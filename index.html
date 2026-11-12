@@ -104,6 +104,7 @@ let ALL_TOPICS_MATH = [];
 let CURRENT_SUBJECT = ''; 
 let CURRENT_PARALLEL = '';
 
+// Переключение экранов
 const pages = document.querySelectorAll('[data-page]');
 function goto(pageId) {
   pages.forEach(p => {
@@ -111,19 +112,21 @@ function goto(pageId) {
     else p.classList.add('hidden');
   });
   window.scrollTo(0, 0);
-  document.querySelectorAll('.subject-card.open').forEach(c => c.classList.remove('open'));
 }
 
+// Открытие/закрытие карточек (Мат/Инф)
 document.body.addEventListener('click', (e) => {
   if (e.target.closest('.submenu a')) return; 
   const card = e.target.closest('.subject-card');
   if (card) {
-    document.querySelectorAll('.subject-card.open').forEach(c => { if (c !== card) c.classList.remove('open'); });
+    document.querySelectorAll('.subject-card.open').forEach(c => { 
+      if (c !== card) c.classList.remove('open'); 
+    });
     card.classList.toggle('open');
   }
 });
 
-// Сразу строим меню (даже если данных нет)
+// 1. СРАЗУ СТРОИМ МЕНЮ КЛАССОВ (чтобы они были видны всегда)
 function buildMenus() {
   const classes = ['5', '6', '7', '8', '9', '10', '11'];
   
@@ -136,10 +139,7 @@ function buildMenus() {
   document.getElementById('mathMenu').innerHTML = mathHtml;
 }
 
-// Вызываем сразу
-buildMenus();
-
-// Загружаем данные из таблицы (если получится)
+// 2. ЗАГРУЖАЕМ ДАННЫЕ (если получится)
 async function loadTopics() {
   try {
     const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
@@ -148,9 +148,12 @@ async function loadTopics() {
       ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
       ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
     }
-  } catch (e) { console.log('Ошибка загрузки тем:', e); }
+  } catch (e) { 
+    console.log('Ошибка загрузки тем (но меню работает):', e); 
+  }
 }
 
+// 3. ОТКРЫТИЕ КЛАССА
 function openClass(subject, par) {
   CURRENT_SUBJECT = subject;
   CURRENT_PARALLEL = par;
@@ -163,7 +166,7 @@ function openClass(subject, par) {
   const filtered = db.filter(t => t.parallel === par);
   
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-note">Для раздела "${displayPar}" пока нет тем.</div>`;
+    container.innerHTML = `<div class="empty-note">Для раздела "${displayPar}" пока нет тем. Добавьте их в таблицу.</div>`;
   } else {
     const grouped = {};
     filtered.forEach(t => {
@@ -190,6 +193,7 @@ function openClass(subject, par) {
   goto('class-page');
 }
 
+// 4. ПРОСМОТР ФАЙЛА
 function openFile(topicName, fileName) {
   document.getElementById('fileTitle').innerText = topicName;
   const iframe = document.getElementById('mainIframe');
@@ -198,15 +202,14 @@ function openFile(topicName, fileName) {
 }
 
 function backToClass() {
-  if (CURRENT_SUBJECT && CURRENT_PARALLEL) {
-    openClass(CURRENT_SUBJECT, CURRENT_PARALLEL);
-  } else {
-    goto('home');
-  }
+  if (CURRENT_SUBJECT && CURRENT_PARALLEL) openClass(CURRENT_SUBJECT, CURRENT_PARALLEL);
+  else goto('home');
 }
 
-loadTopics();
-goto('home');
+// === ЗАПУСК ===
+buildMenus();   // Сначала строим меню
+loadTopics();   // Потом грузим данные
+goto('home');   // Показываем главную
 </script>
 </body>
 </html>
