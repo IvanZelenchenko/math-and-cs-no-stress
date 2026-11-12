@@ -9,32 +9,11 @@
   body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
   .app { max-width: 1150px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); min-height: calc(100vh - 40px); }
   
-  /* Обновленный заголовок */
-  h1.site-title { 
-    font-size: 2.1rem; 
-    font-weight: 700; 
-    background: linear-gradient(to right, #c7b9ff, #80deea, #6effb0); 
-    -webkit-background-clip: text; 
-    background-clip: text; 
-    color: transparent; 
-    margin: 0 0 8px 0; 
-    text-align: center;
-    line-height: 1.3;
-  }
-  
+  h1.site-title { font-size: 2.1rem; font-weight: 700; background: linear-gradient(to right, #c7b9ff, #80deea, #6effb0); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0 0 8px 0; text-align: center; line-height: 1.3; }
   .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 24px; font-size: 1.1rem; border-bottom: 1px dashed #3f3f60; padding-bottom: 16px; }
-  .btn { background: #4f3f8a; border: none; color: white; padding: 14px 32px; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: 0.15s; box-shadow: 0 7px 0 #1e1835; border: 1px solid #8c7be0; display: inline-block; text-decoration: none; }
-  .btn:hover { background: #6252a5; transform: translateY(-2px); }
-  .btn:active { transform: translateY(5px); box-shadow: 0 2px 0 #1e1835; }
-  .btn-secondary { background: #3a3a5c; box-shadow: 0 7px 0 #14141f; border-color: #5f5f92; }
-  .btn-success { background: #2e7d5e; box-shadow: 0 7px 0 #10462f; border-color: #6effb0; }
-  .btn-small { padding: 10px 22px; font-size: 1rem; }
-  .btn:disabled { opacity: 0.5; pointer-events: none; }
-  .hidden { display: none !important; }
-  .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
-
+  
+  /* Главная */
   .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
-  @media (max-width: 700px) { .main-grid { grid-template-columns: 1fr; } }
   .subject-card { background: linear-gradient(135deg, #2a2a4a, #1e1e33); border-radius: 32px; padding: 40px 30px; border: 2px solid #4a4a72; text-align: center; cursor: pointer; transition: 0.2s; }
   .subject-card:hover { transform: translateY(-4px); border-color: #80deea; }
   .subject-card .icon { font-size: 4rem; margin-bottom: 12px; }
@@ -45,43 +24,30 @@
   .subject-card .submenu a { background: #2e2e4a; color: #e0e0ff; text-decoration: none; padding: 12px 20px; border-radius: 40px; border: 2px solid #4a4a72; font-weight: 500; transition: 0.15s; }
   .subject-card .submenu a:hover { background: #5b4b8a; border-color: #80deea; color: white; }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-  .breadcrumb { color: #a0a0c0; font-size: 0.95rem; }
-  .breadcrumb a { color: #80deea; text-decoration: none; }
-  .breadcrumb a:hover { text-decoration: underline; }
+  /* Страница класса */
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .btn { background: #4f3f8a; border: none; color: white; padding: 14px 32px; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: 0.15s; box-shadow: 0 7px 0 #1e1835; border: 1px solid #8c7be0; text-decoration: none; display: inline-block; }
+  .btn:hover { background: #6252a5; transform: translateY(-2px); }
+  .btn-secondary { background: #3a3a5c; box-shadow: 0 7px 0 #14141f; border-color: #5f5f92; }
   .page-title { font-size: 1.8rem; font-weight: 600; color: #e2dcff; margin-bottom: 20px; }
+  
   .topic-list { display: flex; flex-direction: column; gap: 14px; }
   .topic-item { background: #232338; border-radius: 20px; overflow: hidden; border: 1px solid #3b3b5a; }
-  .topic-header { padding: 18px 24px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.15s; font-size: 1.15rem; font-weight: 600; color: #e2dcff; }
-  .topic-header:hover { background: #2a2a4a; }
-  .topic-header .arrow { transition: transform 0.2s; }
-  .topic-item.open .topic-header .arrow { transform: rotate(90deg); }
-  .topic-body { display: none; padding: 4px 24px 20px; flex-direction: column; gap: 10px; }
-  .topic-item.open .topic-body { display: flex; }
-  .topic-body a { background: #1e1e33; color: #cfcaff; text-decoration: none; padding: 12px 20px; border-radius: 14px; border: 1px solid #4a4a72; font-weight: 500; transition: 0.15s; display: flex; align-items: center; gap: 10px; }
+  .topic-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 1.15rem; font-weight: 600; color: #e2dcff; }
+  .topic-body { padding: 4px 24px 20px; }
+  .topic-body a { background: #1e1e33; color: #cfcaff; text-decoration: none; padding: 12px 20px; border-radius: 14px; border: 1px solid #4a4a72; font-weight: 500; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; transition: 0.15s; }
   .topic-body a:hover { background: #3e3e62; border-color: #80deea; color: white; }
-  .topic-body a .badge { background: #5b4b8a; color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; margin-left: auto; }
-  .empty-note { text-align: center; color: #7b7ba3; padding: 40px 20px; font-size: 1.05rem; }
+  .empty-note { text-align: center; color: #7b7ba3; padding: 40px; font-style: italic; }
 
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
-  .modal-box { background: #1c1c2e; border-radius: 32px; padding: 32px; max-width: 520px; width: 100%; border: 2px solid #80deea; box-shadow: 0 0 40px rgba(128,222,234,0.4); }
-  .modal-box h3 { margin: 0 0 18px; color: #c7b9ff; font-size: 1.4rem; }
-  .modal-box label { color: #cfcaff; font-weight: 500; font-size: 0.95rem; display: block; margin-top: 4px; }
-  .modal-box input { width: 100%; padding: 12px 16px; margin-top: 6px; margin-bottom: 14px; background: #2f2f50; color: #ffe484; border: 2px solid #6b6b9a; border-radius: 12px; font-size: 1.05rem; font-family: inherit; }
-  .modal-box input:focus { outline: none; border-color: #80deea; box-shadow: 0 0 10px #80deea; }
-  .modal-box .actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px; }
-  .modal-box .err { color: #ff8a9b; font-size: 0.95rem; margin-top: -6px; margin-bottom: 10px; min-height: 1.2em; }
-  .example-box { background: #2a2a4a; border-left: 4px solid #ffe484; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px; color: #ffd966; font-size: 0.95rem; }
-
-  .info-block { background: #25253e; padding: 16px 22px; border-radius: 20px; border-left: 6px solid #80deea; color: #cfcaff; margin-bottom: 20px; }
-  .result-card { background: linear-gradient(135deg,#1e2e2a,#2a2a40); border: 3px solid #6effb0; border-radius: 32px; padding: 32px; text-align: center; color: #e0e0ff; }
-  .result-card h2 { font-size: 1.8rem; color: #a0ffcf; margin: 0 0 12px; }
-  .grade-big { font-size: 5rem; font-weight: 800; background: linear-gradient(to right,#ffe484,#6effb0); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 12px 0; }
+  /* Просмотр файла */
+  .file-view { background: #1a1a2c; border-radius: 20px; overflow: hidden; border: 1px solid #4a4a72; height: 80vh; }
+  .file-view iframe { width: 100%; height: 100%; border: none; background: #1e1e2f; }
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- ГЛАВНАЯ -->
   <div data-page="home">
     <h1 class="site-title">Формула успеха: плюс логика, минус стресс</h1>
     <div class="subtitle">выберите предмет</div>
@@ -89,147 +55,52 @@
       <div class="subject-card" id="cardMath">
         <div class="icon">📐</div>
         <div class="title">Математика</div>
-        <div class="desc">5 класс · 6 класс · Олимпиадная</div>
-        <div class="submenu">
-          <a href="#" data-goto="math-5">5 класс</a>
-          <a href="#" data-goto="math-6">6 класс</a>
-          <a href="#" data-goto="math-olymp">Олимпиадная</a>
-        </div>
+        <div class="desc">Выберите раздел</div>
+        <div class="submenu" id="mathMenu"></div>
       </div>
       <div class="subject-card" id="cardInf">
         <div class="icon">💻</div>
         <div class="title">Информатика</div>
-        <div class="desc">5–11 классы</div>
-        <div class="submenu">
-          <a href="#" data-goto="inf-5">5 класс</a>
-          <a href="#" data-goto="inf-6">6 класс</a>
-          <a href="#" data-goto="inf-7">7 класс</a>
-          <a href="#" data-goto="inf-8">8 класс</a>
-          <a href="#" data-goto="inf-9">9 класс</a>
-          <a href="#" data-goto="inf-10">10 класс</a>
-          <a href="#" data-goto="inf-11">11 класс</a>
-        </div>
+        <div class="desc">Выберите раздел</div>
+        <div class="submenu" id="infMenu"></div>
       </div>
     </div>
   </div>
 
-  <div data-page="math-5" class="hidden">
-    <div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Математика / 5 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div>
-    <div class="page-title">Математика · 5 класс</div>
-    <div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div>
-  </div>
-  <div data-page="math-6" class="hidden">
-    <div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Математика / 6 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div>
-    <div class="page-title">Математика · 6 класс</div>
-    <div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div>
-  </div>
-  <div data-page="math-olymp" class="hidden">
-    <div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Математика / Олимпиадная</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div>
-    <div class="page-title">Математика · Олимпиадная</div>
-    <div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div>
-  </div>
-
-  <div data-page="inf-5" class="hidden">
-    <div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / 5 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div>
-    <div class="page-title">Информатика · 5 класс</div>
-    <div class="topic-list">
-      <div class="topic-item">
-        <div class="topic-header">Алгебра логики <span class="arrow">▸</span></div>
-        <div class="topic-body">
-          <a href="#" data-goto="logic-1"><span>1 уровень. Операции и таблица истинности</span><span class="badge">ур. 1</span></a>
-          <a href="#" data-goto="logic-2"><span>2 уровень. Логические схемы</span><span class="badge">ур. 2</span></a>
-          <a href="#" data-sw-grade="5"><span>Самостоятельная работа</span><span class="badge">10 мин</span></a>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div data-page="inf-6" class="hidden">
-    <div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / 6 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div>
-    <div class="page-title">Информатика · 6 класс</div>
-    <div class="topic-list">
-      <div class="topic-item">
-        <div class="topic-header">Алгебра логики <span class="arrow">▸</span></div>
-        <div class="topic-body">
-          <a href="#" data-goto="logic-1"><span>1 уровень. Операции и таблица истинности</span><span class="badge">ур. 1</span></a>
-          <a href="#" data-goto="logic-2"><span>2 уровень. Логические схемы</span><span class="badge">ур. 2</span></a>
-          <a href="#" data-sw-grade="6"><span>Самостоятельная работа</span><span class="badge">10 мин</span></a>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div data-page="inf-7" class="hidden"><div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / 7 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div><div class="page-title">Информатика · 7 класс</div><div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div></div>
-  <div data-page="inf-8" class="hidden"><div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / 8 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div><div class="page-title">Информатика · 8 класс</div><div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div></div>
-  <div data-page="inf-9" class="hidden"><div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / 9 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div><div class="page-title">Информатика · 9 класс</div><div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div></div>
-  <div data-page="inf-10" class="hidden"><div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / 10 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div><div class="page-title">Информатика · 10 класс</div><div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div></div>
-  <div data-page="inf-11" class="hidden"><div class="topbar"><div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / 11 класс</div><button class="btn btn-secondary btn-small" data-goto="home">← Главная</button></div><div class="page-title">Информатика · 11 класс</div><div class="topic-list"><div class="topic-item"><div class="topic-header">Темы <span class="arrow">▸</span></div><div class="topic-body"><div class="empty-note">Здесь пока пусто.</div></div></div></div></div>
-
-  <div data-page="logic-1" class="hidden">
+  <!-- СТРАНИЦА РАЗДЕЛА -->
+  <div data-page="class-page" class="hidden">
     <div class="topbar">
-      <div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / Алгебра логики / 1 уровень</div>
-      <div class="row"><button class="btn btn-secondary btn-small" data-goto="inf-5">← К темам</button><button class="btn btn-secondary btn-small" data-goto="home">🏠 Главная</button></div>
-    </div>
-    <div class="page-title">Алгебра логики · 1 уровень. Операции и таблица истинности</div>
-    <div class="info-block">Контент 1-го уровня подключается сюда.</div>
-  </div>
-
-  <div data-page="logic-2" class="hidden">
-    <div class="topbar">
-      <div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / Алгебра логики / 2 уровень</div>
-      <div class="row"><button class="btn btn-secondary btn-small" data-goto="inf-5">← К темам</button><button class="btn btn-secondary btn-small" data-goto="home">🏠 Главная</button></div>
-    </div>
-    <div class="page-title">Алгебра логики · 2 уровень. Логические схемы</div>
-    <div class="info-block">Контент 2-го уровня подключается сюда.</div>
-  </div>
-
-  <div data-page="self-work" class="hidden">
-    <div class="topbar">
-      <div class="breadcrumb"><a href="#" data-goto="home">🏠 Главная</a> / Информатика / Алгебра логики / Самостоятельная</div>
-      <button class="btn btn-secondary btn-small" data-goto="home">🏠 Главная</button>
-    </div>
-    <div class="page-title">Самостоятельная работа · Алгебра логики</div>
-
-    <div id="swIntro" class="info-block">
-      <div style="font-size:1.1rem; margin-bottom:12px;">
-        Вам будет предложено <strong>5 заданий</strong> из базы. Время — <strong>10 минут</strong>. Повторное прохождение невозможно.
+      <div class="page-title" id="classTitle">Загрузка...</div>
+      <div>
+        <button class="btn btn-secondary" onclick="goto('home')">🏠 Главная</button>
       </div>
-      <div style="margin-bottom:12px;">Оценка: 5 верных → «5», 4 → «4», 3 → «3», меньше → «2».</div>
-      <button class="btn btn-success" id="swStart">Ввести данные и начать</button>
     </div>
+    <div class="topic-list" id="classTopics"></div>
+  </div>
 
-    <div id="swRunning" class="hidden">
-      <div class="topbar" style="background:#2a2a4a; padding:14px 22px; border-radius:20px; border:2px solid #4a4a72; position:sticky; top:10px; z-index:50;">
-        <div>📝 Самостоятельная · <span id="swStudentName"></span></div>
-        <div id="swTimer" style="font-family:monospace; font-size:1.6rem; font-weight:700; color:#6effb0; letter-spacing:2px;">10:00</div>
+  <!-- ПРОСМОТР ФАЙЛА -->
+  <div data-page="file-page" class="hidden">
+    <div class="topbar">
+      <div class="page-title" id="fileTitle">Загрузка...</div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-secondary" onclick="backToClass()">← Назад</button>
+        <button class="btn" onclick="goto('home')">🏠 Главная</button>
       </div>
-      <div id="swQuestions"></div>
-      <div class="row" style="justify-content:center; margin-top:22px;"><button class="btn btn-success" id="swSubmit">Завершить работу</button></div>
     </div>
-
-    <div id="swResult" class="hidden"></div>
-  </div>
-
-</div>
-
-<div id="modalBackdrop" class="modal-backdrop hidden">
-  <div class="modal-box">
-    <h3>Данные ученика</h3>
-    <div class="example-box">Пример ввода: <strong>Акимова Софья</strong> и класс <strong>7</strong></div>
-    <label>ФИО (как в списке класса)</label>
-    <input type="text" id="inpFIO" placeholder="Акимова Софья" autocomplete="off">
-    <label>Класс</label>
-    <input type="text" id="inpKlass" placeholder="7" maxlength="4" autocomplete="off">
-    <div class="err" id="modalErr"></div>
-    <div class="actions">
-      <button class="btn btn-secondary btn-small" id="modalCancel">Отмена</button>
-      <button class="btn btn-success btn-small" id="modalOk">Проверить и начать</button>
+    <div class="file-view">
+      <iframe id="mainIframe" src=""></iframe>
     </div>
   </div>
+
 </div>
 
 <script>
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+let ALL_TOPICS_INFO = []; 
+let ALL_TOPICS_MATH = []; 
+let CURRENT_SUBJECT = ''; 
+let CURRENT_PARALLEL = '';
 
 const pages = document.querySelectorAll('[data-page]');
 function goto(pageId) {
@@ -240,325 +111,97 @@ function goto(pageId) {
   window.scrollTo(0, 0);
   document.querySelectorAll('.subject-card.open').forEach(c => c.classList.remove('open'));
 }
+
 document.body.addEventListener('click', (e) => {
-  const a = e.target.closest('[data-goto]');
-  if (a) { e.preventDefault(); goto(a.dataset.goto); }
-  const sw = e.target.closest('[data-sw-grade]');
-  if (sw) { e.preventDefault(); openSelfWork(sw.dataset.swGrade); }
-});
-document.querySelectorAll('.subject-card').forEach(card => {
-  card.addEventListener('click', (e) => {
-    if (e.target.closest('[data-goto]')) return;
+  if (e.target.closest('.submenu a')) return; 
+  const card = e.target.closest('.subject-card');
+  if (card) {
     document.querySelectorAll('.subject-card.open').forEach(c => { if (c !== card) c.classList.remove('open'); });
     card.classList.toggle('open');
-  });
-});
-document.querySelectorAll('.topic-header').forEach(h => {
-  h.addEventListener('click', () => h.closest('.topic-item').classList.toggle('open'));
+  }
 });
 
-const rand01 = () => Math.random() < 0.5 ? 0 : 1;
-const shuffle = arr => arr.map(v => ({v, r: Math.random()})).sort((a,b)=>a.r-b.r).map(o=>o.v);
-
-function renderExpression(expr) {
-  const tokens = [];
-  const re = /([ABC])|([∧∨¬])|([()])|(\s+)/g;
-  let m;
-  while ((m = re.exec(expr)) !== null) {
-    if (m[1]) tokens.push({type:'var', text:m[1]});
-    else if (m[2]) tokens.push({type:'op', text:m[2]});
-    else if (m[3]) tokens.push({type:'paren', text:m[3]});
-    else if (m[4]) tokens.push({type:'space', text:m[4]});
-  }
-  return tokens.map(t => {
-    if (t.type === 'space') return ' ';
-    if (t.type === 'var') return `<span style="color:#b0e0ff;font-weight:700">${t.text}</span>`;
-    if (t.type === 'op') return `<span style="color:#ffe484;font-weight:700">${t.text}</span>`;
-    return `<span style="color:#a0a0c0">${t.text}</span>`;
-  }).join('');
-}
-
-let SW = {
-  gradeParallel: null, fio: '', klass: '', letter: '',
-  questions: [], answers: {}, timeLeft: 600, timer: null,
-  submitted: false, running: false
-};
-
-function openSelfWork(parallel) {
-  if (SW.submitted) { alert('Самостоятельная работа уже выполнена.'); return; }
-  SW.gradeParallel = String(parallel);
-  goto('self-work');
-  document.getElementById('swIntro').classList.remove('hidden');
-  document.getElementById('swRunning').classList.add('hidden');
-  document.getElementById('swResult').classList.add('hidden');
-  document.getElementById('modalBackdrop').classList.remove('hidden');
-  document.getElementById('inpFIO').value = '';
-  document.getElementById('inpKlass').value = '';
-  document.getElementById('modalErr').textContent = '';
-  setTimeout(() => document.getElementById('inpFIO').focus(), 50);
-}
-
-document.getElementById('modalCancel').addEventListener('click', () => {
-  document.getElementById('modalBackdrop').classList.add('hidden');
-  goto('home');
-});
-
-document.getElementById('modalOk').addEventListener('click', async () => {
-  const fio = document.getElementById('inpFIO').value.trim().replace(/\s+/g, ' ');
-  const klass = document.getElementById('inpKlass').value.trim().toUpperCase().replace(/\s+/g, '');
-  const errEl = document.getElementById('modalErr');
-  errEl.textContent = '';
-
-  if (fio.length < 5) {
-    errEl.textContent = 'Введите имя и фамилию полностью (как в списке класса)';
-    return;
-  }
-  if (klass.length < 1) {
-    errEl.textContent = 'Введите ваш класс (например, 7 или 5А)';
-    return;
-  }
-
-  const btn = document.getElementById('modalOk');
-  btn.disabled = true; btn.textContent = 'Проверяем...';
-  errEl.textContent = '';
-  
+async function loadTopics() {
   try {
-    const url = `${BACKEND_URL}?action=checkStudent&fio=${encodeURIComponent(fio)}&klass=${encodeURIComponent(klass)}`;
-    const resp = await fetch(url);
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
     const data = await resp.json();
-    
-    if (!data.found) {
-      errEl.textContent = 'Ошибка ввода данных: ученик не найден в списке этого класса.';
-      btn.disabled = false; btn.textContent = 'Проверить и начать';
-      return;
+    if (data.ok) {
+      ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
+      ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
+      buildMenus();
     }
-  } catch (e) {
-    errEl.textContent = 'Ошибка проверки (нет связи с сервером). Попробуйте еще раз.';
-    btn.disabled = false; btn.textContent = 'Проверить и начать';
-    return;
-  }
+  } catch (e) { console.log('Ошибка загрузки тем:', e); }
+}
+
+function buildMenus() {
+  const classes = ['5', '6', '7', '8', '9', '10', '11'];
   
-  btn.disabled = false; btn.textContent = 'Проверить и начать';
+  // Меню Информатики
+  let infHtml = classes.map(c => `<a href="#" onclick="openClass('Информатика', '${c}')">${c} класс</a>`).join('');
+  infHtml += `<a href="#" onclick="openClass('Информатика', 'Олимпиадная')" style="border-color:#ffe484; color:#ffe484;">🏆 Олимпиадная</a>`;
+  document.getElementById('infMenu').innerHTML = infHtml;
 
-  SW.fio = fio;
-  SW.klass = klass;
-  SW.letter = klass.slice(-1);
-  document.getElementById('modalBackdrop').classList.add('hidden');
-  startSelfWorkRun();
-});
-
-function startSelfWorkRun() {
-  if (SW.submitted || SW.running) return;
-  const pool = shuffle(buildSAQuestionBank());
-  SW.questions = pool.slice(0, 5);
-  SW.answers = {};
-  SW.timeLeft = 600;
-  SW.running = true;
-  SW.submitted = false;
-  document.getElementById('swStudentName').textContent = `${SW.fio} (${SW.klass})`;
-  document.getElementById('swIntro').classList.add('hidden');
-  document.getElementById('swResult').classList.add('hidden');
-  document.getElementById('swRunning').classList.remove('hidden');
-  renderSWQuestions();
-  startSWTimer();
+  // Меню Математики
+  let mathHtml = classes.map(c => `<a href="#" onclick="openClass('Математика', '${c}')">${c} класс</a>`).join('');
+  mathHtml += `<a href="#" onclick="openClass('Математика', 'Олимпиадная')" style="border-color:#ffe484; color:#ffe484;">🏆 Олимпиадная</a>`;
+  document.getElementById('mathMenu').innerHTML = mathHtml;
 }
 
-function startSWTimer() {
-  if (SW.timer) clearInterval(SW.timer);
-  updateSWTimer();
-  SW.timer = setInterval(() => {
-    SW.timeLeft--;
-    updateSWTimer();
-    if (SW.timeLeft <= 0) { clearInterval(SW.timer); submitSelfWork(true); }
-  }, 1000);
-}
-function updateSWTimer() {
-  const m = Math.floor(SW.timeLeft/60), s = SW.timeLeft%60;
-  const el = document.getElementById('swTimer');
-  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  el.style.color = SW.timeLeft <= 60 ? '#ff8a9b' : (SW.timeLeft <= 180 ? '#ffb86b' : '#6effb0');
-}
-
-function renderSWQuestions() {
-  const wrap = document.getElementById('swQuestions');
-  wrap.innerHTML = SW.questions.map((q, idx) => {
-    let body = '';
-    const inpStyle = `width:100px;padding:10px;background:#2f2f50;color:#ffe484;border:2px solid #6b6b9a;border-radius:12px;text-align:center;font-weight:bold;font-family:monospace;font-size:1.2rem;`;
-    const optStyle = `background:#2e2e4a;border:2px solid #4a4a72;color:#e8e4ff;padding:10px 22px;border-radius:40px;cursor:pointer;font-size:1.05rem;font-weight:500;`;
-    if (q.type === 'value') {
-      body = `<div style="font-family:'Courier New',monospace;font-size:1.4rem;padding:12px;background:#14141f;border-radius:12px;margin:12px 0;">${renderExpression(q.expr)}</div>
-              <div style="margin-top:10px;color:#cfcaff;">Ответ: <input type="text" maxlength="1" class="sw-input" data-qidx="${idx}" placeholder="0/1" style="${inpStyle}"></div>`;
-    } else if (q.type === 'rows' || q.type === 'not') {
-      body = `<div style="margin-top:10px;color:#cfcaff;">Ответ: <input type="text" class="sw-input" data-qidx="${idx}" placeholder="?" style="${inpStyle}"></div>`;
-    } else if (q.type === 'first') {
-      body = `<div style="font-family:'Courier New',monospace;font-size:1.4rem;padding:12px;background:#14141f;border-radius:12px;margin:12px 0;">${renderExpression(q.expr)}</div>
-              <div style="margin-top:8px;color:#cfcaff;">Выбери первое действие:</div>
-              <div class="sw-opts" data-qidx="${idx}" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;">
-                ${q.options.map(o => `<button class="sw-opt" data-qidx="${idx}" data-val="${o}" style="${optStyle}">${o}</button>`).join('')}
-              </div>`;
-    } else if (q.type === 'gost') {
-      body = `<div class="sw-opts" data-qidx="${idx}" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;">
-                ${q.options.map(o => `<button class="sw-opt" data-qidx="${idx}" data-val="${o}" style="${optStyle}">${o}</button>`).join('')}
-              </div>`;
-    }
-    return `<div style="background:#1e1e33;border-radius:20px;padding:20px 24px;margin-bottom:18px;border-left:6px solid #80deea;color:#e8e4ff;font-size:1.1rem;">
-      <h3 style="margin:0 0 10px;color:#b0e0ff;font-size:1.05rem;">Задание ${idx+1} из 5</h3>
-      <div>${q.text}</div>
-      ${body}
-    </div>`;
-  }).join('');
-
-  wrap.querySelectorAll('.sw-input').forEach(inp => {
-    inp.addEventListener('input', () => { SW.answers[+inp.dataset.qidx] = inp.value.trim(); });
-  });
-  wrap.querySelectorAll('.sw-opt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const qIdx = +btn.dataset.qidx;
-      btn.parentElement.querySelectorAll('.sw-opt').forEach(b => {
-        b.style.background = '#2e2e4a'; b.style.borderColor = '#4a4a72'; b.style.color = '#e8e4ff';
-      });
-      btn.style.background = '#5b4b8a'; btn.style.borderColor = '#80deea'; btn.style.color = '#fff';
-      SW.answers[qIdx] = btn.dataset.val;
+function openClass(subject, par) {
+  CURRENT_SUBJECT = subject;
+  CURRENT_PARALLEL = par;
+  
+  const displayPar = par === 'Олимпиадная' ? 'Олимпиадная' : `${par} класс`;
+  document.getElementById('classTitle').innerText = `${subject} · ${displayPar}`;
+  
+  const container = document.getElementById('classTopics');
+  const db = subject === 'Информатика' ? ALL_TOPICS_INFO : ALL_TOPICS_MATH;
+  const filtered = db.filter(t => t.parallel === par);
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="empty-note">Для раздела "${displayPar}" пока нет тем.</div>`;
+  } else {
+    const grouped = {};
+    filtered.forEach(t => {
+      if (!grouped[t.name]) grouped[t.name] = [];
+      grouped[t.name].push(t);
     });
-  });
-}
 
-document.getElementById('swSubmit').addEventListener('click', () => submitSelfWork(false));
-
-async function submitSelfWork(autoSubmit) {
-  if (SW.submitted) return;
-  SW.submitted = true;
-  if (SW.timer) clearInterval(SW.timer);
-
-  let correct = 0;
-  SW.questions.forEach((q, idx) => {
-    const u = SW.answers[idx];
-    if (q.type === 'value' || q.type === 'rows' || q.type === 'not') {
-      if (String(u).trim() === String(q.answer)) correct++;
-    } else if (q.type === 'gost' || q.type === 'first') {
-      if (u === q.answer) correct++;
-    }
-  });
-  let grade = '2';
-  if (correct === 5) grade = '5';
-  else if (correct === 4) grade = '4';
-  else if (correct === 3) grade = '3';
-
-  const now = new Date();
-  const dt = now.toLocaleDateString('ru-RU') + ' ' + now.toLocaleTimeString('ru-RU');
-
-  let sendStatus = 'error';
-  if (BACKEND_URL) {
-    try {
-      await fetch(BACKEND_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'addResult',
-          fio: SW.fio,
-          klass: SW.klass,
-          letter: SW.letter,
-          parallel: SW.klass,
-          topic: 'Алгебра логики',
-          grade: grade,
-          datetime: dt,
-          correct: correct
-        })
-      });
-      sendStatus = 'sent';
-    } catch (e) {
-      console.error('send error', e);
-    }
+    container.innerHTML = Object.keys(grouped).map(topicName => {
+      const files = grouped[topicName];
+      return `
+        <div class="topic-item">
+          <div class="topic-header">${topicName}</div>
+          <div class="topic-body">
+            ${files.map(f => `
+              <a href="#" onclick="openFile('${topicName}', '${f.file}')">
+                📄 Открыть материал
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
   }
-
-  document.getElementById('swRunning').classList.add('hidden');
-  const resDiv = document.getElementById('swResult');
-  const statusMsg = sendStatus === 'sent'
-    ? '✅ Результат отправлен в Google Таблицу.'
-    : '⚠️ Не удалось отправить результат. Сообщите учителю.';
-    
-  resDiv.innerHTML = `
-    <div class="result-card">
-      <h2>${autoSubmit ? '⏱ Время вышло!' : '✅ Работа завершена!'}</h2>
-      <div style="color:#cfcaff;font-size:1.15rem;margin:12px 0;">Правильных ответов: <strong style="color:#ffe484;">${correct} из 5</strong></div>
-      <div class="grade-big">${grade}</div>
-      <div style="color:#b0b0d0;">Ваша оценка</div>
-      <div style="color:#7b7ba3;font-size:0.9rem;margin-top:14px;">${statusMsg}</div>
-      <div style="color:#7b7ba3;font-size:0.9rem;margin-top:8px;">Повторное прохождение недоступно</div>
-      <div class="row" style="justify-content:center;margin-top:22px;">
-        <button class="btn btn-secondary" data-goto="home">🏠 Главная</button>
-      </div>
-    </div>
-  `;
-  resDiv.classList.remove('hidden');
-  resDiv.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', (e) => { e.preventDefault(); goto(b.dataset.goto); }));
+  goto('class-page');
 }
 
-function buildSAQuestionBank() {
-  const bank = [];
-  let id = 0;
-  const nextId = () => ++id;
+function openFile(topicName, fileName) {
+  document.getElementById('fileTitle').innerText = topicName;
+  const iframe = document.getElementById('mainIframe');
+  iframe.src = fileName;
+  goto('file-page');
+}
 
-  const exprs = [
-    {e:'A ∧ B', v:(A,B,C)=>A&B}, {e:'A ∨ B', v:(A,B,C)=>A|B},
-    {e:'¬A', v:(A,B,C)=>A?0:1}, {e:'¬B', v:(A,B,C)=>B?0:1}, {e:'¬C', v:(A,B,C)=>C?0:1},
-    {e:'A ∧ ¬B', v:(A,B,C)=>A&(B?0:1)}, {e:'A ∨ ¬B', v:(A,B,C)=>A|(B?0:1)},
-    {e:'¬A ∧ B', v:(A,B,C)=>(A?0:1)&B}, {e:'¬A ∨ B', v:(A,B,C)=>(A?0:1)|B},
-    {e:'A ∧ B ∧ C', v:(A,B,C)=>A&B&C}, {e:'A ∨ B ∨ C', v:(A,B,C)=>A|B|C},
-    {e:'(A ∧ B) ∨ C', v:(A,B,C)=>(A&B)|C}, {e:'(A ∨ B) ∧ C', v:(A,B,C)=>(A|B)&C},
-    {e:'A ∧ (B ∨ C)', v:(A,B,C)=>A&(B|C)}, {e:'A ∨ (B ∧ C)', v:(A,B,C)=>A|(B&C)},
-    {e:'¬(A ∧ B)', v:(A,B,C)=>(A&B)?0:1}, {e:'¬(A ∨ B)', v:(A,B,C)=>(A|B)?0:1},
-    {e:'¬A ∨ ¬B', v:(A,B,C)=>(A?0:1)|(B?0:1)}, {e:'¬A ∧ ¬B', v:(A,B,C)=>(A?0:1)&(B?0:1)},
-    {e:'(A ∧ B) ∨ ¬C', v:(A,B,C)=>(A&B)|(C?0:1)},
-    {e:'(A ∨ B) ∧ ¬C', v:(A,B,C)=>(A|B)&(C?0:1)},
-    {e:'¬(A ∨ B) ∧ C', v:(A,B,C)=>((A|B)?0:1)&C},
-    {e:'¬(A ∧ B) ∨ C', v:(A,B,C)=>((A&B)?0:1)|C},
-    {e:'A ∧ ¬B ∧ C', v:(A,B,C)=>A&(B?0:1)&C},
-    {e:'A ∨ ¬B ∨ C', v:(A,B,C)=>A|(B?0:1)|C}
-  ];
-  exprs.forEach(item => {
-    const A = rand01(), B = rand01(), C = rand01();
-    bank.push({ id: nextId(), type:'value', text:`Вычисли при A=${A}, B=${B}, C=${C}:`, expr:item.e, answer: item.v(A,B,C)?'1':'0' });
-  });
-
-  [2,2,3,3,3,4,2,3].forEach(n => {
-    bank.push({ id: nextId(), type:'rows', text:`Сколько строк в таблице для ${n} переменных?`, answer:String(Math.pow(2,n)) });
-  });
-
-  const firstTasks = [
-    {e:'A ∧ B ∨ C', first:'∧'}, {e:'¬A ∧ (B ∨ C)', first:'¬'},
-    {e:'(A ∨ B) ∧ C', first:'∨'}, {e:'A ∧ ¬B ∨ C', first:'¬'},
-    {e:'¬(A ∧ B) ∨ C', first:'∧'}, {e:'A ∨ B ∧ C', first:'∧'},
-    {e:'¬A ∨ B ∧ C', first:'¬'}, {e:'(A ∧ B) ∨ ¬C', first:'∧'},
-    {e:'A ∧ (B ∨ C)', first:'∨'}, {e:'¬(A ∨ B ∨ C)', first:'∨'}
-  ];
-  firstTasks.forEach(t => {
-    bank.push({ id: nextId(), type:'first', text:'Какое действие выполняется первым?', expr:t.e,
-      options: shuffle(['∧','∨','¬']), answer:t.first });
-  });
-
-  const gost = [
-    {q:'Как по ГОСТ обозначается конъюнктор?', opts:['Прямоугольник с «&»','Прямоугольник с «1»','Пустой прямоугольник с кружком'], a:'Прямоугольник с «&»'},
-    {q:'Как по ГОСТ обозначается дизъюнктор?', opts:['Прямоугольник с «1»','Прямоугольник с «&»','Пустой прямоугольник с кружком'], a:'Прямоугольник с «1»'},
-    {q:'Как по ГОСТ обозначается инвертор?', opts:['Пустой прямоугольник с кружком','Прямоугольник с «&»','Прямоугольник с «1»'], a:'Пустой прямоугольник с кружком'},
-    {q:'Что означает «&» в прямоугольнике?', opts:['Конъюнкция (И)','Дизъюнкция (ИЛИ)','Инверсия (НЕ)'], a:'Конъюнкция (И)'},
-    {q:'Что означает «1» в прямоугольнике?', opts:['Дизъюнкция (ИЛИ)','Конъюнкция (И)','Инверсия (НЕ)'], a:'Дизъюнкция (ИЛИ)'},
-    {q:'Кружок на выходе блока означает...', opts:['Инверсию (НЕ)','Дизъюнкцию','Конъюнкцию'], a:'Инверсию (НЕ)'},
-    {q:'Сколько входов у типового конъюнктора?', opts:['2','1','3'], a:'2'}
-  ];
-  gost.forEach(g => {
-    bank.push({ id: nextId(), type:'gost', text:g.q, options: shuffle(g.opts), answer: g.a });
-  });
-
-  for (let i = 0; i < 5; i++) {
-    const v = rand01();
-    bank.push({ id: nextId(), type:'not', text:`Чему равно ¬${v}?`, answer: v?'0':'1' });
+function backToClass() {
+  if (CURRENT_SUBJECT && CURRENT_PARALLEL) {
+    openClass(CURRENT_SUBJECT, CURRENT_PARALLEL);
+  } else {
+    goto('home');
   }
-
-  return bank;
 }
 
+loadTopics();
 goto('home');
 </script>
 </body>
