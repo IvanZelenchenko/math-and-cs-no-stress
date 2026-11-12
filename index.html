@@ -6,7 +6,7 @@
 <title>Формула успеха: плюс логика, минус стресс</title>
 <style>
   * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
-  .hidden { display: none !important; } /* ВОТ ОНА, СПАСИТЕЛЬНАЯ СТРОКА */
+  .hidden { display: none !important; }
   
   body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
   .app { max-width: 1150px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); min-height: calc(100vh - 40px); }
@@ -123,6 +123,23 @@ document.body.addEventListener('click', (e) => {
   }
 });
 
+// Сразу строим меню (даже если данных нет)
+function buildMenus() {
+  const classes = ['5', '6', '7', '8', '9', '10', '11'];
+  
+  let infHtml = classes.map(c => `<a href="#" onclick="openClass('Информатика', '${c}')">${c} класс</a>`).join('');
+  infHtml += `<a href="#" onclick="openClass('Информатика', 'Олимпиадная')" style="border-color:#ffe484; color:#ffe484;">🏆 Олимпиадная</a>`;
+  document.getElementById('infMenu').innerHTML = infHtml;
+
+  let mathHtml = classes.map(c => `<a href="#" onclick="openClass('Математика', '${c}')">${c} класс</a>`).join('');
+  mathHtml += `<a href="#" onclick="openClass('Математика', 'Олимпиадная')" style="border-color:#ffe484; color:#ffe484;">🏆 Олимпиадная</a>`;
+  document.getElementById('mathMenu').innerHTML = mathHtml;
+}
+
+// Вызываем сразу
+buildMenus();
+
+// Загружаем данные из таблицы (если получится)
 async function loadTopics() {
   try {
     const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
@@ -130,23 +147,8 @@ async function loadTopics() {
     if (data.ok) {
       ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
       ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
-      buildMenus();
     }
   } catch (e) { console.log('Ошибка загрузки тем:', e); }
-}
-
-function buildMenus() {
-  const classes = ['5', '6', '7', '8', '9', '10', '11'];
-  
-  // Меню Информатики
-  let infHtml = classes.map(c => `<a href="#" onclick="openClass('Информатика', '${c}')">${c} класс</a>`).join('');
-  infHtml += `<a href="#" onclick="openClass('Информатика', 'Олимпиадная')" style="border-color:#ffe484; color:#ffe484;">🏆 Олимпиадная</a>`;
-  document.getElementById('infMenu').innerHTML = infHtml;
-
-  // Меню Математики
-  let mathHtml = classes.map(c => `<a href="#" onclick="openClass('Математика', '${c}')">${c} класс</a>`).join('');
-  mathHtml += `<a href="#" onclick="openClass('Математика', 'Олимпиадная')" style="border-color:#ffe484; color:#ffe484;">🏆 Олимпиадная</a>`;
-  document.getElementById('mathMenu').innerHTML = mathHtml;
 }
 
 function openClass(subject, par) {
