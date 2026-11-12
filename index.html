@@ -14,7 +14,6 @@
   h1.site-title { font-size: 2.1rem; font-weight: 700; background: linear-gradient(to right, #c7b9ff, #80deea, #6effb0); -webkit-background-clip: text; background-clip: text; color: transparent; margin: 0 0 8px 0; text-align: center; line-height: 1.3; }
   .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 24px; font-size: 1.1rem; border-bottom: 1px dashed #3f3f60; padding-bottom: 16px; }
   
-  /* Главная */
   .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
   .subject-card { background: linear-gradient(135deg, #2a2a4a, #1e1e33); border-radius: 32px; padding: 40px 30px; border: 2px solid #4a4a72; text-align: center; cursor: pointer; transition: 0.2s; }
   .subject-card:hover { transform: translateY(-4px); border-color: #80deea; }
@@ -26,31 +25,41 @@
   .subject-card .submenu a { background: #2e2e4a; color: #e0e0ff; text-decoration: none; padding: 12px 20px; border-radius: 40px; border: 2px solid #4a4a72; font-weight: 500; transition: 0.15s; }
   .subject-card .submenu a:hover { background: #5b4b8a; border-color: #80deea; color: white; }
 
-  /* Страница класса */
   .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
   .btn { background: #4f3f8a; border: none; color: white; padding: 14px 32px; border-radius: 50px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: 0.15s; box-shadow: 0 7px 0 #1e1835; border: 1px solid #8c7be0; text-decoration: none; display: inline-block; }
   .btn:hover { background: #6252a5; transform: translateY(-2px); }
   .btn-secondary { background: #3a3a5c; box-shadow: 0 7px 0 #14141f; border-color: #5f5f92; }
   .page-title { font-size: 1.8rem; font-weight: 600; color: #e2dcff; margin-bottom: 20px; }
   
-  /* Плашки тем (как было раньше) */
   .topic-list { display: flex; flex-direction: column; gap: 14px; }
   .topic-item { background: #232338; border-radius: 20px; overflow: hidden; border: 1px solid #3b3b5a; }
-  .topic-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 1.15rem; font-weight: 600; color: #e2dcff; }
-  .topic-body { padding: 4px 24px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .topic-header { padding: 18px 24px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 1.15rem; font-weight: 600; color: #e2dcff; transition: 0.15s; }
+  .topic-header:hover { background: #2a2a4a; }
+  .topic-header .arrow { transition: transform 0.2s; color: #80deea; }
+  .topic-item.open .topic-header .arrow { transform: rotate(90deg); }
+  
+  .topic-body { display: none; padding: 4px 24px 20px; flex-direction: column; gap: 10px; }
+  .topic-item.open .topic-body { display: flex; }
   .topic-body a { background: #1e1e33; color: #cfcaff; text-decoration: none; padding: 12px 20px; border-radius: 14px; border: 1px solid #4a4a72; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: 0.15s; }
   .topic-body a:hover { background: #3e3e62; border-color: #80deea; color: white; }
   .empty-note { text-align: center; color: #7b7ba3; padding: 40px; font-style: italic; }
+  .loader { text-align: center; font-size: 1.2rem; color: #80deea; padding: 40px; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-  /* Просмотр файла */
   .file-view { background: #1a1a2c; border-radius: 20px; overflow: hidden; border: 1px solid #4a4a72; height: 80vh; }
   .file-view iframe { width: 100%; height: 100%; border: none; background: #1e1e2f; }
+
+  /* Модалка */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
+  .modal-box { background: #1c1c2e; border-radius: 32px; padding: 32px; max-width: 520px; width: 100%; border: 2px solid #80deea; }
+  .modal-box label { display: block; margin-top: 10px; color: #cfcaff; }
+  .modal-box input { width: 100%; padding: 12px; margin-top: 5px; background: #2f2f50; color: #ffe484; border: 2px solid #6b6b9a; border-radius: 12px; }
+  .modal-box .actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+  .modal-box .err { color: #ff8a9b; font-size: 0.95rem; margin-top: 10px; min-height: 1.2em; }
 </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- ГЛАВНАЯ -->
   <div data-page="home">
     <h1 class="site-title">Формула успеха: плюс логика, минус стресс</h1>
     <div class="subtitle">выберите предмет</div>
@@ -70,7 +79,6 @@
     </div>
   </div>
 
-  <!-- СТРАНИЦА КЛАССА -->
   <div data-page="class-page" class="hidden">
     <div class="topbar">
       <div class="page-title" id="classTitle">Загрузка...</div>
@@ -81,7 +89,6 @@
     <div class="topic-list" id="classTopics"></div>
   </div>
 
-  <!-- ПРОСМОТР ФАЙЛА -->
   <div data-page="file-page" class="hidden">
     <div class="topbar">
       <div class="page-title" id="fileTitle">Загрузка...</div>
@@ -97,6 +104,25 @@
 
 </div>
 
+<!-- Модалка -->
+<div id="modalBackdrop" class="modal-backdrop hidden">
+  <div class="modal-box">
+    <h3>Данные ученика</h3>
+    <div style="background: #2a2a4a; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; color: #ffd966;">
+      Пример: <b>Иванов Иван</b> и класс <b>5Л</b>
+    </div>
+    <label>ФИО</label>
+    <input type="text" id="inpFIO" placeholder="Иванов Иван">
+    <label>Класс</label>
+    <input type="text" id="inpKlass" placeholder="5Л">
+    <div class="err" id="modalErr"></div>
+    <div class="actions">
+      <button class="btn btn-secondary" onclick="document.getElementById('modalBackdrop').classList.add('hidden')">Отмена</button>
+      <button class="btn btn-success" id="modalOk">Проверить</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
 
@@ -104,6 +130,7 @@ let ALL_TOPICS_INFO = [];
 let ALL_TOPICS_MATH = []; 
 let CURRENT_SUBJECT = ''; 
 let CURRENT_PARALLEL = '';
+let IS_LOADING = true;
 
 const pages = document.querySelectorAll('[data-page]');
 function goto(pageId) {
@@ -136,6 +163,7 @@ function buildMenus() {
 }
 
 async function loadTopics() {
+  IS_LOADING = true;
   try {
     const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
     const data = await resp.json();
@@ -144,6 +172,7 @@ async function loadTopics() {
       ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
     }
   } catch (e) { console.log('Ошибка загрузки тем:', e); }
+  IS_LOADING = false;
 }
 
 function openClass(subject, par) {
@@ -154,48 +183,50 @@ function openClass(subject, par) {
   document.getElementById('classTitle').innerText = `${subject} · ${displayPar}`;
   
   const container = document.getElementById('classTopics');
+  
+  if (IS_LOADING) {
+    container.innerHTML = '<div class="loader">Загрузка тем... Пожалуйста, подождите.</div>';
+    setTimeout(() => renderClassContent(container, subject, par), 800);
+    goto('class-page');
+    return;
+  }
+  
+  renderClassContent(container, subject, par);
+  goto('class-page');
+}
+
+function renderClassContent(container, subject, par) {
   const db = subject === 'Информатика' ? ALL_TOPICS_INFO : ALL_TOPICS_MATH;
   const filtered = db.filter(t => t.parallel === par);
   
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-note">Для раздела "${displayPar}" пока нет тем.</div>`;
-  } else {
-    // Группируем по первой строке (Заголовок темы)
-    const grouped = {};
-    filtered.forEach(t => {
-      // Если файл пустой, это заголовок группы, иначе — уровень
-      if (!t.file) {
-        if (!grouped[t.name]) grouped[t.name] = [];
-      } else {
-        // Ищем, к какой группе прикрепить (для простоты — к первой)
-        const parentName = Object.keys(grouped).find(k => t.name.startsWith(k.split(' ')[0])) || t.name;
-        if (!grouped[parentName]) grouped[parentName] = [];
-        grouped[parentName].push(t);
-      }
-    });
-
-    // Если есть только файлы без заголовков, сваливаем в "Материалы"
-    if (Object.keys(grouped).length === 0) {
-        grouped['Темы'] = filtered.filter(t => t.file);
-    }
-
-    container.innerHTML = Object.keys(grouped).map(topicName => {
-      const levels = grouped[topicName];
-      return `
-        <div class="topic-item">
-          <div class="topic-header">${topicName}</div>
-          <div class="topic-body">
-            ${levels.map(l => `
-              <a href="#" onclick="openFile('${l.name}', '${l.file}')">
-                📄 ${l.name}
-              </a>
-            `).join('')}
-          </div>
-        </div>
-      `;
-    }).join('');
+    container.innerHTML = `<div class="empty-note">Для раздела "${par}" пока нет тем.</div>`;
+    return;
   }
-  goto('class-page');
+
+  const grouped = {};
+  filtered.forEach(t => {
+    if (!grouped[t.topicName]) grouped[t.topicName] = [];
+    grouped[t.topicName].push(t);
+  });
+
+  container.innerHTML = Object.keys(grouped).map(topicName => {
+    const levels = grouped[topicName];
+    return `
+      <div class="topic-item">
+        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+          ${topicName} <span class="arrow">▸</span>
+        </div>
+        <div class="topic-body">
+          ${levels.map(l => `
+            <a href="#" onclick="openFile('${l.levelName}', '${l.file}')">
+              📄 ${l.levelName}
+            </a>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 function openFile(topicName, fileName) {
