@@ -7,15 +7,17 @@
 <style>
   * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
   body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
-  .app { max-width: 800px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
+  .app { max-width: 850px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
   
-  h1 { text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; font-size: 2rem; }
+  h1 { text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; font-size: 2rem; margin-bottom: 10px; }
+  .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 24px; }
   .card { background: rgba(20,20,35,0.7); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid #3b3b5a; }
   
   .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
   .btn:hover { background: #6252a5; }
   .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
   .btn-success:hover { background: #3e9d6e; }
+  .btn:disabled { opacity: 0.5; pointer-events: none; }
 
   .timer-bar { display: flex; justify-content: space-between; background: #2a2a4a; border-radius: 20px; padding: 14px 22px; margin-bottom: 20px; border: 2px solid #4a4a72; }
   .timer { font-family: monospace; font-size: 1.6rem; font-weight: 700; color: #6effb0; }
@@ -26,6 +28,12 @@
   .opts { display: flex; flex-wrap: wrap; gap: 12px; margin: 14px 0; }
   .opts button { background: #2e2e4a; border: 2px solid #4a4a72; color: #e8e4ff; padding: 10px 22px; border-radius: 40px; cursor: pointer; }
   .opts button.selected { background: #5b4b8a; border-color: #80deea; color: white; }
+  
+  .expr-box { font-family: monospace; font-size: 1.3rem; padding: 12px; background: #14141f; border-radius: 12px; margin: 10px 0; text-align: center; color: #ffe484; font-weight: bold; border: 1px solid #3b3b5a; }
+
+  /* Блок для схемы */
+  .circuit-view { background: #14141f; border-radius: 16px; padding: 15px; border: 1px solid #2e2e4a; margin: 15px 0; position: relative; }
+  .slot-input { width: 46px; padding: 5px; text-align: center; font-size: 1.05rem; font-weight: bold; border-radius: 8px; background: #2f2f50; color: #ffe484; border: 2px solid #6b6b9a; font-family: monospace; }
   
   .result-card { background: linear-gradient(135deg, #1e2e2a, #2a2a40); border: 3px solid #6effb0; border-radius: 32px; padding: 32px; text-align: center; }
   .grade { font-size: 5rem; font-weight: 800; background: linear-gradient(to right, #ffe484, #6effb0); -webkit-background-clip: text; color: transparent; margin: 12px 0; }
@@ -110,19 +118,45 @@ async function startTest() {
   startTimer();
 }
 
+// --- ГЕНЕРАЦИЯ ЗАДАНИЙ ---
 function generateQuestions() {
   const bank = [
+    // 1. Простые вычисления
     { type: 'value', text: 'Вычисли (A ∧ B) при A=1, B=1', ans: '1' },
     { type: 'value', text: 'Вычисли (A ∨ B) при A=0, B=0', ans: '0' },
-    { type: 'value', text: 'Вычисли ¬A при A=1', ans: '0' },
-    { type: 'value', text: 'Вычисли (A ∧ B) ∨ C при A=1, B=0, C=1', ans: '1' },
-    { type: 'value', text: 'Вычисли ¬(A ∨ B) при A=0, B=1', ans: '0' },
+    { type: 'value', text: 'Вычисли ¬(A ∧ B) при A=1, B=0', ans: '1' },
+    // 2. Сложные вычисления (5-6 действий)
+    { type: 'value', text: 'Вычисли ((A ∧ B) ∨ C) ∧ ¬D при A=1, B=1, C=0, D=1', ans: '0' },
+    { type: 'value', text: 'Вычисли ¬(A ∨ B) ∨ (C ∧ D) при A=0, B=1, C=1, D=1', ans: '1' },
+    { type: 'value', text: 'Вычисли ((A ∧ ¬B) ∨ C) ∧ D при A=1, B=1, C=0, D=1', ans: '0' },
+    // 3. Таблицы истинности
     { type: 'rows', text: 'Сколько строк в таблице для 3 переменных?', ans: '8' },
     { type: 'rows', text: 'Сколько строк в таблице для 4 переменных?', ans: '16' },
-    { type: 'first', text: 'Первое действие в A ∧ B ∨ C?', opts: ['∧', '∨'], ans: '∧' },
-    { type: 'first', text: 'Первое действие в ¬(A ∨ B)?', opts: ['¬', '∨'], ans: '∨' },
+    // 4. Порядок действий
+    { type: 'first', text: 'Первое действие в ¬(A ∧ B) ∨ C?', opts: ['∧', '¬', '∨'], ans: '∧' },
+    { type: 'first', text: 'Первое действие в (A ∨ B) ∧ ¬C?', opts: ['∨', '¬', '∧'], ans: '∨' },
+    // 5. Теория по ГОСТ
     { type: 'gost', text: 'Как обозначается конъюнктор?', opts: ['&', '1', 'Кружок'], ans: '&' },
+    { type: 'gost', text: 'Как обозначается инвертор?', opts: ['&', '1', 'Кружок'], ans: 'Кружок' },
+    
+    // 6. НОВОЕ: Готовые схемы для вычисления
+    {
+      type: 'circuit_calc',
+      text: 'Вычисли значение схемы при A=1, B=0, C=1, D=0:',
+      inputs: {A:1, B:0, C:1, D:0},
+      expr: '(A ∧ B) ∨ (C ∧ ¬D)',
+      ans: '1'
+    },
+    {
+      type: 'circuit_calc',
+      text: 'Вычисли значение схемы при A=1, B=1, C=0, D=0:',
+      inputs: {A:1, B:1, C:0, D:0},
+      expr: '¬(A ∧ B) ∨ (C ∧ D)',
+      ans: '0'
+    }
   ];
+  
+  // Выбираем 5 случайных
   return bank.sort(() => Math.random() - 0.5).slice(0, 5);
 }
 
@@ -130,11 +164,20 @@ function renderQuestions() {
   const container = document.getElementById('questionsContainer');
   container.innerHTML = questions.map((q, i) => {
     let inputHTML = '';
+    
     if (q.type === 'value' || q.type === 'rows') {
       inputHTML = `<div>Ответ: <input class="sa-input" id="ans_${i}" maxlength="2"></div>`;
     } else if (q.type === 'first' || q.type === 'gost') {
       inputHTML = `<div class="opts">${q.opts.map(o => `<button onclick="selectOpt(this, ${i}, '${o}')">${o}</button>`).join('')}</div>`;
+    } else if (q.type === 'circuit_calc') {
+      // Рисуем красивую схему (текстовую)
+      inputHTML = `
+        <div class="expr-box">${q.expr}</div>
+        <div style="margin: 10px 0; color: #cfcaff;">Входы: A=${q.inputs.A}, B=${q.inputs.B}, C=${q.inputs.C}, D=${q.inputs.D}</div>
+        <div>Ответ (0 или 1): <input class="sa-input" id="ans_${i}" maxlength="1"></div>
+      `;
     }
+    
     return `<div class="sa-question">
       <h3>Задание ${i+1}</h3>
       <div>${q.text}</div>
@@ -167,17 +210,34 @@ function updateTimer() {
 
 async function submitWork(auto) {
   if (timerId) clearInterval(timerId);
+
+  // СТРОГАЯ ПРОВЕРКА: не отправляем, если есть незаполненные текстовые поля
+  let emptyFields = false;
+  questions.forEach((q, i) => {
+    if (q.type === 'value' || q.type === 'rows' || q.type === 'circuit_calc') {
+      const val = document.getElementById('ans_' + i).value.trim();
+      if (val === '') emptyFields = true;
+    }
+  });
+
+  if (emptyFields && !auto) {
+    alert('Пожалуйста, ответьте на все вопросы (заполните пустые поля) перед завершением.');
+    return;
+  }
+
   document.getElementById('running').classList.add('hidden');
 
   let correct = 0;
   questions.forEach((q, i) => {
     let userAns = '';
-    if (q.type === 'value' || q.type === 'rows') {
+    if (q.type === 'value' || q.type === 'rows' || q.type === 'circuit_calc') {
       userAns = document.getElementById('ans_' + i).value.trim();
     } else {
       userAns = answers[i] || '';
     }
-    if (userAns === q.ans) correct++;
+    
+    // Строгое сравнение строк
+    if (userAns !== '' && userAns === q.ans) correct++;
   });
 
   let grade = '2';
