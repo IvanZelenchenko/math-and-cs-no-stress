@@ -3,47 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>1 уровень. Операции и таблицы</title>
+<title>Алгебра логики: 1 уровень</title>
 <style>
   * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
   body { background: #1e1e2f; color: #e0e0ff; margin: 0; padding: 20px; }
   .container { max-width: 1000px; margin: 0 auto; }
-  h1 { text-align: center; color: #c7b9ff; }
-  .card { background: #25253e; padding: 24px; border-radius: 20px; margin-bottom: 20px; border-left: 6px solid #80deea; }
-  .question-box { background: #1e1e33; padding: 16px; border-radius: 16px; margin-bottom: 15px; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: 0.15s; }
+  h1 { text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; font-size: 2.1rem; }
+  .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 20px; }
+  .card { background: #25253e; padding: 24px; border-radius: 20px; margin-bottom: 20px; border-left: 6px solid #80deea; }
+  .task-title { font-size: 1.4rem; color: #ffe484; margin-bottom: 15px; }
+  
+  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.15s; text-decoration: none; display: inline-block; }
   .btn:hover { background: #6252a5; }
   .btn-success { background: #2e7d5e; }
-  
+  .btn-success:hover { background: #3e9d6e; }
+
+  .question-box { background: #1e1e33; padding: 16px; border-radius: 16px; margin-bottom: 15px; }
   .options { display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0; }
-  .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; }
+  .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 1rem; }
   .option-btn:hover { border-color: #80deea; }
   .option-btn.correct { background: #2e7d5e; border-color: #6effb0; }
   .option-btn.wrong { background: #8b3a4a; border-color: #ff8a9b; }
-  
-  .table-container { overflow-x: auto; margin: 15px 0; background: #1b1b30; border-radius: 12px; }
+
+  .table-container { overflow-x: auto; margin: 15px 0; background: #1b1b30; border-radius: 12px; padding: 10px; }
   table { border-collapse: collapse; width: 100%; text-align: center; font-family: monospace; font-size: 1.1rem; }
   th { background: #34345a; padding: 10px; color: #b9b2ff; }
   td { padding: 10px; border-bottom: 1px solid #35355a; }
-  .table-input { width: 50px; padding: 6px; background: #2f2f50; border: 2px solid #4d4d7a; border-radius: 8px; color: #fff; text-align: center; }
+  .table-input { width: 50px; padding: 8px; background: #2f2f50; border: 2px solid #4d4d7a; border-radius: 8px; color: #fff; text-align: center; }
   .table-input.correct { border-color: #6effb0; background: #1f4a37; }
   .table-input.wrong { border-color: #ff8a9b; background: #4a1f2a; }
+
+  .expr { font-family: monospace; font-size: 1.4rem; padding: 12px; background: #14141f; border-radius: 12px; margin: 10px 0; text-align: center; color: #ffe484; font-weight: bold; }
   
   /* Колесо */
   .wheel-wrap { position: relative; width: 300px; height: 300px; margin: 20px auto; }
   .wheel-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #ffe484; z-index: 10; }
-  .wheel-svg { width: 100%; height: 100%; transition: transform 4s cubic-bezier(0.15, 0.85, 0.35, 1); }
+  .wheel-svg { width: 100%; height: 100%; transition: transform 4.5s cubic-bezier(0.15, 0.85, 0.35, 1); }
   .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60px; height: 60px; background: #2e2e4a; border: 3px solid #ffe484; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ffe484; font-weight: bold; }
   .wheel-result { text-align: center; font-size: 1.2rem; color: #ffe484; min-height: 2rem; margin-top: 15px; }
+  
+  .text-center { text-align: center; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>1 уровень. Операции и таблицы</h1>
-  
+  <h1>Уровень 1. Операции и таблицы</h1>
+  <div class="subtitle">Интерактивный квест</div>
+
   <div class="card">
-    <h2>1. Вопросы теории</h2>
+    <div class="task-title">1. Вопросы теории</div>
     <div class="question-box">
       <p>Какая операция даёт истину только когда оба высказывания истинны?</p>
       <div class="options">
@@ -63,7 +72,7 @@
   </div>
 
   <div class="card">
-    <h2>2. Таблицы истинности</h2>
+    <div class="task-title">2. Таблицы истинности</div>
     <div class="table-container">
       <table>
         <tr><th>A</th><th>B</th><th>A ∧ B</th></tr>
@@ -82,33 +91,53 @@
         <tr><td>1</td><td>1</td><td><input class="table-input" data-ans="1"></td></tr>
       </table>
     </div>
-    <div style="text-align: center; margin-top: 15px;">
+    <div class="text-center" style="margin-top: 15px;">
       <button class="btn btn-success" onclick="checkTables()">Проверить таблицы</button>
       <div id="tableFb" style="margin-top: 10px;"></div>
     </div>
   </div>
 
   <div class="card">
-    <h2>3. Колесо Фортуны</h2>
+    <div class="task-title">3. Порядок действий</div>
+    <div class="expr">A ∨ B ∧ C</div>
+    <div class="options">
+      <button class="option-btn" onclick="checkAnswer(this, false)">A ∨ B</button>
+      <button class="option-btn" onclick="checkAnswer(this, true)">B ∧ C</button>
+      <button class="option-btn" onclick="checkAnswer(this, false)">A ∨ C</button>
+    </div>
+    <p style="color:#a0a0c0; font-size:0.9rem; text-align: center;">Какое действие выполняется первым?</p>
+  </div>
+
+  <div class="card">
+    <div class="task-title">4. Колесо Фортуны</div>
     <div class="wheel-wrap">
       <div class="wheel-pointer"></div>
       <svg class="wheel-svg" id="wheelSvg" viewBox="0 0 300 300"></svg>
       <div class="wheel-center">SPIN</div>
     </div>
-    <div style="text-align: center;">
+    <div class="text-center">
       <button class="btn" onclick="spinWheel()">Крутить колесо</button>
     </div>
     <div class="wheel-result" id="wheelRes"></div>
   </div>
 
+  <div class="text-center" style="margin-top: 30px; margin-bottom: 50px;">
+    <button class="btn btn-success" style="font-size: 1.2rem; padding: 15px 40px;" onclick="window.location.href='Logika-5-2-uroven.html'">
+      Перейти на 2 уровень →
+    </button>
+  </div>
+
 </div>
 
 <script>
-function checkAnswer(btn, ok) {
-  btn.parentElement.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
-  btn.classList.add(ok ? 'correct' : 'wrong');
+// Логика для кнопок-ответов
+function checkAnswer(btn, isCorrect) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
 }
 
+// Логика для таблиц
 function checkTables() {
   let ok = true;
   document.querySelectorAll('.table-input').forEach(inp => {
@@ -122,7 +151,7 @@ function checkTables() {
   fb.innerHTML = ok ? '<span style="color:#6effb0">✅ Всё верно!</span>' : '<span style="color:#ff8a9b">💡 Проверь красные поля.</span>';
 }
 
-// Колесо
+// Логика для колеса
 const tasks = ['A ∧ B ∨ C', '¬A ∧ (B ∨ C)', '(A ∨ B) ∧ C', 'A ∧ ¬B ∨ C', '¬(A ∧ B) ∨ C', 'A ∨ B ∧ C', '¬A ∨ B ∧ C', '(A ∧ B) ∨ ¬C', 'A ∧ (B ∨ C)', '¬(A ∨ B ∨ C)'];
 let rotation = 0;
 
