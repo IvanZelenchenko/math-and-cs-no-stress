@@ -51,24 +51,24 @@
   <h1>Уровень 1. Операции и таблицы</h1>
   <div class="subtitle">Пройди все шаги, чтобы перейти на 2 уровень</div>
 
-  <!-- ШАГ 1 (Открыт по умолчанию) -->
+  <!-- ШАГ 1 -->
   <div class="card" id="step1">
     <div class="task-title">Шаг 1. Вспомним основы</div>
     <div class="question-box">
       <div>1. Какая операция даёт истину только когда оба высказывания истинны?</div>
       <div class="options">
-        <button class="option-btn" onclick="checkAnswer(this, true, 'hint1')">Конъюнкция (И)</button>
-        <button class="option-btn" onclick="checkAnswer(this, false, 'hint1')">Дизъюнкция (ИЛИ)</button>
-        <button class="option-btn" onclick="checkAnswer(this, false, 'hint1')">Инверсия (НЕ)</button>
+        <button class="option-btn" onclick="checkAnswer(this, true, 'h1_1')">Конъюнкция (И)</button>
+        <button class="option-btn" onclick="checkAnswer(this, false, 'h1_1')">Дизъюнкция (ИЛИ)</button>
+        <button class="option-btn" onclick="checkAnswer(this, false, 'h1_1')">Инверсия (НЕ)</button>
       </div>
-      <div id="hint1" class="hint hidden">💡 «И» — это умножение в логике. 1·1=1, иначе 0.</div>
+      <div id="h1_1" class="hint hidden">💡 «И» — это умножение в логике. 1·1=1, иначе 0.</div>
     </div>
     <div class="row-buttons">
       <button class="btn btn-success" onclick="nextStep(1, 2)">К таблицам →</button>
     </div>
   </div>
 
-  <!-- ШАГ 2 (Скрыт) -->
+  <!-- ШАГ 2 -->
   <div class="card hidden" id="step2">
     <div class="task-title">Шаг 2. Таблицы истинности</div>
     <div class="table-container">
@@ -86,22 +86,22 @@
     <div id="feedback2" class="hint hidden" style="text-align:center;"></div>
   </div>
 
-  <!-- ШАГ 3 (Скрыт) -->
+  <!-- ШАГ 3 -->
   <div class="card hidden" id="step3">
     <div class="task-title">Шаг 3. Сложные выражения</div>
     <div class="expr">A ∨ B ∧ C</div>
     <div class="options">
-      <button class="option-btn" onclick="checkAnswer(this, false, 'hint3')">A ∨ B</button>
-      <button class="option-btn" onclick="checkAnswer(this, true, 'hint3')">B ∧ C</button>
-      <button class="option-btn" onclick="checkAnswer(this, false, 'hint3')">A ∨ C</button>
+      <button class="option-btn" onclick="checkAnswer(this, false, 'h3')">A ∨ B</button>
+      <button class="option-btn" onclick="checkAnswer(this, true, 'h3')">B ∧ C</button>
+      <button class="option-btn" onclick="checkAnswer(this, false, 'h3')">A ∨ C</button>
     </div>
-    <div id="hint3" class="hint hidden">💡 Сначала выполняется конъюнкция (И), затем дизъюнкция (ИЛИ).</div>
+    <div id="h3" class="hint hidden">💡 Сначала выполняется конъюнкция (И), затем дизъюнкция (ИЛИ).</div>
     <div class="row-buttons">
       <button class="btn btn-success" onclick="nextStep(3, 4)">К колесу →</button>
     </div>
   </div>
 
-  <!-- ШАГ 4 (Скрыт) -->
+  <!-- ШАГ 4 -->
   <div class="card hidden" id="step4">
     <div class="task-title">Шаг 4. Колесо Фортуны</div>
     <div class="wheel-wrap">
@@ -127,7 +127,6 @@
 </div>
 
 <script>
-// Проверка ответов
 function checkAnswer(btn, isCorrect, hintId) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
@@ -142,13 +141,11 @@ function checkAnswer(btn, isCorrect, hintId) {
   }
 }
 
-// Переключение шагов
 function nextStep(current, next) {
   document.getElementById('step' + current).classList.add('hidden');
   document.getElementById('step' + next).classList.remove('hidden');
 }
 
-// Проверка таблицы
 function checkStep2() {
   let ok = true;
   document.querySelectorAll('#step2 .table-input').forEach(inp => {
@@ -168,7 +165,6 @@ function checkStep2() {
   }
 }
 
-// Колесо
 const wheelTasks = [
   {expr: 'A ∧ B ∨ C', opts: ['∧', '∨'], ans: '∧'},
   {expr: '¬A ∧ (B ∨ C)', opts: ['¬', '∨', '∧'], ans: '¬'},
