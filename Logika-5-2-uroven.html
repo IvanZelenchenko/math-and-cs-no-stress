@@ -3,30 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Алгебра логики: 2 уровень</title>
+<title>2 уровень. Логические схемы</title>
 <style>
-  * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-  body { background: #1e1e2f; color: #e0e0ff; margin: 0; padding: 20px; }
-  .container { max-width: 1000px; margin: 0 auto; }
+  * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+  body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
+  .app { max-width: 1000px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
   
-  h1 { text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; font-size: 2.1rem; }
-  .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 20px; }
-  .card { background: #25253e; padding: 24px; border-radius: 20px; margin-bottom: 20px; border-left: 6px solid #80deea; }
-  .task-title { font-size: 1.4rem; color: #ffe484; margin-bottom: 15px; }
+  h1 { font-size: 2rem; text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; margin-bottom: 10px; }
+  .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 24px; border-bottom: 1px dashed #3f3f60; padding-bottom: 16px; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
-  .btn:hover { background: #6252a5; }
-  .btn-success { background: #2e7d5e; }
-  .btn-success:hover { background: #3e9d6e; }
-
-  .options { display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0; }
-  .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; }
+  .card { background: rgba(20,20,35,0.7); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid #3b3b5a; }
+  .task-title { font-size: 1.4rem; color: #e2dcff; margin-bottom: 15px; }
+  
+  .question-box { background: #25253e; padding: 16px; border-radius: 16px; margin: 15px 0; color: #cfcaff; border-left: 4px solid #80deea; }
+  .options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
+  .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 1rem; transition: 0.15s; }
   .option-btn:hover { border-color: #80deea; }
   .option-btn.correct { background: #2e7d5e; border-color: #6effb0; }
   .option-btn.wrong { background: #8b3a4a; border-color: #ff8a9b; }
+  
+  .hint { background: #2a2a4a; color: #ffd966; padding: 10px; border-radius: 12px; border: 1px dashed #ffb86b; margin-top: 10px; font-size: 0.9rem; }
+  .hidden { display: none !important; }
+  
+  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
+  .btn:hover { background: #6252a5; }
+  .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
+  .btn-success:hover { background: #3e9d6e; }
+  .row-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
 
-  /* Конструктор схем */
-  .circuit-builder { background: #1a1a2c; border-radius: 20px; padding: 20px; min-height: 400px; display: grid; grid-template-columns: 80px 1fr 80px; gap: 20px; }
+  /* Конструктор */
+  .circuit-builder { background: #1a1a2c; border-radius: 20px; padding: 20px; min-height: 350px; display: grid; grid-template-columns: 80px 1fr 80px; gap: 20px; }
   .circuit-canvas { position: relative; background: #14141f; border-radius: 12px; border: 1px solid #2e2e4a; overflow: hidden; }
   .circuit-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
   .gate-node { position: absolute; z-index: 3; width: 100px; height: 60px; cursor: grab; user-select: none; display: flex; align-items: center; justify-content: center; }
@@ -47,38 +53,30 @@
 
   .lamp { width: 60px; height: 60px; border-radius: 50%; background: #2a2a4a; border: 3px solid #6b6b9a; margin-top: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #b9b2ff; }
   .lamp.on { background: #ffe484; border-color: #ffb86b; box-shadow: 0 0 20px #ffe484; color: #7a4a00; }
-
-  .slot-input { width: 40px; padding: 4px; text-align: center; font-weight: bold; border-radius: 6px; background: #2f2f50; color: #ffe484; border: 1px solid #6b6b9a; }
-  .text-center { text-align: center; }
 </style>
 </head>
 <body>
-<div class="container">
+<div class="app">
   <h1>Уровень 2. Логические схемы</h1>
   <div class="subtitle">Блоки по ГОСТ 2.743-91</div>
 
-  <div class="card">
-    <div class="task-title">1. Вопросы теории</div>
-    <div class="question-box" style="background:#1e1e33; padding:15px; border-radius:12px; margin-bottom:10px;">
-      <p>По ГОСТ 2.743-91 конъюнктор обозначается прямоугольником с...</p>
+  <div class="card" id="step1">
+    <div class="task-title">Шаг 1. Теория</div>
+    <div class="question-box">
+      <div>1. По ГОСТ 2.743-91 конъюнктор (И) обозначается...</div>
       <div class="options">
-        <button class="option-btn" onclick="checkAnswer(this, true)">«&»</button>
-        <button class="option-btn" onclick="checkAnswer(this, false)">«1»</button>
-        <button class="option-btn" onclick="checkAnswer(this, false)">пустым (без символа)</button>
+        <button class="option-btn" onclick="checkAnswer(this, true, 'h1')">Прямоугольник с «&»</button>
+        <button class="option-btn" onclick="checkAnswer(this, false, 'h1')">Прямоугольник с «1»</button>
       </div>
+      <div id="h1" class="hint hidden">Символ «&» означает конъюнкцию.</div>
     </div>
-    <div class="question-box" style="background:#1e1e33; padding:15px; border-radius:12px;">
-      <p>По ГОСТ 2.743-91 инвертор — это...</p>
-      <div class="options">
-        <button class="option-btn" onclick="checkAnswer(this, true)">Пустой прямоугольник с кружком</button>
-        <button class="option-btn" onclick="checkAnswer(this, false)">Прямоугольник с «&»</button>
-        <button class="option-btn" onclick="checkAnswer(this, false)">Прямоугольник с «1»</button>
-      </div>
+    <div class="row-buttons">
+      <button class="btn btn-success" onclick="nextStep(1, 2)">К сборке схемы →</button>
     </div>
   </div>
 
-  <div class="card">
-    <div class="task-title">2. Собери схему: (A ∧ B) ∨ ¬C</div>
+  <div class="card hidden" id="step2">
+    <div class="task-title">Шаг 2. Собери схему: (A ∧ B) ∨ ¬C</div>
     <div class="gate-palette">
       <div class="palette-gate" data-gate="and" onclick="addGate('and')">
         <svg viewBox="0 0 100 60" width="100%" height="100%"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>
@@ -102,35 +100,39 @@
         <span style="font-size: 0.8rem; margin-top: 5px;">OUT</span>
       </div>
     </div>
-    <div class="text-center" style="margin-top: 15px;">
-      <button class="btn" onclick="checkScheme()">Проверить схему</button>
+    <div class="row-buttons">
       <button class="btn" onclick="location.reload()">Сбросить</button>
+      <button class="btn btn-success" onclick="checkScheme()">Проверить схему</button>
     </div>
+    <div id="schemeFb" class="hint hidden" style="text-align:center;"></div>
   </div>
 
-  <div class="card">
-    <div class="task-title">3. Вычисли значения схемы</div>
-    <div id="schemeContainer" class="text-center"></div>
-  </div>
-
-  <div class="text-center" style="margin-top: 30px; margin-bottom: 50px;">
-    <button class="btn btn-success" style="font-size: 1.2rem; padding: 15px 40px;" onclick="window.location.href='Logika-5-samostoyatelnaya.html'">
-      Перейти к самостоятельной работе →
-    </button>
+  <div class="card hidden" id="step3">
+    <div class="task-title">Шаг 3. Вычисли значения</div>
+    <div id="calcContainer" style="text-align:center;"></div>
+    <div class="row-buttons">
+      <button class="btn btn-success" onclick="window.location.href='Logika-5-samostoyatelnaya.html'">К самостоятельной работе →</button>
+    </div>
   </div>
 </div>
 
 <script>
-// Проверка ответов на теорию
-function checkAnswer(btn, isCorrect) {
+function checkAnswer(btn, isCorrect, hintId) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
-  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  const hint = document.getElementById(hintId);
+  if (isCorrect) { btn.classList.add('correct'); hint.classList.add('hidden'); }
+  else { btn.classList.add('wrong'); hint.classList.remove('hidden'); }
 }
 
-// Конструктор схем
-let nodes = [], connections = [], pendingPort = null;
+function nextStep(current, next) {
+  document.getElementById('step' + current).classList.add('hidden');
+  document.getElementById('step' + next).classList.remove('hidden');
+  if (next === 3) loadCalcScheme();
+}
 
+// КОНСТРУКТОР
+let nodes = [], connections = [], pendingPort = null;
 function svgAND() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>`; }
 function svgOR() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="20" fill="#ffe484" font-family="monospace" font-weight="bold">1</text></svg>`; }
 function svgNOT() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="70" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><circle cx="85" cy="30" r="6" fill="#14141f" stroke="#8c7be0" stroke-width="2.5"/></svg>`; }
@@ -140,7 +142,6 @@ function addGate(type) {
   el.className = 'gate-node';
   el.style.left = '50px'; el.style.top = (50 + nodes.length * 70) + 'px';
   el.innerHTML = type === 'and' ? svgAND() : (type === 'or' ? svgOR() : svgNOT());
-  
   const ports = type === 'not' ? ['in', 'out'] : ['in1', 'in2', 'out'];
   ports.forEach(p => {
     const portEl = document.createElement('div');
@@ -149,7 +150,6 @@ function addGate(type) {
     portEl.onclick = (e) => { e.stopPropagation(); handlePortClick(el, p, p === 'out' ? 'out' : 'in'); };
     el.appendChild(portEl);
   });
-
   let sx, sy, ox, oy;
   el.onmousedown = (e) => {
     if (e.target.classList.contains('port')) return;
@@ -160,89 +160,6 @@ function addGate(type) {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   };
-
   document.getElementById('canvas').appendChild(el);
   nodes.push({ id: el, type: type });
-  document.querySelector(`.palette-gate[data-gate="${type}"]`).classList.add('used');
-}
-
-function handlePortClick(el, portName, dir) {
-  if (dir === 'out') { pendingPort = { el, portName }; return; }
-  if (pendingPort && pendingPort.el !== el) {
-    connections.push({ from: pendingPort, to: { el, portName } });
-    pendingPort = null;
-    drawLines();
-  }
-}
-
-function drawLines() {
-  const canvas = document.getElementById('canvas');
-  const svg = document.getElementById('svg-lines');
-  const cr = canvas.getBoundingClientRect();
-  let html = `<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#80deea"/></marker></defs>`;
-  connections.forEach(c => {
-    const fOut = c.from.el.querySelector('.port.out').getBoundingClientRect();
-    const tIn = c.to.el.querySelector(`.port.${c.to.portName}`).getBoundingClientRect();
-    const x1 = fOut.left - cr.left + 9, y1 = fOut.top - cr.top + 9;
-    const x2 = tIn.left - cr.left + 9, y2 = tIn.top - cr.top + 9;
-    const dx = Math.abs(x2 - x1) * 0.5;
-    html += `<path d="M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}" stroke="#80deea" stroke-width="3" fill="none" marker-end="url(#ah)"/>`;
-  });
-  svg.innerHTML = html;
-}
-
-function checkScheme() {
-  const hasAnd = nodes.some(n => n.type === 'and');
-  const hasOr = nodes.some(n => n.type === 'or');
-  const hasNot = nodes.some(n => n.type === 'not');
-  const lamp = document.getElementById('lamp');
-  if (hasAnd && hasOr && hasNot && connections.length >= 3) {
-    lamp.classList.add('on');
-    lamp.innerHTML = '💡';
-  } else {
-    alert('Добавьте все три элемента и соедините их!');
-  }
-}
-
-// Инициализация портов для A, B, C и лампочки
-['A','B','C'].forEach(k => {
-  const el = document.getElementById('src-'+k);
-  const p = document.createElement('div'); p.className = 'port out';
-  p.onclick = () => { pendingPort = { el, portName: 'out' }; };
-  el.appendChild(p);
-});
-const lampEl = document.getElementById('lamp');
-const lampPort = document.createElement('div'); lampPort.className = 'port in';
-lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
-lampPort.onclick = () => { if (pendingPort) { connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } }); pendingPort = null; drawLines(); } };
-lampEl.appendChild(lampPort);
-lampEl.style.position = 'relative';
-
-// Готовые схемы
-function loadScheme() {
-  const container = document.getElementById('schemeContainer');
-  const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
-  const res = (a & b) | (c ? 0 : 1);
-  container.innerHTML = `
-    <p>Вычисли: <b>(A ∧ B) ∨ ¬C</b> при A=${a}, B=${b}, C=${c}</p>
-    <p>1. A ∧ B = <input class="slot-input" id="s1" maxlength="1"></p>
-    <p>2. ¬C = <input class="slot-input" id="s2" maxlength="1"></p>
-    <p>3. Результат (ИЛИ) = <input class="slot-input" id="s3" maxlength="1"></p>
-    <button class="btn btn-success" onclick="checkCalc(${a&b}, ${c?0:1}, ${res})">Проверить</button>
-    <div id="calcFb" style="margin-top: 10px;"></div>
-  `;
-}
-
-function checkCalc(ans1, ans2, ans3) {
-  const v1 = document.getElementById('s1').value.trim();
-  const v2 = document.getElementById('s2').value.trim();
-  const v3 = document.getElementById('s3').value.trim();
-  const fb = document.getElementById('calcFb');
-  if (v1 == ans1 && v2 == ans2 && v3 == ans3) fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно!</span>';
-  else fb.innerHTML = '<span style="color:#ff8a9b">💡 Проверь расчёты.</span>';
-}
-
-loadScheme();
-</script>
-</body>
-</html>
+  document.querySelector(`.palette-gate[data-gate="${type}"]`
