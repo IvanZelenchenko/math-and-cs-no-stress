@@ -13,7 +13,6 @@
   
   .card { background: rgba(20,20,35,0.7); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid #3b3b5a; }
   .task-title { font-size: 1.4rem; color: #e2dcff; margin-bottom: 15px; }
-  
   .question-box { background: #25253e; padding: 16px; border-radius: 16px; margin: 15px 0; color: #cfcaff; border-left: 4px solid #80deea; }
   .options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
   .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; transition: 0.15s; }
@@ -30,7 +29,6 @@
   .btn-success:hover { background: #3e9d6e; }
   .row-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
 
-  /* Конструктор */
   .circuit-builder { background: #1a1a2c; border-radius: 20px; padding: 20px; min-height: 350px; display: grid; grid-template-columns: 80px 1fr 80px; gap: 20px; }
   .circuit-canvas { position: relative; background: #14141f; border-radius: 12px; border: 1px solid #2e2e4a; overflow: hidden; }
   .circuit-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
@@ -50,7 +48,6 @@
   .port.in { background: #80deea; left: -9px; top: 50%; transform: translateY(-50%); }
   .port:hover { box-shadow: 0 0 10px #ffe484; }
 
-  /* Лампочка */
   .lamp { width: 60px; height: 60px; border-radius: 50%; background: #2a2a4a; border: 3px solid #6b6b9a; margin-top: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #b9b2ff; font-size: 1.2rem; font-weight: bold; }
   .lamp.green { background: #6effb0; border-color: #2e7d5e; box-shadow: 0 0 20px #6effb0; color: #10462f; }
   .lamp.red { background: #ff8a9b; border-color: #8b3a4a; box-shadow: 0 0 20px #ff8a9b; color: #4e1f2a; }
@@ -132,7 +129,6 @@ function nextStep(current, next) {
   if (next === 3) loadCalcScheme();
 }
 
-// КОНСТРУКТОР
 let nodes = [], connections = [], pendingPort = null;
 function svgAND() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>`; }
 function svgOR() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="20" fill="#ffe484" font-family="monospace" font-weight="bold">1</text></svg>`; }
@@ -196,7 +192,6 @@ function checkScheme() {
   const fb = document.getElementById('schemeFb');
   fb.classList.remove('hidden');
 
-  // Простая проверка: есть ли все 3 блока и хотя бы 3 соединения
   const hasAnd = nodes.some(n => n.type === 'and');
   const hasOr = nodes.some(n => n.type === 'or');
   const hasNot = nodes.some(n => n.type === 'not');
@@ -213,7 +208,6 @@ function checkScheme() {
   }
 }
 
-// Инициализация портов для A, B, C и лампочки
 ['A','B','C'].forEach(k => {
   const el = document.getElementById('src-'+k);
   const p = document.createElement('div'); p.className = 'port out';
@@ -227,7 +221,6 @@ lampPort.onclick = () => { if (pendingPort) { connections.push({ from: pendingPo
 lampEl.appendChild(lampPort);
 lampEl.style.position = 'relative';
 
-// Вычисление схемы (Шаг 3)
 function loadCalcScheme() {
   const container = document.getElementById('calcContainer');
   const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
