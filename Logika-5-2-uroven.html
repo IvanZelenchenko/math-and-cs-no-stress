@@ -130,6 +130,7 @@ function nextStep(current, next) {
 }
 
 let nodes = [], connections = [], pendingPort = null;
+
 function svgAND() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>`; }
 function svgOR() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="20" fill="#ffe484" font-family="monospace" font-weight="bold">1</text></svg>`; }
 function svgNOT() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="70" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><circle cx="85" cy="30" r="6" fill="#14141f" stroke="#8c7be0" stroke-width="2.5"/></svg>`; }
@@ -139,6 +140,7 @@ function addGate(type) {
   el.className = 'gate-node';
   el.style.left = '50px'; el.style.top = (50 + nodes.length * 70) + 'px';
   el.innerHTML = type === 'and' ? svgAND() : (type === 'or' ? svgOR() : svgNOT());
+  
   const ports = type === 'not' ? ['in', 'out'] : ['in1', 'in2', 'out'];
   ports.forEach(p => {
     const portEl = document.createElement('div');
@@ -147,6 +149,7 @@ function addGate(type) {
     portEl.onclick = (e) => { e.stopPropagation(); handlePortClick(el, p, p === 'out' ? 'out' : 'in'); };
     el.appendChild(portEl);
   });
+  
   let sx, sy, ox, oy;
   el.onmousedown = (e) => {
     if (e.target.classList.contains('port')) return;
@@ -157,6 +160,7 @@ function addGate(type) {
     document.addEventListener('mousemove', onMove);
     document.addEventListener('mouseup', onUp);
   };
+  
   document.getElementById('canvas').appendChild(el);
   nodes.push({ id: el, type: type });
   document.querySelector(`.palette-gate[data-gate="${type}"]`).classList.add('used');
@@ -187,24 +191,41 @@ function drawLines() {
   svg.innerHTML = html;
 }
 
+// ЖЕСТКАЯ ПРОВЕРКА СХЕМЫ
 function checkScheme() {
   const lamp = document.getElementById('lamp');
   const fb = document.getElementById('schemeFb');
   fb.classList.remove('hidden');
 
-  const hasAnd = nodes.some(n => n.type === 'and');
-  const hasOr = nodes.some(n => n.type === 'or');
-  const hasNot = nodes.some(n => n.type === 'not');
+  const andN = nodes.find(n => n.type === 'and');
+  const orN  = nodes.find(n => n.type === 'or');
+  const notN = nodes.find(n => n.type === 'not');
+
+  if (!andN || !orN || !notN) {
+    lamp.className = 'lamp red';
+    lamp.innerText = '✖';
+    fb.innerHTML = '<span style="color:#ff8a9b">💡 Схема неверна. Вы должны добавить все 3 элемента: И, ИЛИ и НЕ.</span>';
+    return;
+  }
+
+  // Проверяем конкретные провода
+  const aToAnd = connections.find(c => c.from.el.id === 'src-A' && c.to.el === andN);
+  const bToAnd = connections.find(c => c.from.el.id === 'src-B' && c.to.el === andN);
+  const cToNot = connections.find(c => c.from.el.id === 'src-C' && c.to.el === notN);
   
-  if (hasAnd && hasOr && hasNot && connections.length >= 3) {
+  const andToOr = connections.find(c => c.from.el === andN && c.to.el === orN);
+  const notToOr = connections.find(c => c.from.el === notN && c.to.el === orN);
+  const orToLamp = connections.find(c => c.from.el === orN && c.to.el.id === 'lamp');
+
+  if (aToAnd && bToAnd && cToNot && andToOr && notToOr && orToLamp) {
     lamp.className = 'lamp green';
     lamp.innerText = '💡';
-    fb.innerHTML = '<span style="color:#6effb0">✅ Схема собрана верно! Лампочка горит зелёным.</span>';
+    fb.innerHTML = '<span style="color:#6effb0">✅ Схема собрана абсолютно верно! Переходим дальше...</span>';
     setTimeout(() => nextStep(2, 3), 2000);
   } else {
     lamp.className = 'lamp red';
     lamp.innerText = '✖';
-    fb.innerHTML = '<span style="color:#ff8a9b">💡 Схема собрана неверно. Убедитесь, что вы добавили все 3 элемента (И, ИЛИ, НЕ) и соединили их проводами.</span>';
+    fb.innerHTML = '<span style="color:#ff8a9b">💡 Ошибка в соединениях! Проверьте: A и B должны идти на И. C на НЕ. Выход И и выход НЕ на ИЛИ. Выход ИЛИ на лампочку.</span>';
   }
 }
 
@@ -214,12 +235,14 @@ function checkScheme() {
   p.onclick = () => { pendingPort = { el, portName: 'out' }; };
   el.appendChild(p);
 });
+
 const lampEl = document.getElementById('lamp');
 const lampPort = document.createElement('div'); lampPort.className = 'port in';
 lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
 lampPort.onclick = () => { if (pendingPort) { connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } }); pendingPort = null; drawLines(); } };
 lampEl.appendChild(lampPort);
 lampEl.style.position = 'relative';
+lampEl.id = 'lamp';
 
 function loadCalcScheme() {
   const container = document.getElementById('calcContainer');
