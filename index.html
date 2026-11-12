@@ -49,6 +49,9 @@
 
   .file-view { background: #1a1a2c; border-radius: 20px; overflow: hidden; border: 1px solid #4a4a72; height: 80vh; }
   .file-view iframe { width: 100%; height: 100%; border: none; background: #1e1e2f; }
+
+  /* Блок для отладки */
+  .debug-info { background: rgba(255,0,0,0.1); color: #ff8a9b; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ff8a9b; font-family: monospace; }
 </style>
 </head>
 <body>
@@ -79,6 +82,7 @@
         <button class="btn btn-secondary" onclick="goto('home')">🏠 Главная</button>
       </div>
     </div>
+    <div id="debugBox" class="debug-info hidden"></div>
     <div class="topic-list" id="classTopics"></div>
   </div>
 
@@ -103,10 +107,7 @@ let ALL_TOPICS_INFO = [];
 let ALL_TOPICS_MATH = []; 
 let CURRENT_SUBJECT = ''; 
 let CURRENT_PARALLEL = '';
-
-// Флаг загрузки и обещание (чтобы ждать, если ученик нажал быстро)
 let isLoaded = false;
-let loadPromise = null;
 
 const pages = document.querySelectorAll('[data-page]');
 function goto(pageId) {
@@ -139,23 +140,23 @@ function buildMenus() {
 }
 
 async function loadTopics() {
-  if (isLoaded) return;
-  loadPromise = fetch(`${BACKEND_URL}?action=getTopics`)
-    .then(resp => resp.json())
-    .then(data => {
-      if (data.ok) {
-        ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
-        ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
-      }
-      isLoaded = true;
-    })
-    .catch(e => {
-      console.log('Ошибка загрузки:', e);
-      isLoaded = true; // Чтобы не зависало навсегда
-    });
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
+      ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
+      // ОТЛАДКА: сколько всего пришло
+      console.log(`Загружено тем Информатики: ${ALL_TOPICS_INFO.length}`);
+    }
+    isLoaded = true;
+  } catch (e) { 
+    console.log('Ошибка загрузки:', e); 
+    isLoaded = true;
+  }
 }
 
-async function openClass(subject, par) {
+function openClass(subject, par) {
   CURRENT_SUBJECT = subject;
   CURRENT_PARALLEL = par;
   
@@ -163,50 +164,72 @@ async function openClass(subject, par) {
   document.getElementById('classTitle').innerText = `${subject} · ${displayPar}`;
   
   const container = document.getElementById('classTopics');
-  container.innerHTML = '<div class="loader">Загрузка тем... Пожалуйста, подождите.</div>';
-  goto('class-page');
-
-  // Ждем завершения загрузки данных (если оно еще идет)
+  const dbg = document.getElementById('debugBox');
+  
   if (!isLoaded) {
-    await loadPromise;
+    container.innerHTML = '<div class="loader">Данные еще загружаются... Подождите.</div>';
+    // Ждем, пока загрузятся
+    const interval = setInterval(() => {
+      if (isLoaded) {
+        clearInterval(interval);
+        renderClassContent(container, subject, par);
+      }
+    }, 100);
+  } else {
+    renderClassContent(container, subject, par);
   }
-
-  // Теперь данные точно есть, рисуем
-  renderClassContent(container, subject, par);
+  
+  goto('class-page');
 }
 
 function renderClassContent(container, subject, par) {
-  const db = subject === 'Информатика' ? ALL_TOPICS_INFO : ALL_TOPICS_MATH;
-  const filtered = db.filter(t => t.parallel === par);
+  const dbg = document.getElementById('debugBox');
+  dbg.classList.add('hidden');
   
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-note">Для раздела "${par}" пока нет тем.</div>`;
-    return;
+  try {
+    const db = subject === 'Информатика' ? ALL_TOPICS_INFO : ALL_TOPICS_MATH;
+    
+    // ОТЛАДКА: пишем на экран, сколько всего тем и ищем ли мы класс
+    const debugText = `Всего тем (${subject}): ${db.length}. Ищем класс: "${par}".`;
+    
+    const filtered = db.filter(t => t.parallel === par);
+    
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="empty-note">Для раздела "${par}" пока нет тем.</div>`;
+      // Включаем отладку на экране
+      dbg.classList.remove('hidden');
+      dbg.innerHTML = `${debugText}<br>Найдено тем для этого класса: 0.<br>
+        <b>Проверьте, что в таблице в столбце "Параллель" написано ровно "${par}" (без пробелов).</b>`;
+      return;
+    }
+
+    const grouped = {};
+    filtered.forEach(t => {
+      if (!grouped[t.topicName]) grouped[t.topicName] = [];
+      grouped[t.topicName].push(t);
+    });
+
+    container.innerHTML = Object.keys(grouped).map(topicName => {
+      const levels = grouped[topicName];
+      return `
+        <div class="topic-item">
+          <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
+            ${topicName} <span class="arrow">▸</span>
+          </div>
+          <div class="topic-body">
+            ${levels.map(l => `
+              <a href="#" onclick="openFile('${l.levelName}', '${l.file}')">
+                📄 ${l.levelName}
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+    
+  } catch(e) {
+    container.innerHTML = `<div class="empty-note" style="color:red;">Произошла ошибка при отрисовке: ${e.message}</div>`;
   }
-
-  const grouped = {};
-  filtered.forEach(t => {
-    if (!grouped[t.topicName]) grouped[t.topicName] = [];
-    grouped[t.topicName].push(t);
-  });
-
-  container.innerHTML = Object.keys(grouped).map(topicName => {
-    const levels = grouped[topicName];
-    return `
-      <div class="topic-item">
-        <div class="topic-header" onclick="this.parentElement.classList.toggle('open')">
-          ${topicName} <span class="arrow">▸</span>
-        </div>
-        <div class="topic-body">
-          ${levels.map(l => `
-            <a href="#" onclick="openFile('${l.levelName}', '${l.file}')">
-              📄 ${l.levelName}
-            </a>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  }).join('');
 }
 
 function openFile(topicName, fileName) {
@@ -221,7 +244,6 @@ function backToClass() {
   else goto('home');
 }
 
-// Запуск
 buildMenus();   
 loadTopics();   
 goto('home');
