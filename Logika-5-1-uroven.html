@@ -8,6 +8,20 @@
   * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
   body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
   .app { max-width: 1000px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
+  
+  /* Верхняя панель */
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+  .breadcrumb { color: #a0a0c0; font-size: 0.95rem; }
+  .breadcrumb a { color: #80deea; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  .btn-group { display: flex; gap: 10px; }
+  
+  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; transition: 0.15s; }
+  .btn:hover { background: #6252a5; }
+  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; border: 1px solid #5f5f92; }
+  .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
+  .btn-success:hover { background: #3e9d6e; }
+
   h1 { font-size: 2rem; text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; margin-bottom: 10px; }
   .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 24px; border-bottom: 1px dashed #3f3f60; padding-bottom: 16px; }
   
@@ -33,10 +47,6 @@
   
   .expr { font-family: monospace; font-size: 1.4rem; padding: 12px; background: #14141f; border-radius: 12px; margin: 10px 0; text-align: center; color: #ffe484; font-weight: bold; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
-  .btn:hover { background: #6252a5; }
-  .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
-  .btn-success:hover { background: #3e9d6e; }
   .row-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
   
   .wheel-wrap { position: relative; width: 300px; height: 300px; margin: 20px auto; }
@@ -48,10 +58,18 @@
 </head>
 <body>
 <div class="app">
+  <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+  <div class="topbar">
+    <div class="breadcrumb">🏠 <a href="index.html">Главная</a> / Информатика / Алгебра логики / 1 уровень</div>
+    <div class="btn-group">
+      <a href="index.html" class="btn btn-secondary">← Назад</a>
+      <a href="index.html" class="btn">🏠 Главная</a>
+    </div>
+  </div>
+
   <h1>Уровень 1. Операции и таблицы</h1>
   <div class="subtitle">Пройди все шаги, чтобы перейти на 2 уровень</div>
 
-  <!-- ШАГ 1 -->
   <div class="card" id="step1">
     <div class="task-title">Шаг 1. Вспомним основы</div>
     <div class="question-box">
@@ -68,7 +86,6 @@
     </div>
   </div>
 
-  <!-- ШАГ 2 -->
   <div class="card hidden" id="step2">
     <div class="task-title">Шаг 2. Таблицы истинности</div>
     <div class="table-container">
@@ -86,7 +103,6 @@
     <div id="feedback2" class="hint hidden" style="text-align:center;"></div>
   </div>
 
-  <!-- ШАГ 3 -->
   <div class="card hidden" id="step3">
     <div class="task-title">Шаг 3. Сложные выражения</div>
     <div class="expr">A ∨ B ∧ C</div>
@@ -101,7 +117,6 @@
     </div>
   </div>
 
-  <!-- ШАГ 4 -->
   <div class="card hidden" id="step4">
     <div class="task-title">Шаг 4. Колесо Фортуны</div>
     <div class="wheel-wrap">
