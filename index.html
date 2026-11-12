@@ -33,11 +33,12 @@
   .btn-secondary { background: #3a3a5c; box-shadow: 0 7px 0 #14141f; border-color: #5f5f92; }
   .page-title { font-size: 1.8rem; font-weight: 600; color: #e2dcff; margin-bottom: 20px; }
   
+  /* Плашки тем (как было раньше) */
   .topic-list { display: flex; flex-direction: column; gap: 14px; }
   .topic-item { background: #232338; border-radius: 20px; overflow: hidden; border: 1px solid #3b3b5a; }
   .topic-header { padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 1.15rem; font-weight: 600; color: #e2dcff; }
-  .topic-body { padding: 4px 24px 20px; }
-  .topic-body a { background: #1e1e33; color: #cfcaff; text-decoration: none; padding: 12px 20px; border-radius: 14px; border: 1px solid #4a4a72; font-weight: 500; display: flex; align-items: center; gap: 10px; margin-bottom: 10px; transition: 0.15s; }
+  .topic-body { padding: 4px 24px 20px; display: flex; flex-direction: column; gap: 10px; }
+  .topic-body a { background: #1e1e33; color: #cfcaff; text-decoration: none; padding: 12px 20px; border-radius: 14px; border: 1px solid #4a4a72; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: 0.15s; }
   .topic-body a:hover { background: #3e3e62; border-color: #80deea; color: white; }
   .empty-note { text-align: center; color: #7b7ba3; padding: 40px; font-style: italic; }
 
@@ -69,7 +70,7 @@
     </div>
   </div>
 
-  <!-- СТРАНИЦА РАЗДЕЛА -->
+  <!-- СТРАНИЦА КЛАССА -->
   <div data-page="class-page" class="hidden">
     <div class="topbar">
       <div class="page-title" id="classTitle">Загрузка...</div>
@@ -104,7 +105,6 @@ let ALL_TOPICS_MATH = [];
 let CURRENT_SUBJECT = ''; 
 let CURRENT_PARALLEL = '';
 
-// Переключение экранов
 const pages = document.querySelectorAll('[data-page]');
 function goto(pageId) {
   pages.forEach(p => {
@@ -114,19 +114,15 @@ function goto(pageId) {
   window.scrollTo(0, 0);
 }
 
-// Открытие/закрытие карточек (Мат/Инф)
 document.body.addEventListener('click', (e) => {
   if (e.target.closest('.submenu a')) return; 
   const card = e.target.closest('.subject-card');
   if (card) {
-    document.querySelectorAll('.subject-card.open').forEach(c => { 
-      if (c !== card) c.classList.remove('open'); 
-    });
+    document.querySelectorAll('.subject-card.open').forEach(c => { if (c !== card) c.classList.remove('open'); });
     card.classList.toggle('open');
   }
 });
 
-// 1. СРАЗУ СТРОИМ МЕНЮ КЛАССОВ (чтобы они были видны всегда)
 function buildMenus() {
   const classes = ['5', '6', '7', '8', '9', '10', '11'];
   
@@ -139,7 +135,6 @@ function buildMenus() {
   document.getElementById('mathMenu').innerHTML = mathHtml;
 }
 
-// 2. ЗАГРУЖАЕМ ДАННЫЕ (если получится)
 async function loadTopics() {
   try {
     const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
@@ -148,12 +143,9 @@ async function loadTopics() {
       ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
       ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
     }
-  } catch (e) { 
-    console.log('Ошибка загрузки тем (но меню работает):', e); 
-  }
+  } catch (e) { console.log('Ошибка загрузки тем:', e); }
 }
 
-// 3. ОТКРЫТИЕ КЛАССА
 function openClass(subject, par) {
   CURRENT_SUBJECT = subject;
   CURRENT_PARALLEL = par;
@@ -166,23 +158,36 @@ function openClass(subject, par) {
   const filtered = db.filter(t => t.parallel === par);
   
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty-note">Для раздела "${displayPar}" пока нет тем. Добавьте их в таблицу.</div>`;
+    container.innerHTML = `<div class="empty-note">Для раздела "${displayPar}" пока нет тем.</div>`;
   } else {
+    // Группируем по первой строке (Заголовок темы)
     const grouped = {};
     filtered.forEach(t => {
-      if (!grouped[t.name]) grouped[t.name] = [];
-      grouped[t.name].push(t);
+      // Если файл пустой, это заголовок группы, иначе — уровень
+      if (!t.file) {
+        if (!grouped[t.name]) grouped[t.name] = [];
+      } else {
+        // Ищем, к какой группе прикрепить (для простоты — к первой)
+        const parentName = Object.keys(grouped).find(k => t.name.startsWith(k.split(' ')[0])) || t.name;
+        if (!grouped[parentName]) grouped[parentName] = [];
+        grouped[parentName].push(t);
+      }
     });
 
+    // Если есть только файлы без заголовков, сваливаем в "Материалы"
+    if (Object.keys(grouped).length === 0) {
+        grouped['Темы'] = filtered.filter(t => t.file);
+    }
+
     container.innerHTML = Object.keys(grouped).map(topicName => {
-      const files = grouped[topicName];
+      const levels = grouped[topicName];
       return `
         <div class="topic-item">
           <div class="topic-header">${topicName}</div>
           <div class="topic-body">
-            ${files.map(f => `
-              <a href="#" onclick="openFile('${topicName}', '${f.file}')">
-                📄 Открыть материал
+            ${levels.map(l => `
+              <a href="#" onclick="openFile('${l.name}', '${l.file}')">
+                📄 ${l.name}
               </a>
             `).join('')}
           </div>
@@ -193,7 +198,6 @@ function openClass(subject, par) {
   goto('class-page');
 }
 
-// 4. ПРОСМОТР ФАЙЛА
 function openFile(topicName, fileName) {
   document.getElementById('fileTitle').innerText = topicName;
   const iframe = document.getElementById('mainIframe');
@@ -206,10 +210,9 @@ function backToClass() {
   else goto('home');
 }
 
-// === ЗАПУСК ===
-buildMenus();   // Сначала строим меню
-loadTopics();   // Потом грузим данные
-goto('home');   // Показываем главную
+buildMenus();   
+loadTopics();   
+goto('home');
 </script>
 </body>
 </html>
