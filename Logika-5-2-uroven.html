@@ -8,6 +8,18 @@
   * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
   body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
   .app { max-width: 1000px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
+  
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+  .breadcrumb { color: #a0a0c0; font-size: 0.95rem; }
+  .breadcrumb a { color: #80deea; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  
+  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
+  .btn:hover { background: #6252a5; }
+  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; }
+  .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
+  .btn-success:hover { background: #3e9d6e; }
+
   h1 { font-size: 2rem; text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; margin-bottom: 10px; }
   .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 24px; border-bottom: 1px dashed #3f3f60; padding-bottom: 16px; }
   
@@ -23,10 +35,6 @@
   .hint { background: #2a2a4a; color: #ffd966; padding: 10px; border-radius: 12px; border: 1px dashed #ffb86b; margin-top: 10px; font-size: 0.9rem; }
   .hidden { display: none !important; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
-  .btn:hover { background: #6252a5; }
-  .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
-  .btn-success:hover { background: #3e9d6e; }
   .row-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
 
   .circuit-builder { background: #1a1a2c; border-radius: 20px; padding: 20px; min-height: 350px; display: grid; grid-template-columns: 80px 1fr 80px; gap: 20px; }
@@ -48,6 +56,10 @@
   .port.in { background: #80deea; left: -9px; top: 50%; transform: translateY(-50%); }
   .port:hover { box-shadow: 0 0 10px #ffe484; }
 
+  /* Стили для удаления провода */
+  .wire-path { cursor: pointer; pointer-events: stroke; transition: stroke 0.2s; }
+  .wire-path:hover { stroke: #ff8a9b !important; }
+
   .lamp { width: 60px; height: 60px; border-radius: 50%; background: #2a2a4a; border: 3px solid #6b6b9a; margin-top: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #b9b2ff; font-size: 1.2rem; font-weight: bold; }
   .lamp.green { background: #6effb0; border-color: #2e7d5e; box-shadow: 0 0 20px #6effb0; color: #10462f; }
   .lamp.red { background: #ff8a9b; border-color: #8b3a4a; box-shadow: 0 0 20px #ff8a9b; color: #4e1f2a; }
@@ -55,6 +67,14 @@
 </head>
 <body>
 <div class="app">
+  <div class="topbar">
+    <div class="breadcrumb">🏠 <a href="index.html">Главная</a> / Информатика / Алгебра логики / 2 уровень</div>
+    <div style="display:flex; gap:10px;">
+      <a href="index.html" class="btn btn-secondary">← Назад</a>
+      <a href="index.html" class="btn">🏠 Главная</a>
+    </div>
+  </div>
+
   <h1>Уровень 2. Логические схемы</h1>
   <div class="subtitle">Блоки по ГОСТ 2.743-91</div>
 
@@ -99,10 +119,13 @@
       </div>
     </div>
     <div class="row-buttons">
-      <button class="btn" onclick="location.reload()">Сбросить</button>
+      <button class="btn btn-secondary" onclick="clearCanvas()">Сбросить схему</button>
       <button class="btn btn-success" onclick="checkScheme()">Проверить схему</button>
     </div>
     <div id="schemeFb" class="hint hidden" style="text-align:center;"></div>
+    <div style="text-align: center; margin-top: 10px; font-size: 0.85rem; color: #7b7ba3;">
+      * Чтобы удалить провод, кликните по нему левой кнопкой мыши.
+    </div>
   </div>
 
   <div class="card hidden" id="step3">
@@ -131,6 +154,9 @@ function nextStep(current, next) {
 
 // --- ЛОГИКА СХЕМЫ ---
 let nodes = [], connections = [], pendingPort = null;
+const canvas = document.getElementById('canvas');
+const svg = document.getElementById('svg-lines');
+const palette = document.querySelector('.gate-palette');
 
 function svgAND() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>`; }
 function svgOR() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="20" fill="#ffe484" font-family="monospace" font-weight="bold">1</text></svg>`; }
@@ -162,38 +188,131 @@ function addGate(type) {
     document.addEventListener('mouseup', onUp);
   };
   
-  document.getElementById('canvas').appendChild(el);
+  canvas.appendChild(el);
   nodes.push({ id: el, type: type });
   document.querySelector(`.palette-gate[data-gate="${type}"]`).classList.add('used');
 }
 
+// Инициализация входов A, B, C
+['A','B','C'].forEach(k => {
+  const el = document.getElementById('src-'+k);
+  const p = document.createElement('div'); p.className = 'port out';
+  p.onclick = (e) => { e.stopPropagation(); handlePortClick(el, 'out', 'out'); };
+  el.appendChild(p);
+});
+
+// Инициализация лампочки
+const lampEl = document.getElementById('lamp');
+const lampPort = document.createElement('div'); lampPort.className = 'port in';
+lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
+lampPort.onclick = (e) => { e.stopPropagation(); handlePortClick(lampEl, 'in', 'in'); };
+lampEl.appendChild(lampPort);
+lampEl.style.position = 'relative';
+lampEl.id = 'lamp';
+
 function handlePortClick(el, portName, dir) {
   if (dir === 'out') {
+    // Если уже есть выбранный порт, сбрасываем
+    if (pendingPort) clearPending();
     pendingPort = { el, portName };
+    
+    // Включаем слежение за мышкой
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('click', onCanvasClick);
   } else {
-    if (pendingPort && pendingPort.el !== el) {
-      connections.push({ from: pendingPort, to: { el, portName } });
-      pendingPort = null;
+    // Если тянем провод
+    if (pendingPort) {
+      const fromEl = pendingPort.el;
+      const toEl = el;
+      
+      if (fromEl === toEl) { clearPending(); return; } // Нельзя соединить сам с собой
+
+      // УДАЛЯЕМ СТАРЫЙ ПРОВОД, ЕСЛИ ВХОД УЖЕ ЗАНЯТ (строгий один провод на вход)
+      if (dir === 'in') {
+        const existingIdx = connections.findIndex(c => c.to.el === toEl && c.to.portName === portName);
+        if (existingIdx !== -1) {
+          connections.splice(existingIdx, 1);
+        }
+      }
+
+      connections.push({ 
+        from: { el: fromEl, portName: pendingPort.portName }, 
+        to: { el: toEl, portName: portName } 
+      });
+      
+      clearPending();
       drawLines();
     }
   }
 }
 
+// --- ОТРИСОВКА ПРОВОДОВ ---
+let mouseX = 0, mouseY = 0;
+
+function onMouseMove(e) {
+  if (!pendingPort) return;
+  const cr = canvas.getBoundingClientRect();
+  mouseX = e.clientX - cr.left;
+  mouseY = e.clientY - cr.top;
+  drawLines();
+}
+
+function onCanvasClick(e) {
+  // Клик по пустому месту отменяет рисование
+  if (e.target === canvas || e.target === svg) clearPending();
+}
+
+function clearPending() {
+  pendingPort = null;
+  document.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('click', onCanvasClick);
+  drawLines();
+}
+
 function drawLines() {
-  const canvas = document.getElementById('canvas');
-  const svg = document.getElementById('svg-lines');
   const cr = canvas.getBoundingClientRect();
   let html = `<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#80deea"/></marker></defs>`;
   
-  connections.forEach(c => {
-    const fOut = c.from.el.querySelector('.port.out').getBoundingClientRect();
+  // Отрисовка существующих проводов
+  connections.forEach((c, index) => {
+    const fOut = c.from.el.querySelector(`.port.${c.from.portName}`).getBoundingClientRect();
     const tIn = c.to.el.querySelector(`.port.${c.to.portName}`).getBoundingClientRect();
     const x1 = fOut.left - cr.left + 9, y1 = fOut.top - cr.top + 9;
     const x2 = tIn.left - cr.left + 9, y2 = tIn.top - cr.top + 9;
     const dx = Math.abs(x2 - x1) * 0.5;
-    html += `<path d="M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}" stroke="#80deea" stroke-width="3" fill="none" marker-end="url(#ah)"/>`;
+    
+    // Провод с возможностью удаления по клику
+    html += `<path d="M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}" 
+             stroke="#80deea" stroke-width="3" fill="none" marker-end="url(#ah)" 
+             class="wire-path" onclick="deleteWire(${index})"/>`;
   });
+
+  // Отрисовка пунктира (если тянем)
+  if (pendingPort) {
+    const fOut = pendingPort.el.querySelector(`.port.${pendingPort.portName}`).getBoundingClientRect();
+    const x1 = fOut.left - cr.left + 9, y1 = fOut.top - cr.top + 9;
+    html += `<line x1="${x1}" y1="${y1}" x2="${mouseX}" y2="${mouseY}" stroke="#ffe484" stroke-width="3" stroke-dasharray="8,6"/>`;
+  }
+  
   svg.innerHTML = html;
+}
+
+function deleteWire(idx) {
+  connections.splice(idx, 1);
+  drawLines();
+}
+
+function clearCanvas() {
+  nodes.forEach(n => n.el.remove());
+  nodes = [];
+  connections = [];
+  clearPending();
+  svg.innerHTML = '';
+  document.querySelectorAll('.palette-gate').forEach(p => p.classList.remove('used'));
+  document.getElementById('schemeFb').classList.add('hidden');
+  document.getElementById('lamp').className = 'lamp';
+  document.getElementById('lamp').innerText = '?';
+  drawLines();
 }
 
 function checkScheme() {
@@ -212,9 +331,11 @@ function checkScheme() {
     return;
   }
 
+  // Проверяем конкретные соединения
   const aToAnd = connections.find(c => c.from.el.id === 'src-A' && c.to.el === andN.id);
   const bToAnd = connections.find(c => c.from.el.id === 'src-B' && c.to.el === andN.id);
   const cToNot = connections.find(c => c.from.el.id === 'src-C' && c.to.el === notN.id);
+  
   const andToOr = connections.find(c => c.from.el === andN.id && c.to.el === orN.id);
   const notToOr = connections.find(c => c.from.el === notN.id && c.to.el === orN.id);
   const orToLamp = connections.find(c => c.from.el === orN.id && c.to.el.id === 'lamp');
@@ -231,28 +352,7 @@ function checkScheme() {
   }
 }
 
-['A','B','C'].forEach(k => {
-  const el = document.getElementById('src-'+k);
-  const p = document.createElement('div'); p.className = 'port out';
-  p.onclick = () => { pendingPort = { el, portName: 'out' }; };
-  el.appendChild(p);
-});
-
-const lampEl = document.getElementById('lamp');
-const lampPort = document.createElement('div'); lampPort.className = 'port in';
-lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
-lampPort.onclick = () => { 
-  if (pendingPort) { 
-    connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } }); 
-    pendingPort = null; 
-    drawLines(); 
-  } 
-};
-lampEl.appendChild(lampPort);
-lampEl.style.position = 'relative';
-lampEl.id = 'lamp';
-
-// --- ИСПРАВЛЕННАЯ ПРОВЕРКА ВЫЧИСЛЕНИЙ ---
+// --- ВЫЧИСЛЕНИЯ (ШАГ 3) ---
 function loadCalcScheme() {
   const container = document.getElementById('calcContainer');
   const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
@@ -274,13 +374,11 @@ function checkCalc(ans1, ans2, ans3) {
   const fb = document.getElementById('calcFb');
   fb.classList.remove('hidden');
 
-  // Если поля пустые — не пропускаем!
   if (v1 === '' || v2 === '' || v3 === '') {
     fb.innerHTML = '<span style="color:#ff8a9b">💡 Заполните все поля ответами (0 или 1).</span>';
     return;
   }
 
-  // Строгое сравнение
   if (v1 === ans1 && v2 === ans2 && v3 === ans3) {
     fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно! Теперь можешь перейти к самостоятельной работе.</span>';
   } else {
