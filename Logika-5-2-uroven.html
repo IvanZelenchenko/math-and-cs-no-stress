@@ -3,17 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2 уровень. Логические схемы</title>
+<title>Алгебра логики: 2 уровень</title>
 <style>
   * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
   body { background: #1e1e2f; color: #e0e0ff; margin: 0; padding: 20px; }
   .container { max-width: 1000px; margin: 0 auto; }
-  h1 { text-align: center; color: #c7b9ff; }
+  
+  h1 { text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; font-size: 2.1rem; }
+  .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 20px; }
   .card { background: #25253e; padding: 24px; border-radius: 20px; margin-bottom: 20px; border-left: 6px solid #80deea; }
+  .task-title { font-size: 1.4rem; color: #ffe484; margin-bottom: 15px; }
   
   .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
   .btn:hover { background: #6252a5; }
   .btn-success { background: #2e7d5e; }
+  .btn-success:hover { background: #3e9d6e; }
+
+  .options { display: flex; flex-wrap: wrap; gap: 15px; margin: 15px 0; }
+  .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; }
+  .option-btn:hover { border-color: #80deea; }
+  .option-btn.correct { background: #2e7d5e; border-color: #6effb0; }
+  .option-btn.wrong { background: #8b3a4a; border-color: #ff8a9b; }
 
   /* Конструктор схем */
   .circuit-builder { background: #1a1a2c; border-radius: 20px; padding: 20px; min-height: 400px; display: grid; grid-template-columns: 80px 1fr 80px; gap: 20px; }
@@ -38,19 +48,37 @@
   .lamp { width: 60px; height: 60px; border-radius: 50%; background: #2a2a4a; border: 3px solid #6b6b9a; margin-top: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #b9b2ff; }
   .lamp.on { background: #ffe484; border-color: #ffb86b; box-shadow: 0 0 20px #ffe484; color: #7a4a00; }
 
-  /* Готовые схемы */
-  .scheme-nav { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; }
-  .scheme-nav button { padding: 8px 16px; border-radius: 20px; background: #2e2e4a; color: #cfcaff; border: 1px solid #4a4a72; cursor: pointer; }
-  .scheme-nav button.active { background: #5b4b8a; border-color: #80deea; color: white; }
   .slot-input { width: 40px; padding: 4px; text-align: center; font-weight: bold; border-radius: 6px; background: #2f2f50; color: #ffe484; border: 1px solid #6b6b9a; }
+  .text-center { text-align: center; }
 </style>
 </head>
 <body>
 <div class="container">
-  <h1>2 уровень. Логические схемы</h1>
+  <h1>Уровень 2. Логические схемы</h1>
+  <div class="subtitle">Блоки по ГОСТ 2.743-91</div>
 
   <div class="card">
-    <h2>1. Собери схему по ГОСТ: (A ∧ B) ∨ ¬C</h2>
+    <div class="task-title">1. Вопросы теории</div>
+    <div class="question-box" style="background:#1e1e33; padding:15px; border-radius:12px; margin-bottom:10px;">
+      <p>По ГОСТ 2.743-91 конъюнктор обозначается прямоугольником с...</p>
+      <div class="options">
+        <button class="option-btn" onclick="checkAnswer(this, true)">«&»</button>
+        <button class="option-btn" onclick="checkAnswer(this, false)">«1»</button>
+        <button class="option-btn" onclick="checkAnswer(this, false)">пустым (без символа)</button>
+      </div>
+    </div>
+    <div class="question-box" style="background:#1e1e33; padding:15px; border-radius:12px;">
+      <p>По ГОСТ 2.743-91 инвертор — это...</p>
+      <div class="options">
+        <button class="option-btn" onclick="checkAnswer(this, true)">Пустой прямоугольник с кружком</button>
+        <button class="option-btn" onclick="checkAnswer(this, false)">Прямоугольник с «&»</button>
+        <button class="option-btn" onclick="checkAnswer(this, false)">Прямоугольник с «1»</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="task-title">2. Собери схему: (A ∧ B) ∨ ¬C</div>
     <div class="gate-palette">
       <div class="palette-gate" data-gate="and" onclick="addGate('and')">
         <svg viewBox="0 0 100 60" width="100%" height="100%"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>
@@ -74,24 +102,33 @@
         <span style="font-size: 0.8rem; margin-top: 5px;">OUT</span>
       </div>
     </div>
-    <div style="text-align: center; margin-top: 15px;">
+    <div class="text-center" style="margin-top: 15px;">
       <button class="btn" onclick="checkScheme()">Проверить схему</button>
       <button class="btn" onclick="location.reload()">Сбросить</button>
     </div>
   </div>
 
   <div class="card">
-    <h2>2. Вычисли значения схемы</h2>
-    <div class="scheme-nav">
-      <button class="active" onclick="loadScheme(0)">Схема 1</button>
-      <button onclick="loadScheme(1)">Схема 2</button>
-    </div>
-    <div id="schemeContainer" style="text-align: center;"></div>
+    <div class="task-title">3. Вычисли значения схемы</div>
+    <div id="schemeContainer" class="text-center"></div>
+  </div>
+
+  <div class="text-center" style="margin-top: 30px; margin-bottom: 50px;">
+    <button class="btn btn-success" style="font-size: 1.2rem; padding: 15px 40px;" onclick="window.location.href='Logika-5-samostoyatelnaya.html'">
+      Перейти к самостоятельной работе →
+    </button>
   </div>
 </div>
 
 <script>
-// ЛОГИКА КОНСТРУКТОРА
+// Проверка ответов на теорию
+function checkAnswer(btn, isCorrect) {
+  const parent = btn.parentElement;
+  parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+}
+
+// Конструктор схем
 let nodes = [], connections = [], pendingPort = null;
 
 function svgAND() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>`; }
@@ -167,61 +204,33 @@ function checkScheme() {
   }
 }
 
-// Инициализация портов для A, B, C
+// Инициализация портов для A, B, C и лампочки
 ['A','B','C'].forEach(k => {
   const el = document.getElementById('src-'+k);
   const p = document.createElement('div'); p.className = 'port out';
   p.onclick = () => { pendingPort = { el, portName: 'out' }; };
   el.appendChild(p);
 });
-// Порт для лампочки
 const lampEl = document.getElementById('lamp');
 const lampPort = document.createElement('div'); lampPort.className = 'port in';
 lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
-lampPort.onclick = () => {
-  if (pendingPort) {
-    connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } });
-    pendingPort = null;
-    drawLines();
-  }
-};
+lampPort.onclick = () => { if (pendingPort) { connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } }); pendingPort = null; drawLines(); } };
 lampEl.appendChild(lampPort);
 lampEl.style.position = 'relative';
 
-
-// ЛОГИКА ГОТОВЫХ СХЕМ
-const schemes = [
-  { name: 'Схема 1: (A ∧ B) ∨ ¬C', inputs: ['A','B','C'] },
-  { name: 'Схема 2: ¬(A ∨ B) ∧ C', inputs: ['A','B','C'] }
-];
-
-function loadScheme(idx) {
-  document.querySelectorAll('.scheme-nav button').forEach((b, i) => b.classList.toggle('active', i === idx));
+// Готовые схемы
+function loadScheme() {
   const container = document.getElementById('schemeContainer');
-  // Генерируем случайные входы для красоты
   const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
-  
-  if (idx === 0) {
-    const res = (a & b) | (c ? 0 : 1);
-    container.innerHTML = `
-      <p>Вычисли: <b>(A ∧ B) ∨ ¬C</b> при A=${a}, B=${b}, C=${c}</p>
-      <p>1. A ∧ B = <input class="slot-input" id="s1" maxlength="1"></p>
-      <p>2. ¬C = <input class="slot-input" id="s2" maxlength="1"></p>
-      <p>3. Результат (ИЛИ) = <input class="slot-input" id="s3" maxlength="1"></p>
-      <button class="btn btn-success" onclick="checkCalc(${a&b}, ${c?0:1}, ${res})">Проверить</button>
-      <div id="calcFb" style="margin-top: 10px;"></div>
-    `;
-  } else {
-    const res = ((a|b)?0:1) & c;
-    container.innerHTML = `
-      <p>Вычисли: <b>¬(A ∨ B) ∧ C</b> при A=${a}, B=${b}, C=${c}</p>
-      <p>1. A ∨ B = <input class="slot-input" id="s1" maxlength="1"></p>
-      <p>2. ¬(A ∨ B) = <input class="slot-input" id="s2" maxlength="1"></p>
-      <p>3. Результат (И) = <input class="slot-input" id="s3" maxlength="1"></p>
-      <button class="btn btn-success" onclick="checkCalc(${a|b}, ${(a|b)?0:1}, ${res})">Проверить</button>
-      <div id="calcFb" style="margin-top: 10px;"></div>
-    `;
-  }
+  const res = (a & b) | (c ? 0 : 1);
+  container.innerHTML = `
+    <p>Вычисли: <b>(A ∧ B) ∨ ¬C</b> при A=${a}, B=${b}, C=${c}</p>
+    <p>1. A ∧ B = <input class="slot-input" id="s1" maxlength="1"></p>
+    <p>2. ¬C = <input class="slot-input" id="s2" maxlength="1"></p>
+    <p>3. Результат (ИЛИ) = <input class="slot-input" id="s3" maxlength="1"></p>
+    <button class="btn btn-success" onclick="checkCalc(${a&b}, ${c?0:1}, ${res})">Проверить</button>
+    <div id="calcFb" style="margin-top: 10px;"></div>
+  `;
 }
 
 function checkCalc(ans1, ans2, ans3) {
@@ -229,14 +238,11 @@ function checkCalc(ans1, ans2, ans3) {
   const v2 = document.getElementById('s2').value.trim();
   const v3 = document.getElementById('s3').value.trim();
   const fb = document.getElementById('calcFb');
-  if (v1 == ans1 && v2 == ans2 && v3 == ans3) {
-    fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно!</span>';
-  } else {
-    fb.innerHTML = '<span style="color:#ff8a9b">💡 Проверь расчёты.</span>';
-  }
+  if (v1 == ans1 && v2 == ans2 && v3 == ans3) fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно!</span>';
+  else fb.innerHTML = '<span style="color:#ff8a9b">💡 Проверь расчёты.</span>';
 }
 
-loadScheme(0);
+loadScheme();
 </script>
 </body>
 </html>
