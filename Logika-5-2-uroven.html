@@ -8,7 +8,6 @@
   * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
   body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
   .app { max-width: 1000px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
-  
   h1 { font-size: 2rem; text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; margin-bottom: 10px; }
   .subtitle { text-align: center; color: #b0b0d0; margin-bottom: 24px; border-bottom: 1px dashed #3f3f60; padding-bottom: 16px; }
   
@@ -17,7 +16,7 @@
   
   .question-box { background: #25253e; padding: 16px; border-radius: 16px; margin: 15px 0; color: #cfcaff; border-left: 4px solid #80deea; }
   .options { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 10px; }
-  .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-size: 1rem; transition: 0.15s; }
+  .option-btn { background: #2e2e4a; border: 2px solid #4a4a72; color: #e0e0ff; padding: 10px 20px; border-radius: 30px; cursor: pointer; transition: 0.15s; }
   .option-btn:hover { border-color: #80deea; }
   .option-btn.correct { background: #2e7d5e; border-color: #6effb0; }
   .option-btn.wrong { background: #8b3a4a; border-color: #ff8a9b; }
@@ -51,8 +50,10 @@
   .port.in { background: #80deea; left: -9px; top: 50%; transform: translateY(-50%); }
   .port:hover { box-shadow: 0 0 10px #ffe484; }
 
-  .lamp { width: 60px; height: 60px; border-radius: 50%; background: #2a2a4a; border: 3px solid #6b6b9a; margin-top: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #b9b2ff; }
-  .lamp.on { background: #ffe484; border-color: #ffb86b; box-shadow: 0 0 20px #ffe484; color: #7a4a00; }
+  /* Лампочка */
+  .lamp { width: 60px; height: 60px; border-radius: 50%; background: #2a2a4a; border: 3px solid #6b6b9a; margin-top: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #b9b2ff; font-size: 1.2rem; font-weight: bold; }
+  .lamp.green { background: #6effb0; border-color: #2e7d5e; box-shadow: 0 0 20px #6effb0; color: #10462f; }
+  .lamp.red { background: #ff8a9b; border-color: #8b3a4a; box-shadow: 0 0 20px #ff8a9b; color: #4e1f2a; }
 </style>
 </head>
 <body>
@@ -162,4 +163,97 @@ function addGate(type) {
   };
   document.getElementById('canvas').appendChild(el);
   nodes.push({ id: el, type: type });
-  document.querySelector(`.palette-gate[data-gate="${type}"]`
+  document.querySelector(`.palette-gate[data-gate="${type}"]`).classList.add('used');
+}
+
+function handlePortClick(el, portName, dir) {
+  if (dir === 'out') { pendingPort = { el, portName }; return; }
+  if (pendingPort && pendingPort.el !== el) {
+    connections.push({ from: pendingPort, to: { el, portName } });
+    pendingPort = null;
+    drawLines();
+  }
+}
+
+function drawLines() {
+  const canvas = document.getElementById('canvas');
+  const svg = document.getElementById('svg-lines');
+  const cr = canvas.getBoundingClientRect();
+  let html = `<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#80deea"/></marker></defs>`;
+  connections.forEach(c => {
+    const fOut = c.from.el.querySelector('.port.out').getBoundingClientRect();
+    const tIn = c.to.el.querySelector(`.port.${c.to.portName}`).getBoundingClientRect();
+    const x1 = fOut.left - cr.left + 9, y1 = fOut.top - cr.top + 9;
+    const x2 = tIn.left - cr.left + 9, y2 = tIn.top - cr.top + 9;
+    const dx = Math.abs(x2 - x1) * 0.5;
+    html += `<path d="M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}" stroke="#80deea" stroke-width="3" fill="none" marker-end="url(#ah)"/>`;
+  });
+  svg.innerHTML = html;
+}
+
+function checkScheme() {
+  const lamp = document.getElementById('lamp');
+  const fb = document.getElementById('schemeFb');
+  fb.classList.remove('hidden');
+
+  // Простая проверка: есть ли все 3 блока и хотя бы 3 соединения
+  const hasAnd = nodes.some(n => n.type === 'and');
+  const hasOr = nodes.some(n => n.type === 'or');
+  const hasNot = nodes.some(n => n.type === 'not');
+  
+  if (hasAnd && hasOr && hasNot && connections.length >= 3) {
+    lamp.className = 'lamp green';
+    lamp.innerText = '💡';
+    fb.innerHTML = '<span style="color:#6effb0">✅ Схема собрана верно! Лампочка горит зелёным.</span>';
+    setTimeout(() => nextStep(2, 3), 2000);
+  } else {
+    lamp.className = 'lamp red';
+    lamp.innerText = '✖';
+    fb.innerHTML = '<span style="color:#ff8a9b">💡 Схема собрана неверно. Убедитесь, что вы добавили все 3 элемента (И, ИЛИ, НЕ) и соединили их проводами.</span>';
+  }
+}
+
+// Инициализация портов для A, B, C и лампочки
+['A','B','C'].forEach(k => {
+  const el = document.getElementById('src-'+k);
+  const p = document.createElement('div'); p.className = 'port out';
+  p.onclick = () => { pendingPort = { el, portName: 'out' }; };
+  el.appendChild(p);
+});
+const lampEl = document.getElementById('lamp');
+const lampPort = document.createElement('div'); lampPort.className = 'port in';
+lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
+lampPort.onclick = () => { if (pendingPort) { connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } }); pendingPort = null; drawLines(); } };
+lampEl.appendChild(lampPort);
+lampEl.style.position = 'relative';
+
+// Вычисление схемы (Шаг 3)
+function loadCalcScheme() {
+  const container = document.getElementById('calcContainer');
+  const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
+  const res = (a & b) | (c ? 0 : 1);
+  container.innerHTML = `
+    <p>Вычисли: <b>(A ∧ B) ∨ ¬C</b> при A=${a}, B=${b}, C=${c}</p>
+    <p>1. A ∧ B = <input class="slot-input" id="s1" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;"></p>
+    <p>2. ¬C = <input class="slot-input" id="s2" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;"></p>
+    <p>3. Результат (ИЛИ) = <input class="slot-input" id="s3" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;"></p>
+    <button class="btn btn-success" onclick="checkCalc(${a&b}, ${c?0:1}, ${res})">Проверить</button>
+    <div id="calcFb" class="hint hidden" style="margin-top:10px;"></div>
+  `;
+}
+
+function checkCalc(ans1, ans2, ans3) {
+  const v1 = document.getElementById('s1').value.trim();
+  const v2 = document.getElementById('s2').value.trim();
+  const v3 = document.getElementById('s3').value.trim();
+  const fb = document.getElementById('calcFb');
+  fb.classList.remove('hidden');
+  if (v1 == ans1 && v2 == ans2 && v3 == ans3) {
+    fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно! Теперь можешь перейти к самостоятельной работе.</span>';
+  } else {
+    fb.innerHTML = '<span style="color:#ff8a9b">💡 Проверь расчёты. Сначала выполняется И и НЕ, затем ИЛИ.</span>';
+  }
+}
+</script>
+</body>
+</html>
