@@ -42,20 +42,13 @@
   .topic-item.open .topic-body { display: flex; }
   .topic-body a { background: #1e1e33; color: #cfcaff; text-decoration: none; padding: 12px 20px; border-radius: 14px; border: 1px solid #4a4a72; font-weight: 500; display: flex; align-items: center; gap: 10px; transition: 0.15s; }
   .topic-body a:hover { background: #3e3e62; border-color: #80deea; color: white; }
-  .empty-note { text-align: center; color: #7b7ba3; padding: 40px; font-style: italic; }
+  
+  .empty-note { text-align: center; color: #7b7ba3; padding: 40px; font-style: italic; font-size: 1.1rem; }
   .loader { text-align: center; font-size: 1.2rem; color: #80deea; padding: 40px; animation: pulse 1.5s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
   .file-view { background: #1a1a2c; border-radius: 20px; overflow: hidden; border: 1px solid #4a4a72; height: 80vh; }
   .file-view iframe { width: 100%; height: 100%; border: none; background: #1e1e2f; }
-
-  /* Модалка */
-  .modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 1000; }
-  .modal-box { background: #1c1c2e; border-radius: 32px; padding: 32px; max-width: 520px; width: 100%; border: 2px solid #80deea; }
-  .modal-box label { display: block; margin-top: 10px; color: #cfcaff; }
-  .modal-box input { width: 100%; padding: 12px; margin-top: 5px; background: #2f2f50; color: #ffe484; border: 2px solid #6b6b9a; border-radius: 12px; }
-  .modal-box .actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
-  .modal-box .err { color: #ff8a9b; font-size: 0.95rem; margin-top: 10px; min-height: 1.2em; }
 </style>
 </head>
 <body>
@@ -101,26 +94,6 @@
       <iframe id="mainIframe" src=""></iframe>
     </div>
   </div>
-
-</div>
-
-<!-- Модалка -->
-<div id="modalBackdrop" class="modal-backdrop hidden">
-  <div class="modal-box">
-    <h3>Данные ученика</h3>
-    <div style="background: #2a2a4a; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; color: #ffd966;">
-      Пример: <b>Иванов Иван</b> и класс <b>5Л</b>
-    </div>
-    <label>ФИО</label>
-    <input type="text" id="inpFIO" placeholder="Иванов Иван">
-    <label>Класс</label>
-    <input type="text" id="inpKlass" placeholder="5Л">
-    <div class="err" id="modalErr"></div>
-    <div class="actions">
-      <button class="btn btn-secondary" onclick="document.getElementById('modalBackdrop').classList.add('hidden')">Отмена</button>
-      <button class="btn btn-success" id="modalOk">Проверить</button>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -130,7 +103,10 @@ let ALL_TOPICS_INFO = [];
 let ALL_TOPICS_MATH = []; 
 let CURRENT_SUBJECT = ''; 
 let CURRENT_PARALLEL = '';
-let IS_LOADING = true;
+
+// Флаг загрузки и обещание (чтобы ждать, если ученик нажал быстро)
+let isLoaded = false;
+let loadPromise = null;
 
 const pages = document.querySelectorAll('[data-page]');
 function goto(pageId) {
@@ -163,19 +139,23 @@ function buildMenus() {
 }
 
 async function loadTopics() {
-  IS_LOADING = true;
-  try {
-    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
-    const data = await resp.json();
-    if (data.ok) {
-      ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
-      ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
-    }
-  } catch (e) { console.log('Ошибка загрузки тем:', e); }
-  IS_LOADING = false;
+  if (isLoaded) return;
+  loadPromise = fetch(`${BACKEND_URL}?action=getTopics`)
+    .then(resp => resp.json())
+    .then(data => {
+      if (data.ok) {
+        ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
+        ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
+      }
+      isLoaded = true;
+    })
+    .catch(e => {
+      console.log('Ошибка загрузки:', e);
+      isLoaded = true; // Чтобы не зависало навсегда
+    });
 }
 
-function openClass(subject, par) {
+async function openClass(subject, par) {
   CURRENT_SUBJECT = subject;
   CURRENT_PARALLEL = par;
   
@@ -183,16 +163,16 @@ function openClass(subject, par) {
   document.getElementById('classTitle').innerText = `${subject} · ${displayPar}`;
   
   const container = document.getElementById('classTopics');
-  
-  if (IS_LOADING) {
-    container.innerHTML = '<div class="loader">Загрузка тем... Пожалуйста, подождите.</div>';
-    setTimeout(() => renderClassContent(container, subject, par), 800);
-    goto('class-page');
-    return;
-  }
-  
-  renderClassContent(container, subject, par);
+  container.innerHTML = '<div class="loader">Загрузка тем... Пожалуйста, подождите.</div>';
   goto('class-page');
+
+  // Ждем завершения загрузки данных (если оно еще идет)
+  if (!isLoaded) {
+    await loadPromise;
+  }
+
+  // Теперь данные точно есть, рисуем
+  renderClassContent(container, subject, par);
 }
 
 function renderClassContent(container, subject, par) {
@@ -241,6 +221,7 @@ function backToClass() {
   else goto('home');
 }
 
+// Запуск
 buildMenus();   
 loadTopics();   
 goto('home');
