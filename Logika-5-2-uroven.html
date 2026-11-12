@@ -129,6 +129,7 @@ function nextStep(current, next) {
   if (next === 3) loadCalcScheme();
 }
 
+// --- ЛОГИКА СХЕМЫ ---
 let nodes = [], connections = [], pendingPort = null;
 
 function svgAND() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>`; }
@@ -140,13 +141,13 @@ function addGate(type) {
   el.className = 'gate-node';
   el.style.left = '50px'; el.style.top = (50 + nodes.length * 70) + 'px';
   el.innerHTML = type === 'and' ? svgAND() : (type === 'or' ? svgOR() : svgNOT());
+  el.dataset.type = type; // Сохраняем тип прямо в DOM-элементе
   
   const ports = type === 'not' ? ['in', 'out'] : ['in1', 'in2', 'out'];
   ports.forEach(p => {
     const portEl = document.createElement('div');
     portEl.className = 'port ' + p;
-    portEl.dataset.dir = p === 'out' ? 'out' : 'in';
-    portEl.onclick = (e) => { e.stopPropagation(); handlePortClick(el, p, p === 'out' ? 'out' : 'in'); };
+    portEl.onclick = (e) => { e.stopPropagation(); handlePortClick(el, type, p, p === 'out' ? 'out' : 'in'); };
     el.appendChild(portEl);
   });
   
@@ -166,12 +167,15 @@ function addGate(type) {
   document.querySelector(`.palette-gate[data-gate="${type}"]`).classList.add('used');
 }
 
-function handlePortClick(el, portName, dir) {
-  if (dir === 'out') { pendingPort = { el, portName }; return; }
-  if (pendingPort && pendingPort.el !== el) {
-    connections.push({ from: pendingPort, to: { el, portName } });
-    pendingPort = null;
-    drawLines();
+function handlePortClick(el, type, portName, dir) {
+  if (dir === 'out') {
+    pendingPort = { el, type, portName };
+  } else {
+    if (pendingPort && pendingPort.el !== el) {
+      connections.push({ from: pendingPort, to: { el, type, portName } });
+      pendingPort = null;
+      drawLines();
+    }
   }
 }
 
@@ -180,6 +184,7 @@ function drawLines() {
   const svg = document.getElementById('svg-lines');
   const cr = canvas.getBoundingClientRect();
   let html = `<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#80deea"/></marker></defs>`;
+  
   connections.forEach(c => {
     const fOut = c.from.el.querySelector('.port.out').getBoundingClientRect();
     const tIn = c.to.el.querySelector(`.port.${c.to.portName}`).getBoundingClientRect();
@@ -191,12 +196,13 @@ function drawLines() {
   svg.innerHTML = html;
 }
 
-// ЖЕСТКАЯ ПРОВЕРКА СХЕМЫ
+// --- ПРОВЕРКА ---
 function checkScheme() {
   const lamp = document.getElementById('lamp');
   const fb = document.getElementById('schemeFb');
   fb.classList.remove('hidden');
 
+  // Находим все 3 блока по их типам
   const andN = nodes.find(n => n.type === 'and');
   const orN  = nodes.find(n => n.type === 'or');
   const notN = nodes.find(n => n.type === 'not');
@@ -208,14 +214,19 @@ function checkScheme() {
     return;
   }
 
-  // Проверяем конкретные провода
-  const aToAnd = connections.find(c => c.from.el.id === 'src-A' && c.to.el === andN);
-  const bToAnd = connections.find(c => c.from.el.id === 'src-B' && c.to.el === andN);
-  const cToNot = connections.find(c => c.from.el.id === 'src-C' && c.to.el === notN);
+  // 1. A и B должны идти в И
+  const aToAnd = connections.find(c => c.from.el.id === 'src-A' && c.to.el === andN.id);
+  const bToAnd = connections.find(c => c.from.el.id === 'src-B' && c.to.el === andN.id);
   
-  const andToOr = connections.find(c => c.from.el === andN && c.to.el === orN);
-  const notToOr = connections.find(c => c.from.el === notN && c.to.el === orN);
-  const orToLamp = connections.find(c => c.from.el === orN && c.to.el.id === 'lamp');
+  // 2. C должен идти в НЕ
+  const cToNot = connections.find(c => c.from.el.id === 'src-C' && c.to.el === notN.id);
+  
+  // 3. Выход И и выход НЕ должны идти в ИЛИ
+  const andToOr = connections.find(c => c.from.el === andN.id && c.to.el === orN.id);
+  const notToOr = connections.find(c => c.from.el === notN.id && c.to.el === orN.id);
+  
+  // 4. Выход ИЛИ должен идти в лампочку
+  const orToLamp = connections.find(c => c.from.el === orN.id && c.to.el.id === 'lamp');
 
   if (aToAnd && bToAnd && cToNot && andToOr && notToOr && orToLamp) {
     lamp.className = 'lamp green';
@@ -229,21 +240,30 @@ function checkScheme() {
   }
 }
 
+// Инициализация источников A, B, C
 ['A','B','C'].forEach(k => {
   const el = document.getElementById('src-'+k);
   const p = document.createElement('div'); p.className = 'port out';
-  p.onclick = () => { pendingPort = { el, portName: 'out' }; };
+  p.onclick = () => { pendingPort = { el, type: 'source', portName: 'out' }; };
   el.appendChild(p);
 });
 
+// Инициализация лампочки
 const lampEl = document.getElementById('lamp');
 const lampPort = document.createElement('div'); lampPort.className = 'port in';
 lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
-lampPort.onclick = () => { if (pendingPort) { connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } }); pendingPort = null; drawLines(); } };
+lampPort.onclick = () => { 
+  if (pendingPort) { 
+    connections.push({ from: pendingPort, to: { el: lampEl, type: 'out', portName: 'in' } }); 
+    pendingPort = null; 
+    drawLines(); 
+  } 
+};
 lampEl.appendChild(lampPort);
 lampEl.style.position = 'relative';
 lampEl.id = 'lamp';
 
+// Вычисления (Шаг 3)
 function loadCalcScheme() {
   const container = document.getElementById('calcContainer');
   const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
