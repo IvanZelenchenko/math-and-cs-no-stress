@@ -5,16 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Самостоятельная работа</title>
 <style>
-  * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-  body { background: #1e1e2f; color: #e0e0ff; margin: 0; padding: 20px; }
-  .container { max-width: 800px; margin: 0 auto; }
+  * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+  body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
+  .app { max-width: 800px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
   
-  h1 { text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; font-size: 2.1rem; }
-  .card { background: #25253e; padding: 24px; border-radius: 20px; margin-bottom: 20px; border-left: 6px solid #80deea; }
+  h1 { text-align: center; background: linear-gradient(to right, #c7b9ff, #80deea); -webkit-background-clip: text; color: transparent; font-size: 2rem; }
+  .card { background: rgba(20,20,35,0.7); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: 1px solid #3b3b5a; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+  .btn { background: #4f3f8a; border: none; color: white; padding: 12px 24px; border-radius: 40px; font-size: 1rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
   .btn:hover { background: #6252a5; }
-  .btn-success { background: #2e7d5e; }
+  .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
   .btn-success:hover { background: #3e9d6e; }
 
   .timer-bar { display: flex; justify-content: space-between; background: #2a2a4a; border-radius: 20px; padding: 14px 22px; margin-bottom: 20px; border: 2px solid #4a4a72; }
@@ -27,11 +27,6 @@
   .opts button { background: #2e2e4a; border: 2px solid #4a4a72; color: #e8e4ff; padding: 10px 22px; border-radius: 40px; cursor: pointer; }
   .opts button.selected { background: #5b4b8a; border-color: #80deea; color: white; }
   
-  .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-  .modal-content { background: #1c1c2e; padding: 30px; border-radius: 24px; border: 2px solid #80deea; width: 400px; max-width: 90%; }
-  .modal-content input { width: 100%; padding: 12px; margin-bottom: 15px; background: #2f2f50; color: #ffe484; border: 2px solid #6b6b9a; border-radius: 12px; box-sizing: border-box; }
-  .err { color: #ff8a9b; margin-bottom: 15px; font-size: 0.9rem; min-height: 1em; }
-  
   .result-card { background: linear-gradient(135deg, #1e2e2a, #2a2a40); border: 3px solid #6effb0; border-radius: 32px; padding: 32px; text-align: center; }
   .grade { font-size: 5rem; font-weight: 800; background: linear-gradient(to right, #ffe484, #6effb0); -webkit-background-clip: text; color: transparent; margin: 12px 0; }
   
@@ -39,13 +34,23 @@
 </style>
 </head>
 <body>
-<div class="container">
+<div class="app">
   <h1>Самостоятельная работа</h1>
 
   <div class="card" id="intro">
     <p>Вам будет предложено <strong>5 заданий</strong>. Время — <strong>10 минут</strong>.</p>
     <p>Повторное прохождение невозможно.</p>
-    <button class="btn btn-success" onclick="document.getElementById('authModal').classList.remove('hidden')">Ввести данные и начать</button>
+    
+    <div style="background: #2a2a4a; padding: 10px; border-radius: 8px; margin: 15px 0; font-size: 0.9rem; color: #ffd966;">
+      Введите данные как в журнале. Пример: <b>Иванов Иван</b> и класс <b>5Л</b>
+    </div>
+    <label>ФИО</label><br>
+    <input type="text" id="inpFIO" placeholder="Иванов Иван" style="width:100%; padding:10px; margin:5px 0 15px; background:#2f2f50; color:#ffe484; border:2px solid #6b6b9a; border-radius:10px;"><br>
+    <label>Класс</label><br>
+    <input type="text" id="inpKlass" placeholder="5Л" style="width:100%; padding:10px; margin:5px 0 15px; background:#2f2f50; color:#ffe484; border:2px solid #6b6b9a; border-radius:10px;"><br>
+    <div id="err" style="color:#ff8a9b; margin-bottom:15px;"></div>
+    
+    <button class="btn btn-success" style="width:100%;" onclick="startTest()">Проверить и начать</button>
   </div>
 
   <div class="card hidden" id="running">
@@ -59,45 +64,20 @@
 
   <div class="hidden" id="result"></div>
 
-  <div class="text-center" style="margin-top: 30px;">
+  <div style="text-align: center; margin-top: 30px;">
     <button class="btn" onclick="window.location.href='index.html'">← На главную</button>
-  </div>
-</div>
-
-<!-- Модалка ввода ФИО -->
-<div class="modal hidden" id="authModal">
-  <div class="modal-content">
-    <h3>Данные ученика</h3>
-    <div style="background: #2a2a4a; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; color: #ffd966;">
-      Пример: <b>Иванов Иван</b> и класс <b>5Л</b>
-    </div>
-    <label>ФИО</label>
-    <input type="text" id="inpFIO" placeholder="Иванов Иван">
-    <label>Класс</label>
-    <input type="text" id="inpKlass" placeholder="5Л">
-    <div class="err" id="modalErr"></div>
-    <div style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button class="btn" onclick="document.getElementById('authModal').classList.add('hidden')">Отмена</button>
-      <button class="btn btn-success" onclick="startTest()">Проверить и начать</button>
-    </div>
   </div>
 </div>
 
 <script>
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+let studentName = '', studentClass = '';
+let questions = [], answers = {}, timeLeft = 600, timerId = null;
 
-let studentName = '';
-let studentClass = '';
-let questions = [];
-let answers = {};
-let timeLeft = 600;
-let timerId = null;
-
-// Проверка данных через Google Apps Script
 async function startTest() {
   const fio = document.getElementById('inpFIO').value.trim();
   const klass = document.getElementById('inpKlass').value.trim().toUpperCase();
-  const err = document.getElementById('modalErr');
+  const err = document.getElementById('err');
   err.innerText = '';
 
   if (fio.length < 5) { err.innerText = 'Введите имя и фамилию полностью.'; return; }
@@ -122,29 +102,21 @@ async function startTest() {
 
   studentName = fio;
   studentClass = klass;
-  document.getElementById('authModal').classList.add('hidden');
-  runTest();
-}
-
-// Запуск теста
-function runTest() {
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('running').classList.remove('hidden');
-
-  // Генерируем 5 случайных заданий
+  
   questions = generateQuestions();
   renderQuestions();
   startTimer();
 }
 
-// Генерация заданий (упрощенная версия)
 function generateQuestions() {
   const bank = [
-    { type: 'value', text: 'Вычисли (A ∧ B) при A=1, B=1', expr: 'A ∧ B', ans: '1' },
-    { type: 'value', text: 'Вычисли (A ∨ B) при A=0, B=0', expr: 'A ∨ B', ans: '0' },
-    { type: 'value', text: 'Вычисли ¬A при A=1', expr: '¬A', ans: '0' },
-    { type: 'value', text: 'Вычисли (A ∧ B) ∨ C при A=1, B=0, C=1', expr: '(A ∧ B) ∨ C', ans: '1' },
-    { type: 'value', text: 'Вычисли ¬(A ∨ B) при A=0, B=1', expr: '¬(A ∨ B)', ans: '0' },
+    { type: 'value', text: 'Вычисли (A ∧ B) при A=1, B=1', ans: '1' },
+    { type: 'value', text: 'Вычисли (A ∨ B) при A=0, B=0', ans: '0' },
+    { type: 'value', text: 'Вычисли ¬A при A=1', ans: '0' },
+    { type: 'value', text: 'Вычисли (A ∧ B) ∨ C при A=1, B=0, C=1', ans: '1' },
+    { type: 'value', text: 'Вычисли ¬(A ∨ B) при A=0, B=1', ans: '0' },
     { type: 'rows', text: 'Сколько строк в таблице для 3 переменных?', ans: '8' },
     { type: 'rows', text: 'Сколько строк в таблице для 4 переменных?', ans: '16' },
     { type: 'first', text: 'Первое действие в A ∧ B ∨ C?', opts: ['∧', '∨'], ans: '∧' },
@@ -154,7 +126,6 @@ function generateQuestions() {
   return bank.sort(() => Math.random() - 0.5).slice(0, 5);
 }
 
-// Отрисовка заданий
 function renderQuestions() {
   const container = document.getElementById('questionsContainer');
   container.innerHTML = questions.map((q, i) => {
@@ -178,7 +149,6 @@ function selectOpt(btn, qIdx, val) {
   answers[qIdx] = val;
 }
 
-// Таймер
 function startTimer() {
   if (timerId) clearInterval(timerId);
   timeLeft = 600;
@@ -186,10 +156,7 @@ function startTimer() {
   timerId = setInterval(() => {
     timeLeft--;
     updateTimer();
-    if (timeLeft <= 0) {
-      clearInterval(timerId);
-      submitWork(true);
-    }
+    if (timeLeft <= 0) { clearInterval(timerId); submitWork(true); }
   }, 1000);
 }
 
@@ -198,7 +165,6 @@ function updateTimer() {
   document.getElementById('timerDisplay').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
 }
 
-// Завершение работы
 async function submitWork(auto) {
   if (timerId) clearInterval(timerId);
   document.getElementById('running').classList.add('hidden');
@@ -219,7 +185,6 @@ async function submitWork(auto) {
   else if (correct === 4) grade = '4';
   else if (correct === 3) grade = '3';
 
-  // Отправка в Google
   const date = new Date().toLocaleString('ru-RU');
   fetch(BACKEND_URL, {
     method: 'POST',
