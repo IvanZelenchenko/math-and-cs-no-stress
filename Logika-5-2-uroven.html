@@ -141,13 +141,13 @@ function addGate(type) {
   el.className = 'gate-node';
   el.style.left = '50px'; el.style.top = (50 + nodes.length * 70) + 'px';
   el.innerHTML = type === 'and' ? svgAND() : (type === 'or' ? svgOR() : svgNOT());
-  el.dataset.type = type; // Сохраняем тип прямо в DOM-элементе
+  el.dataset.type = type;
   
   const ports = type === 'not' ? ['in', 'out'] : ['in1', 'in2', 'out'];
   ports.forEach(p => {
     const portEl = document.createElement('div');
     portEl.className = 'port ' + p;
-    portEl.onclick = (e) => { e.stopPropagation(); handlePortClick(el, type, p, p === 'out' ? 'out' : 'in'); };
+    portEl.onclick = (e) => { e.stopPropagation(); handlePortClick(el, p, p === 'out' ? 'out' : 'in'); };
     el.appendChild(portEl);
   });
   
@@ -167,12 +167,12 @@ function addGate(type) {
   document.querySelector(`.palette-gate[data-gate="${type}"]`).classList.add('used');
 }
 
-function handlePortClick(el, type, portName, dir) {
+function handlePortClick(el, portName, dir) {
   if (dir === 'out') {
-    pendingPort = { el, type, portName };
+    pendingPort = { el, portName };
   } else {
     if (pendingPort && pendingPort.el !== el) {
-      connections.push({ from: pendingPort, to: { el, type, portName } });
+      connections.push({ from: pendingPort, to: { el, portName } });
       pendingPort = null;
       drawLines();
     }
@@ -196,13 +196,11 @@ function drawLines() {
   svg.innerHTML = html;
 }
 
-// --- ПРОВЕРКА ---
 function checkScheme() {
   const lamp = document.getElementById('lamp');
   const fb = document.getElementById('schemeFb');
   fb.classList.remove('hidden');
 
-  // Находим все 3 блока по их типам
   const andN = nodes.find(n => n.type === 'and');
   const orN  = nodes.find(n => n.type === 'or');
   const notN = nodes.find(n => n.type === 'not');
@@ -214,18 +212,11 @@ function checkScheme() {
     return;
   }
 
-  // 1. A и B должны идти в И
   const aToAnd = connections.find(c => c.from.el.id === 'src-A' && c.to.el === andN.id);
   const bToAnd = connections.find(c => c.from.el.id === 'src-B' && c.to.el === andN.id);
-  
-  // 2. C должен идти в НЕ
   const cToNot = connections.find(c => c.from.el.id === 'src-C' && c.to.el === notN.id);
-  
-  // 3. Выход И и выход НЕ должны идти в ИЛИ
   const andToOr = connections.find(c => c.from.el === andN.id && c.to.el === orN.id);
   const notToOr = connections.find(c => c.from.el === notN.id && c.to.el === orN.id);
-  
-  // 4. Выход ИЛИ должен идти в лампочку
   const orToLamp = connections.find(c => c.from.el === orN.id && c.to.el.id === 'lamp');
 
   if (aToAnd && bToAnd && cToNot && andToOr && notToOr && orToLamp) {
@@ -240,21 +231,19 @@ function checkScheme() {
   }
 }
 
-// Инициализация источников A, B, C
 ['A','B','C'].forEach(k => {
   const el = document.getElementById('src-'+k);
   const p = document.createElement('div'); p.className = 'port out';
-  p.onclick = () => { pendingPort = { el, type: 'source', portName: 'out' }; };
+  p.onclick = () => { pendingPort = { el, portName: 'out' }; };
   el.appendChild(p);
 });
 
-// Инициализация лампочки
 const lampEl = document.getElementById('lamp');
 const lampPort = document.createElement('div'); lampPort.className = 'port in';
 lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
 lampPort.onclick = () => { 
   if (pendingPort) { 
-    connections.push({ from: pendingPort, to: { el: lampEl, type: 'out', portName: 'in' } }); 
+    connections.push({ from: pendingPort, to: { el: lampEl, portName: 'in' } }); 
     pendingPort = null; 
     drawLines(); 
   } 
@@ -263,17 +252,17 @@ lampEl.appendChild(lampPort);
 lampEl.style.position = 'relative';
 lampEl.id = 'lamp';
 
-// Вычисления (Шаг 3)
+// --- ИСПРАВЛЕННАЯ ПРОВЕРКА ВЫЧИСЛЕНИЙ ---
 function loadCalcScheme() {
   const container = document.getElementById('calcContainer');
   const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
   const res = (a & b) | (c ? 0 : 1);
   container.innerHTML = `
     <p>Вычисли: <b>(A ∧ B) ∨ ¬C</b> при A=${a}, B=${b}, C=${c}</p>
-    <p>1. A ∧ B = <input class="slot-input" id="s1" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;"></p>
-    <p>2. ¬C = <input class="slot-input" id="s2" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;"></p>
-    <p>3. Результат (ИЛИ) = <input class="slot-input" id="s3" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;"></p>
-    <button class="btn btn-success" onclick="checkCalc(${a&b}, ${c?0:1}, ${res})">Проверить</button>
+    <p>1. A ∧ B = <input class="slot-input" id="s1" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;text-align:center;"></p>
+    <p>2. ¬C = <input class="slot-input" id="s2" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;text-align:center;"></p>
+    <p>3. Результат (ИЛИ) = <input class="slot-input" id="s3" maxlength="1" style="width:50px;padding:5px;background:#2f2f50;color:#fff;border:1px solid #6b6b9a;text-align:center;"></p>
+    <button class="btn btn-success" onclick="checkCalc('${a&b}', '${c?0:1}', '${res}')">Проверить</button>
     <div id="calcFb" class="hint hidden" style="margin-top:10px;"></div>
   `;
 }
@@ -284,7 +273,15 @@ function checkCalc(ans1, ans2, ans3) {
   const v3 = document.getElementById('s3').value.trim();
   const fb = document.getElementById('calcFb');
   fb.classList.remove('hidden');
-  if (v1 == ans1 && v2 == ans2 && v3 == ans3) {
+
+  // Если поля пустые — не пропускаем!
+  if (v1 === '' || v2 === '' || v3 === '') {
+    fb.innerHTML = '<span style="color:#ff8a9b">💡 Заполните все поля ответами (0 или 1).</span>';
+    return;
+  }
+
+  // Строгое сравнение
+  if (v1 === ans1 && v2 === ans2 && v3 === ans3) {
     fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно! Теперь можешь перейти к самостоятельной работе.</span>';
   } else {
     fb.innerHTML = '<span style="color:#ff8a9b">💡 Проверь расчёты. Сначала выполняется И и НЕ, затем ИЛИ.</span>';
