@@ -46,16 +46,11 @@
   .empty-note { text-align: center; color: #7b7ba3; padding: 40px; font-style: italic; font-size: 1.1rem; }
   .loader { text-align: center; font-size: 1.2rem; color: #80deea; padding: 40px; animation: pulse 1.5s infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-  .file-view { background: #1a1a2c; border-radius: 20px; overflow: hidden; border: 1px solid #4a4a72; height: 80vh; }
-  .file-view iframe { width: 100%; height: 100%; border: none; background: #1e1e2f; }
-
-  /* Блок для отладки */
-  .debug-info { background: rgba(255,0,0,0.1); color: #ff8a9b; padding: 10px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #ff8a9b; font-family: monospace; }
 </style>
 </head>
 <body>
 <div class="app">
+  <!-- ГЛАВНАЯ -->
   <div data-page="home">
     <h1 class="site-title">Формула успеха: плюс логика, минус стресс</h1>
     <div class="subtitle">выберите предмет</div>
@@ -75,6 +70,7 @@
     </div>
   </div>
 
+  <!-- СТРАНИЦА РАЗДЕЛА -->
   <div data-page="class-page" class="hidden">
     <div class="topbar">
       <div class="page-title" id="classTitle">Загрузка...</div>
@@ -82,25 +78,12 @@
         <button class="btn btn-secondary" onclick="goto('home')">🏠 Главная</button>
       </div>
     </div>
-    <div id="debugBox" class="debug-info hidden"></div>
     <div class="topic-list" id="classTopics"></div>
-  </div>
-
-  <div data-page="file-page" class="hidden">
-    <div class="topbar">
-      <div class="page-title" id="fileTitle">Загрузка...</div>
-      <div style="display: flex; gap: 10px;">
-        <button class="btn btn-secondary" onclick="backToClass()">← Назад</button>
-        <button class="btn" onclick="goto('home')">🏠 Главная</button>
-      </div>
-    </div>
-    <div class="file-view">
-      <iframe id="mainIframe" src=""></iframe>
-    </div>
   </div>
 </div>
 
 <script>
+// ВАША ССЫЛКА НА APPS SCRIPT
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
 
 let ALL_TOPICS_INFO = []; 
@@ -146,12 +129,10 @@ async function loadTopics() {
     if (data.ok) {
       ALL_TOPICS_INFO = data.topics.filter(t => t.subject.toLowerCase().includes('информ'));
       ALL_TOPICS_MATH = data.topics.filter(t => t.subject.toLowerCase().includes('матем'));
-      // ОТЛАДКА: сколько всего пришло
-      console.log(`Загружено тем Информатики: ${ALL_TOPICS_INFO.length}`);
     }
     isLoaded = true;
   } catch (e) { 
-    console.log('Ошибка загрузки:', e); 
+    console.log('Ошибка загрузки тем:', e); 
     isLoaded = true;
   }
 }
@@ -164,11 +145,9 @@ function openClass(subject, par) {
   document.getElementById('classTitle').innerText = `${subject} · ${displayPar}`;
   
   const container = document.getElementById('classTopics');
-  const dbg = document.getElementById('debugBox');
   
   if (!isLoaded) {
-    container.innerHTML = '<div class="loader">Данные еще загружаются... Подождите.</div>';
-    // Ждем, пока загрузятся
+    container.innerHTML = '<div class="loader">Загрузка тем... Подождите.</div>';
     const interval = setInterval(() => {
       if (isLoaded) {
         clearInterval(interval);
@@ -183,23 +162,12 @@ function openClass(subject, par) {
 }
 
 function renderClassContent(container, subject, par) {
-  const dbg = document.getElementById('debugBox');
-  dbg.classList.add('hidden');
-  
   try {
     const db = subject === 'Информатика' ? ALL_TOPICS_INFO : ALL_TOPICS_MATH;
-    
-    // ОТЛАДКА: пишем на экран, сколько всего тем и ищем ли мы класс
-    const debugText = `Всего тем (${subject}): ${db.length}. Ищем класс: "${par}".`;
-    
     const filtered = db.filter(t => t.parallel === par);
     
     if (filtered.length === 0) {
       container.innerHTML = `<div class="empty-note">Для раздела "${par}" пока нет тем.</div>`;
-      // Включаем отладку на экране
-      dbg.classList.remove('hidden');
-      dbg.innerHTML = `${debugText}<br>Найдено тем для этого класса: 0.<br>
-        <b>Проверьте, что в таблице в столбце "Параллель" написано ровно "${par}" (без пробелов).</b>`;
       return;
     }
 
@@ -218,7 +186,7 @@ function renderClassContent(container, subject, par) {
           </div>
           <div class="topic-body">
             ${levels.map(l => `
-              <a href="#" onclick="openFile('${l.levelName}', '${l.file}')">
+              <a href="#" onclick="openFile('${l.file}')">
                 📄 ${l.levelName}
               </a>
             `).join('')}
@@ -226,22 +194,14 @@ function renderClassContent(container, subject, par) {
         </div>
       `;
     }).join('');
-    
   } catch(e) {
-    container.innerHTML = `<div class="empty-note" style="color:red;">Произошла ошибка при отрисовке: ${e.message}</div>`;
+    container.innerHTML = `<div class="empty-note" style="color:red;">Ошибка: ${e.message}</div>`;
   }
 }
 
-function openFile(topicName, fileName) {
-  document.getElementById('fileTitle').innerText = topicName;
-  const iframe = document.getElementById('mainIframe');
-  iframe.src = fileName;
-  goto('file-page');
-}
-
-function backToClass() {
-  if (CURRENT_SUBJECT && CURRENT_PARALLEL) openClass(CURRENT_SUBJECT, CURRENT_PARALLEL);
-  else goto('home');
+// ВОТ ЗДЕСЬ МЫ УБРАЛИ IFRAME И СДЕЛАЛИ ПЕРЕХОД ПО ССЫЛКЕ!
+function openFile(fileName) {
+  window.location.href = fileName;
 }
 
 buildMenus();   
