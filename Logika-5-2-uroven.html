@@ -14,9 +14,9 @@
   .breadcrumb a { color: #80deea; text-decoration: none; }
   .breadcrumb a:hover { text-decoration: underline; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
+  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; transition: 0.15s; }
   .btn:hover { background: #6252a5; }
-  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; }
+  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; border: 1px solid #5f5f92; }
   .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
   .btn-success:hover { background: #3e9d6e; }
 
@@ -37,7 +37,7 @@
   
   .row-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
 
-  .circuit-builder { background: #1a1a2c; border-radius: 20px; padding: 20px; min-height: 350px; display: grid; grid-template-columns: 80px 1fr 80px; gap: 20px; }
+  .circuit-builder { background: #1a1a2c; border-radius: 20px; padding: 20px; min-height: 350px; display: grid; grid-template-columns: 80px 1fr 100px; gap: 20px; }
   .circuit-canvas { position: relative; background: #14141f; border-radius: 12px; border: 1px solid #2e2e4a; overflow: hidden; }
   .circuit-canvas svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
   .gate-node { position: absolute; z-index: 3; width: 100px; height: 60px; cursor: grab; user-select: none; display: flex; align-items: center; justify-content: center; }
@@ -56,13 +56,13 @@
   .port.in { background: #80deea; left: -9px; top: 50%; transform: translateY(-50%); }
   .port:hover { box-shadow: 0 0 10px #ffe484; }
 
-  /* Стили для удаления провода */
   .wire-path { cursor: pointer; pointer-events: stroke; transition: stroke 0.2s; }
   .wire-path:hover { stroke: #ff8a9b !important; }
 
-  .lamp { width: 60px; height: 60px; border-radius: 50%; background: #2a2a4a; border: 3px solid #6b6b9a; margin-top: 10px; transition: 0.3s; display: flex; align-items: center; justify-content: center; color: #b9b2ff; font-size: 1.2rem; font-weight: bold; }
-  .lamp.green { background: #6effb0; border-color: #2e7d5e; box-shadow: 0 0 20px #6effb0; color: #10462f; }
-  .lamp.red { background: #ff8a9b; border-color: #8b3a4a; box-shadow: 0 0 20px #ff8a9b; color: #4e1f2a; }
+  .lamp-container { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 80px; height: 80px; }
+  .lamp-svg { width: 100%; height: 100%; transition: 0.3s; filter: drop-shadow(0 0 5px rgba(0,0,0,0.5)); }
+  .lamp-svg.on-green { filter: drop-shadow(0 0 20px #6effb0); }
+  .lamp-svg.on-red { filter: drop-shadow(0 0 20px #ff8a9b); }
 </style>
 </head>
 <body>
@@ -107,15 +107,21 @@
       </div>
     </div>
     <div class="circuit-builder">
-      <div class="circuit-source">
+      <div class="circuit-source" id="source-area">
         <div class="io-node" id="src-A"><span class="io-label">A</span>A</div>
         <div class="io-node" id="src-B"><span class="io-label">B</span>B</div>
         <div class="io-node" id="src-C"><span class="io-label">C</span>C</div>
       </div>
       <div class="circuit-canvas" id="canvas"><svg id="svg-lines"></svg></div>
       <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div class="lamp" id="lamp">?</div>
-        <span style="font-size: 0.8rem; margin-top: 5px;">OUT</span>
+        <div class="lamp-container" id="lamp">
+          <svg class="lamp-svg" id="lampSvg" viewBox="0 0 60 60">
+            <rect x="22" y="40" width="16" height="10" rx="2" fill="#6b6b9a" />
+            <rect x="24" y="50" width="12" height="6" rx="1" fill="#6b6b9a" />
+            <circle cx="30" cy="24" r="18" fill="#2a2a4a" stroke="#6b6b9a" stroke-width="3" id="lampGlass" />
+            <path d="M 22 20 Q 30 10 38 20" stroke="#6b6b9a" stroke-width="2" fill="none" id="lampFilament"/>
+          </svg>
+        </div>
       </div>
     </div>
     <div class="row-buttons">
@@ -131,13 +137,15 @@
   <div class="card hidden" id="step3">
     <div class="task-title">Шаг 3. Вычисли значения</div>
     <div id="calcContainer" style="text-align:center;"></div>
-    <div class="row-buttons">
-      <button class="btn btn-success" onclick="window.location.href='Logika-5-samostoyatelnaya.html'">К самостоятельной работе →</button>
+    <div class="row-buttons" id="nextLevelContainer">
+      <!-- Кнопка перехода появится здесь -->
     </div>
   </div>
 </div>
 
 <script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
 function checkAnswer(btn, isCorrect, hintId) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
@@ -156,11 +164,32 @@ function nextStep(current, next) {
 let nodes = [], connections = [], pendingPort = null;
 const canvas = document.getElementById('canvas');
 const svg = document.getElementById('svg-lines');
-const palette = document.querySelector('.gate-palette');
 
 function svgAND() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="22" fill="#ffe484" font-family="monospace" font-weight="bold">&amp;</text></svg>`; }
 function svgOR() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="80" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><text x="45" y="38" text-anchor="middle" font-size="20" fill="#ffe484" font-family="monospace" font-weight="bold">1</text></svg>`; }
 function svgNOT() { return `<svg viewBox="0 0 100 60"><rect x="5" y="5" width="70" height="50" rx="2" fill="#4a4a72" stroke="#8c7be0" stroke-width="2.5"/><circle cx="85" cy="30" r="6" fill="#14141f" stroke="#8c7be0" stroke-width="2.5"/></svg>`; }
+
+function initPorts() {
+  // Восстанавливаем порты для источников
+  ['A','B','C'].forEach(k => {
+    const el = document.getElementById('src-'+k);
+    el.querySelectorAll('.port').forEach(p => p.remove());
+    const p = document.createElement('div'); p.className = 'port out';
+    p.onclick = (e) => { e.stopPropagation(); handlePortClick(el, 'out', 'out'); };
+    el.appendChild(p);
+  });
+
+  // Восстанавливаем порт для лампочки (с правильными стилями)
+  const lampEl = document.getElementById('lamp');
+  lampEl.querySelectorAll('.port').forEach(p => p.remove());
+  const lampPort = document.createElement('div'); lampPort.className = 'port in';
+  lampPort.style.left = '-9px';
+  lampPort.style.top = '50%';
+  lampPort.style.transform = 'translateY(-50%)';
+  lampPort.onclick = (e) => { e.stopPropagation(); handlePortClick(lampEl, 'in', 'in'); };
+  lampEl.appendChild(lampPort);
+  lampEl.style.position = 'relative';
+}
 
 function addGate(type) {
   const el = document.createElement('div');
@@ -193,46 +222,22 @@ function addGate(type) {
   document.querySelector(`.palette-gate[data-gate="${type}"]`).classList.add('used');
 }
 
-// Инициализация входов A, B, C
-['A','B','C'].forEach(k => {
-  const el = document.getElementById('src-'+k);
-  const p = document.createElement('div'); p.className = 'port out';
-  p.onclick = (e) => { e.stopPropagation(); handlePortClick(el, 'out', 'out'); };
-  el.appendChild(p);
-});
-
-// Инициализация лампочки
-const lampEl = document.getElementById('lamp');
-const lampPort = document.createElement('div'); lampPort.className = 'port in';
-lampPort.style.left = '0px'; lampPort.style.top = '50%'; lampPort.style.transform = 'translateY(-50%)';
-lampPort.onclick = (e) => { e.stopPropagation(); handlePortClick(lampEl, 'in', 'in'); };
-lampEl.appendChild(lampPort);
-lampEl.style.position = 'relative';
-lampEl.id = 'lamp';
-
 function handlePortClick(el, portName, dir) {
   if (dir === 'out') {
-    // Если уже есть выбранный порт, сбрасываем
     if (pendingPort) clearPending();
     pendingPort = { el, portName };
-    
-    // Включаем слежение за мышкой
     document.addEventListener('mousemove', onMouseMove);
     document.addEventListener('click', onCanvasClick);
   } else {
-    // Если тянем провод
     if (pendingPort) {
       const fromEl = pendingPort.el;
       const toEl = el;
       
-      if (fromEl === toEl) { clearPending(); return; } // Нельзя соединить сам с собой
+      if (fromEl === toEl) { clearPending(); return; }
 
-      // УДАЛЯЕМ СТАРЫЙ ПРОВОД, ЕСЛИ ВХОД УЖЕ ЗАНЯТ (строгий один провод на вход)
       if (dir === 'in') {
         const existingIdx = connections.findIndex(c => c.to.el === toEl && c.to.portName === portName);
-        if (existingIdx !== -1) {
-          connections.splice(existingIdx, 1);
-        }
+        if (existingIdx !== -1) connections.splice(existingIdx, 1);
       }
 
       connections.push({ 
@@ -246,7 +251,6 @@ function handlePortClick(el, portName, dir) {
   }
 }
 
-// --- ОТРИСОВКА ПРОВОДОВ ---
 let mouseX = 0, mouseY = 0;
 
 function onMouseMove(e) {
@@ -258,7 +262,6 @@ function onMouseMove(e) {
 }
 
 function onCanvasClick(e) {
-  // Клик по пустому месту отменяет рисование
   if (e.target === canvas || e.target === svg) clearPending();
 }
 
@@ -273,7 +276,6 @@ function drawLines() {
   const cr = canvas.getBoundingClientRect();
   let html = `<defs><marker id="ah" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#80deea"/></marker></defs>`;
   
-  // Отрисовка существующих проводов
   connections.forEach((c, index) => {
     const fOut = c.from.el.querySelector(`.port.${c.from.portName}`).getBoundingClientRect();
     const tIn = c.to.el.querySelector(`.port.${c.to.portName}`).getBoundingClientRect();
@@ -281,13 +283,11 @@ function drawLines() {
     const x2 = tIn.left - cr.left + 9, y2 = tIn.top - cr.top + 9;
     const dx = Math.abs(x2 - x1) * 0.5;
     
-    // Провод с возможностью удаления по клику
     html += `<path d="M ${x1} ${y1} C ${x1+dx} ${y1}, ${x2-dx} ${y2}, ${x2} ${y2}" 
              stroke="#80deea" stroke-width="3" fill="none" marker-end="url(#ah)" 
              class="wire-path" onclick="deleteWire(${index})"/>`;
   });
 
-  // Отрисовка пунктира (если тянем)
   if (pendingPort) {
     const fOut = pendingPort.el.querySelector(`.port.${pendingPort.portName}`).getBoundingClientRect();
     const x1 = fOut.left - cr.left + 9, y1 = fOut.top - cr.top + 9;
@@ -309,50 +309,61 @@ function clearCanvas() {
   clearPending();
   svg.innerHTML = '';
   document.querySelectorAll('.palette-gate').forEach(p => p.classList.remove('used'));
+  
+  const lampGlass = document.getElementById('lampGlass');
+  const lampSvg = document.getElementById('lampSvg');
+  lampGlass.setAttribute('fill', '#2a2a4a');
+  lampGlass.setAttribute('stroke', '#6b6b9a');
+  lampSvg.className.baseVal = 'lamp-svg';
+  
   document.getElementById('schemeFb').classList.add('hidden');
-  document.getElementById('lamp').className = 'lamp';
-  document.getElementById('lamp').innerText = '?';
+  
+  initPorts();
   drawLines();
 }
 
 function checkScheme() {
-  const lamp = document.getElementById('lamp');
   const fb = document.getElementById('schemeFb');
   fb.classList.remove('hidden');
 
   const andN = nodes.find(n => n.type === 'and');
   const orN  = nodes.find(n => n.type === 'or');
   const notN = nodes.find(n => n.type === 'not');
+  
+  const lampGlass = document.getElementById('lampGlass');
+  const lampSvg = document.getElementById('lampSvg');
 
   if (!andN || !orN || !notN) {
-    lamp.className = 'lamp red';
-    lamp.innerText = '✖';
+    lampGlass.setAttribute('fill', '#ff8a9b');
+    lampSvg.className.baseVal = 'lamp-svg on-red';
     fb.innerHTML = '<span style="color:#ff8a9b">💡 Схема неверна. Вы должны добавить все 3 элемента: И, ИЛИ и НЕ.</span>';
     return;
   }
 
-  // Проверяем конкретные соединения
   const aToAnd = connections.find(c => c.from.el.id === 'src-A' && c.to.el === andN.id);
   const bToAnd = connections.find(c => c.from.el.id === 'src-B' && c.to.el === andN.id);
   const cToNot = connections.find(c => c.from.el.id === 'src-C' && c.to.el === notN.id);
-  
   const andToOr = connections.find(c => c.from.el === andN.id && c.to.el === orN.id);
   const notToOr = connections.find(c => c.from.el === notN.id && c.to.el === orN.id);
   const orToLamp = connections.find(c => c.from.el === orN.id && c.to.el.id === 'lamp');
 
   if (aToAnd && bToAnd && cToNot && andToOr && notToOr && orToLamp) {
-    lamp.className = 'lamp green';
-    lamp.innerText = '💡';
+    lampGlass.setAttribute('fill', '#6effb0');
+    lampGlass.setAttribute('stroke', '#2e7d5e');
+    lampSvg.className.baseVal = 'lamp-svg on-green';
     fb.innerHTML = '<span style="color:#6effb0">✅ Схема собрана абсолютно верно! Переходим дальше...</span>';
     setTimeout(() => nextStep(2, 3), 2000);
   } else {
-    lamp.className = 'lamp red';
-    lamp.innerText = '✖';
+    lampGlass.setAttribute('fill', '#ff8a9b');
+    lampGlass.setAttribute('stroke', '#8b3a4a');
+    lampSvg.className.baseVal = 'lamp-svg on-red';
     fb.innerHTML = '<span style="color:#ff8a9b">💡 Ошибка в соединениях! Проверьте: A и B должны идти на И. C на НЕ. Выход И и выход НЕ на ИЛИ. Выход ИЛИ на лампочку.</span>';
   }
 }
 
-// --- ВЫЧИСЛЕНИЯ (ШАГ 3) ---
+// Инициализация при загрузке
+initPorts();
+
 function loadCalcScheme() {
   const container = document.getElementById('calcContainer');
   const a = Math.floor(Math.random()*2), b = Math.floor(Math.random()*2), c = Math.floor(Math.random()*2);
@@ -380,9 +391,34 @@ function checkCalc(ans1, ans2, ans3) {
   }
 
   if (v1 === ans1 && v2 === ans2 && v3 === ans3) {
-    fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно! Теперь можешь перейти к самостоятельной работе.</span>';
+    fb.innerHTML = '<span style="color:#6effb0">✅ Всё верно! Теперь можешь перейти к следующему заданию.</span>';
+    loadNextButton('Logika-5-2-uroven.html'); // Загружаем кнопку для текущего файла
   } else {
     fb.innerHTML = '<span style="color:#ff8a9b">💡 Проверь расчёты. Сначала выполняется И и НЕ, затем ИЛИ.</span>';
+  }
+}
+
+// --- УМНЫЙ ПЕРЕХОД ---
+async function loadNextButton(currentFile) {
+  const container = document.getElementById('nextLevelContainer');
+  container.innerHTML = '<span style="color:#a0a0c0;">Поиск следующего задания...</span>';
+  
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='${currentTopic.next}'" style="font-size:1.1rem; padding:14px 32px;">Перейти к следующему заданию →</button>`;
+      } else {
+        container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'" style="font-size:1.1rem; padding:14px 32px; background:#4f3f8a;">Тема изучена, перейти на главную 🏠</button>`;
+      }
+    } else {
+      container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'">Тема изучена, перейти на главную 🏠</button>`;
+    }
+  } catch (e) {
+    container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'">Тема изучена, перейти на главную 🏠</button>`;
   }
 }
 </script>
