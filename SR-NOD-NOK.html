@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Самостоятельная работа: НОД и НОК</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem 6rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; width: 100%; }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.1rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.4rem; }
+
+  /* ---------- ЭКРАН АВТОРИЗАЦИИ ---------- */
+  .auth-box {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .auth-box h2 { color: #173a5e; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif; text-align: center; }
+  .auth-box p { color: #4a5f78; margin-bottom: 1.5rem; text-align: center; }
+  .auth-row { margin-bottom: 1.2rem; text-align: left; }
+  .auth-row label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #173a5e; }
+  .auth-row input {
+    width: 100%; padding: 0.8rem 1rem; border-radius: 14px;
+    border: 2px solid #bcd4f0; font-size: 1.05rem; font-family: 'Rubik', sans-serif;
+  }
+  .auth-row input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .auth-error { color: #d9544d; font-weight: 600; margin-bottom: 1rem; min-height: 1.2rem; display: none; text-align: center; }
+  .auth-error.show { display: block; }
+  
+  .btn-start {
+    width: 100%; padding: 1rem; border-radius: 16px; font-size: 1.2rem;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    border: none; font-weight: 700; font-family: 'Rubik', sans-serif;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    margin-bottom: 1.5rem;
+  }
+  .btn-start:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-start:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+
+  .btn-home {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    padding: 0.8rem; border-radius: 16px; font-size: 1rem;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    font-weight: 600; box-shadow: 0 5px 0 #445566; transition: 0.1s;
+  }
+  .btn-home:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+
+  /* ---------- Критерии ---------- */
+  .criteria {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.2rem 1.6rem; margin-bottom: 1.6rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 10px 24px -12px rgba(20, 60, 120, 0.2);
+    display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center;
+  }
+  .criteria .crit-title { font-weight: 700; color: #173a5e; font-size: 1.05rem; width: 100%; margin-bottom: 0.2rem; }
+  .crit-item { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 0.98rem; }
+  .crit-mark { font-weight: 800; font-size: 1.1rem; color: #fff; padding: 0.15rem 0.7rem; border-radius: 30px; }
+  .mark5 { background: #2fbf71; } .mark4 { background: #4a90e2; }
+  .mark3 { background: #f2a03d; } .mark2 { background: #d9544d; }
+
+  /* ---------- Таймер ---------- */
+  .timer-bar {
+    position: sticky; top: 10px; z-index: 50;
+    background: #ffffffec; backdrop-filter: blur(8px);
+    border-radius: 20px; padding: 0.8rem 1.6rem; margin-bottom: 1.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; border: 1px solid #cfe2ff;
+    box-shadow: 0 8px 20px -10px rgba(20, 60, 120, 0.3); flex-wrap: wrap;
+  }
+  .timer-label { font-weight: 600; color: #173a5e; }
+  .timer-value {
+    font-family: 'Montserrat', monospace; font-weight: 800;
+    font-size: 1.5rem; color: #1d4e7a; min-width: 90px; text-align: right;
+  }
+  .timer-value.warn { color: #d9544d; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+  /* ---------- Задания ---------- */
+  .q-card {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.5rem 1.7rem; margin-bottom: 1.3rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 12px 26px -14px rgba(20, 60, 120, 0.25); transition: 0.2s;
+  }
+  .q-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0.9rem; }
+  .q-num {
+    font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.05rem;
+    color: #fff; background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    min-width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 0 #2a4f9e; flex-shrink: 0;
+  }
+  .q-text { font-weight: 600; font-size: 1.08rem; color: #173a5e; padding-top: 6px; }
+  .q-text .inline-math {
+    font-family: 'Montserrat', monospace; font-weight: 700;
+    background: #eef5ff; padding: 0.1rem 0.55rem; border-radius: 10px; color: #0b4a7a;
+  }
+  .q-body { margin-top: 0.4rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 0.6rem; }
+  input[type="text"] {
+    font-family: 'Rubik', sans-serif; font-size: 1.05rem;
+    padding: 0.55rem 1rem; border-radius: 14px; border: 2px solid #bcd4f0;
+    outline: none; background: #fff; min-width: 110px; transition: 0.15s;
+  }
+  input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 0.4rem; }
+  .chip {
+    font-weight: 600; font-size: 1.05rem; padding: 0.45rem 1.1rem;
+    border-radius: 40px; background: #f2f7ff; border: 2px solid #c4daf5;
+    color: #24425f; cursor: pointer; user-select: none; transition: 0.12s;
+  }
+  .chip:hover { background: #e1edff; }
+  .chip.selected { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  
+  /* ---------- Одиночный выбор с таблицами ---------- */
+  .fake-select { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 0.6rem; }
+  .fake-select .opt {
+    padding: 0.45rem 1.1rem; border-radius: 14px; border: 2px solid #c4daf5;
+    background: #fff; font-weight: 600; cursor: pointer; font-size: 1.02rem;
+    transition: 0.12s; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+  .fake-select .opt:hover { background: #eef5ff; }
+  .fake-select .opt.sel { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  
+  .opt-table {
+    display: grid; grid-template-columns: auto 1fr; column-gap: 0;
+    row-gap: 2px; font-family: 'Montserrat', monospace; font-weight: 700;
+    font-size: 0.95rem; text-align: right; margin: 4px 0; min-width: 80px;
+  }
+  .opt-table .ln { padding-right: 10px; color: inherit; }
+  .opt-table .rn {
+    padding-left: 10px; border-left: 2px solid #4a90e2;
+    text-align: left; color: #0b6b3a; min-height: 1.3em;
+  }
+  .opt.sel .opt-table .rn { border-left-color: #fff; color: #fff; }
+  .opt.sel .opt-table .ln { color: #fff; }
+
+  /* ---------- Результаты ---------- */
+  .result-box {
+    margin-top: 2rem; background: #ffffffdd; backdrop-filter: blur(8px);
+    border-radius: 28px; padding: 2rem 2.2rem; border: 2px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3); display: none;
+  }
+  .result-box.show { display: block; animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .result-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.6rem; margin-bottom: 0.6rem; color: #173a5e; }
+  .result-mark {
+    display: inline-block; font-family: 'Montserrat', sans-serif; font-weight: 800;
+    font-size: 3rem; padding: 0.3rem 1.6rem; border-radius: 28px; color: #fff;
+    margin: 0.6rem 0; box-shadow: 0 10px 0 rgba(0,0,0,0.12);
+  }
+  .result-summary { font-size: 1.1rem; margin: 0.6rem 0 1.2rem; color: #2c3e50; }
+  .wrong-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .wrong-item {
+    background: #fff5f3; border-left: 8px solid #e0644d; border-radius: 16px;
+    padding: 0.9rem 1.2rem; font-size: 1rem;
+  }
+  .wrong-item .wq { font-weight: 700; color: #8a2c1c; margin-bottom: 4px; }
+  .wrong-item .wdetail { color: #4a3a37; margin-bottom: 4px;}
+  .wrong-item .wdetail b { color: #8a2c1c; }
+  .wrong-item .wcorrect { color: #15623b; font-weight: 600; }
+  .all-ok { background: #e3f9ec; border-left: 8px solid #2fbf71; border-radius: 16px; padding: 1rem 1.3rem; color: #15623b; font-weight: 600; font-size: 1.05rem; }
+  
+  .btn-check {
+    font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.2rem;
+    padding: 0.9rem 2.4rem; border: none; border-radius: 20px;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    display: block; width: 100%; margin-top: 1.6rem;
+  }
+  .btn-check:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-check:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-check:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+  
+  .btn-restart {
+    font-family: 'Rubik', sans-serif; font-weight: 600; font-size: 1rem;
+    padding: 0.6rem 1.6rem; border: none; border-radius: 16px;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    cursor: pointer; box-shadow: 0 5px 0 #445566; margin-top: 1.2rem;
+    display: inline-block; text-decoration: none;
+  }
+  .btn-restart:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+  
+  .hidden { display: none !important; }
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.7rem 5rem; }
+    h1 { font-size: 1.6rem; }
+    .q-card { padding: 1.2rem 1.1rem; }
+    .criteria { padding: 1rem 1.1rem; }
+    .result-box { padding: 1.4rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- ЭКРАН 1: АВТОРИЗАЦИЯ -->
+  <div id="authScreen" class="auth-box">
+    <h2>📝 Вход в тест</h2>
+    <p>Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
+    
+    <div style="background:#f0f6ff; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #3a5f8a; text-align: center;">
+      Пример: <b>Иванов Иван</b> и класс <b>5Л</b>
+    </div>
+
+    <div class="auth-row">
+      <label>ФИО (как в журнале)</label>
+      <input type="text" id="inpFIO" placeholder="Иванов Иван" autocomplete="off">
+    </div>
+    <div class="auth-row">
+      <label>Класс</label>
+      <input type="text" id="inpKlass" placeholder="5Л" autocomplete="off">
+    </div>
+    <div class="auth-error" id="authError"></div>
+    
+    <button class="btn-start" id="btnStart" onclick="checkStudent()">Проверить и начать</button>
+    
+    <a href="index.html" class="btn-home">🏠 Вернуться на главную</a>
+  </div>
+
+  <!-- ЭКРАН 2: САМ ТЕСТ (скрыт) -->
+  <div id="quizScreen" class="hidden">
+    <h1>📝 Самостоятельная работа</h1>
+    <p class="subtitle">Тема: НОД и НОК · 10 вопросов · 10 минут</p>
+
+    <div class="criteria">
+      <div class="crit-title">📊 Критерии оценивания (из 10 заданий):</div>
+      <div class="crit-item"><span class="crit-mark mark5">5</span> 9–10 верных</div>
+      <div class="crit-item"><span class="crit-mark mark4">4</span> 7–8 верных</div>
+      <div class="crit-item"><span class="crit-mark mark3">3</span> 5–6 верных</div>
+      <div class="crit-item"><span class="crit-mark mark2">2</span> 0–4 верных</div>
+    </div>
+
+    <div class="timer-bar">
+      <span class="timer-label">⏱️ Осталось времени:</span>
+      <span class="timer-value" id="timer">10:00</span>
+    </div>
+
+    <div id="quiz"></div>
+
+    <button class="btn-check" id="checkBtn" onclick="finishQuiz()">Проверить результаты</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-title">📋 Результат</div>
+      <div id="resultMark" class="result-mark"></div>
+      <div class="result-summary" id="resultSummary"></div>
+      <div id="wrongContainer"></div>
+      <a href="index.html" class="btn-restart">🏠 Вернуться на главную</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+let studentName = '';
+let studentClass = '';
+let quizStarted = false;
+
+/* ============================================================
+   АВТОРИЗАЦИЯ
+============================================================ */
+async function checkStudent() {
+  const fio = document.getElementById('inpFIO').value.trim();
+  const klass = document.getElementById('inpKlass').value.trim().toUpperCase();
+  const err = document.getElementById('authError');
+  err.classList.remove('show');
+
+  if (fio.length < 5) { err.textContent = 'Введите имя и фамилию полностью.'; err.classList.add('show'); return; }
+  if (klass.length < 1) { err.textContent = 'Введите ваш класс (например, 5Л).'; err.classList.add('show'); return; }
+
+  const btn = document.getElementById('btnStart');
+  btn.disabled = true; btn.innerText = 'Проверяем...';
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=checkStudent&fio=${encodeURIComponent(fio)}&klass=${encodeURIComponent(klass)}`);
+    const data = await resp.json();
+    if (!data.found) {
+      err.textContent = 'Ошибка: ученик не найден в списке этого класса.';
+      err.classList.add('show');
+      btn.disabled = false; btn.innerText = 'Проверить и начать';
+      return;
+    }
+  } catch (e) {
+    err.textContent = 'Ошибка сети. Попробуйте позже.';
+    err.classList.add('show');
+    btn.disabled = false; btn.innerText = 'Проверить и начать';
+    return;
+  }
+
+  studentName = fio;
+  studentClass = klass;
+  quizStarted = true;
+  
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  
+  startQuiz();
+}
+
+/* ============================================================
+   БАНК ВОПРОСОВ
+============================================================ */
+const QUESTION_BANK = [
+  // ---------- INPUT: НОД ----------
+  { id: 1, type: 'input', text: 'Найди НОД чисел <span class="inline-math">12</span> и <span class="inline-math">18</span>.', accept: ['6'] },
+  { id: 2, type: 'input', text: 'Найди НОД чисел <span class="inline-math">24</span> и <span class="inline-math">36</span>.', accept: ['12'] },
+  { id: 3, type: 'input', text: 'Найди НОД чисел <span class="inline-math">48</span> и <span class="inline-math">60</span>.', accept: ['12'] },
+  { id: 4, type: 'input', text: 'Найди НОД чисел <span class="inline-math">72</span> и <span class="inline-math">108</span>.', accept: ['36'] },
+  { id: 5, type: 'input', text: 'Найди НОД чисел <span class="inline-math">168</span> и <span class="inline-math">180</span>.', accept: ['12'] },
+  { id: 6, type: 'input', text: 'Найди НОД чисел <span class="inline-math">360</span> и <span class="inline-math">1050</span>.', accept: ['30'] },
+  { id: 7, type: 'input', text: 'Найди НОД чисел <span class="inline-math">270</span>, <span class="inline-math">450</span> и <span class="inline-math">555</span>.', accept: ['15'] },
+  { id: 8, type: 'input', text: 'Найди НОД чисел <span class="inline-math">120</span> и <span class="inline-math">252</span>.', accept: ['12'] },
+  { id: 9, type: 'input', text: 'Найди НОД чисел <span class="inline-math">96</span> и <span class="inline-math">112</span>.', accept: ['16'] },
+  { id: 10, type: 'input', text: 'Найди НОД чисел <span class="inline-math">45</span> и <span class="inline-math">75</span>.', accept: ['15'] },
+  { id: 11, type: 'input', text: 'Найди НОД чисел <span class="inline-math">54</span> и <span class="inline-math">86</span>.', accept: ['2'] },
+  { id: 12, type: 'input', text: 'Найди НОД чисел <span class="inline-math">28</span>, <span class="inline-math">24</span> и <span class="inline-math">76</span>.', accept: ['4'] },
+  { id: 13, type: 'input', text: 'Найди НОД чисел <span class="inline-math">98</span> и <span class="inline-math">35</span>.', accept: ['7'] },
+  { id: 14, type: 'input', text: 'Найди НОД чисел <span class="inline-math">40</span> и <span class="inline-math">32</span>.', accept: ['8'] },
+  { id: 15, type: 'input', text: 'Найди НОД чисел <span class="inline-math">16</span> и <span class="inline-math">28</span>.', accept: ['4'] },
+
+  // ---------- INPUT: НОК ----------
+  { id: 16, type: 'input', text: 'Найди НОК чисел <span class="inline-math">6</span> и <span class="inline-math">9</span>.', accept: ['18'] },
+  { id: 17, type: 'input', text: 'Найди НОК чисел <span class="inline-math">15</span> и <span class="inline-math">18</span>.', accept: ['90'] },
+  { id: 18, type: 'input', text: 'Найди НОК чисел <span class="inline-math">36</span> и <span class="inline-math">48</span>.', accept: ['144'] },
+  { id: 19, type: 'input', text: 'Найди НОК чисел <span class="inline-math">252</span> и <span class="inline-math">360</span>.', accept: ['2520'] },
+  { id: 20, type: 'input', text: 'Найди НОК чисел <span class="inline-math">72</span>, <span class="inline-math">120</span> и <span class="inline-math">264</span>.', accept: ['3960'] },
+  { id: 21, type: 'input', text: 'Найди НОК чисел <span class="inline-math">18</span> и <span class="inline-math">24</span>.', accept: ['72'] },
+  { id: 22, type: 'input', text: 'Найди НОК чисел <span class="inline-math">24</span> и <span class="inline-math">60</span>.', accept: ['120'] },
+  { id: 23, type: 'input', text: 'Найди НОК чисел <span class="inline-math">12</span> и <span class="inline-math">16</span>.', accept: ['48'] },
+  { id: 24, type: 'input', text: 'Найди НОК чисел <span class="inline-math">40</span> и <span class="inline-math">32</span>.', accept: ['160'] },
+  { id: 25, type: 'input', text: 'Найди НОК чисел <span class="inline-math">98</span> и <span class="inline-math">35</span>.', accept: ['490'] },
+  { id: 26, type: 'input', text: 'Найди НОК чисел <span class="inline-math">54</span> и <span class="inline-math">86</span>.', accept: ['2322'] },
+  { id: 27, type: 'input', text: 'Найди НОК чисел <span class="inline-math">4</span> и <span class="inline-math">10</span>.', accept: ['20'] },
+  { id: 28, type: 'input', text: 'Найди НОК чисел <span class="inline-math">8</span> и <span class="inline-math">12</span>.', accept: ['24'] },
+  { id: 29, type: 'input', text: 'Найди НОК чисел <span class="inline-math">9</span> и <span class="inline-math">12</span>.', accept: ['36'] },
+  { id: 30, type: 'input', text: 'Найди НОК чисел <span class="inline-math">10</span> и <span class="inline-math">15</span>.', accept: ['30'] },
+
+  // ---------- INPUT: делители / сумма ----------
+  { id: 31, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">18</span>?', accept: ['6'] },
+  { id: 32, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">36</span>?', accept: ['9'] },
+  { id: 33, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">24</span>?', accept: ['8'] },
+  { id: 34, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">100</span>?', accept: ['9'] },
+  { id: 35, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">12</span> равна?', accept: ['28'] },
+  { id: 36, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">28</span> равна?', accept: ['56'] },
+  { id: 37, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">10</span> равна?', accept: ['18'] },
+  { id: 38, type: 'input', text: 'Наибольший делитель числа <span class="inline-math">48</span>, меньший самого числа, — это?', accept: ['24'] },
+  { id: 39, type: 'input', text: 'Наибольший делитель числа <span class="inline-math">60</span>, меньший самого числа, — это?', accept: ['30'] },
+  { id: 40, type: 'input', text: 'Наименьшее кратное числа <span class="inline-math">7</span>, большее самого числа, — это?', accept: ['14'] },
+
+  // ---------- SINGLE ----------
+  { id: 41, type: 'single', text: 'Какое из чисел является делителем числа <span class="inline-math">24</span>?', options: ['5','7','8','9'], answer: '8' },
+  { id: 42, type: 'single', text: 'Какое из чисел кратно <span class="inline-math">6</span>?', options: ['14','18','22','26'], answer: '18' },
+  { id: 43, type: 'single', text: 'Какое число имеет ровно 2 делителя?', options: ['9','11','15','21'], answer: '11' },
+  { id: 44, type: 'single', text: 'НОД(12, 18) равен:', options: ['2','3','6','9'], answer: '6' },
+  { id: 45, type: 'single', text: 'НОК(6, 10) равен:', options: ['20','30','40','60'], answer: '30' },
+  { id: 46, type: 'single', text: 'Какое число не является делителем <span class="inline-math">40</span>?', options: ['4','5','8','12'], answer: '12' },
+  { id: 47, type: 'single', text: 'НОД(20, 30) равен:', options: ['5','10','15','20'], answer: '10' },
+  { id: 48, type: 'single', text: 'НОК(4, 10) равен:', options: ['10','20','30','40'], answer: '20' },
+  { id: 49, type: 'single', text: 'Какое из чисел кратно <span class="inline-math">9</span> и чётно одновременно?', options: ['27','36','45','63'], answer: '36' },
+  { id: 50, type: 'single', text: 'Какое из чисел является кратным <span class="inline-math">11</span>?', options: ['99','101','112','123'], answer: '99' },
+
+  // ---------- MULTI ----------
+  { id: 51, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">16</span>.', options: ['1','2','3','4','8','16'], answer: ['1','2','4','8','16'] },
+  { id: 52, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">5</span>.', options: ['10','12','15','20','22','25'], answer: ['10','15','20','25'] },
+  { id: 53, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">20</span>.', options: ['1','2','3','4','5','10','20'], answer: ['1','2','4','5','10','20'] },
+  { id: 54, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">4</span>.', options: ['8','10','12','16','18','20'], answer: ['8','12','16','20'] },
+  { id: 55, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">18</span>.', options: ['1','2','3','6','9','18','24'], answer: ['1','2','3','6','9','18'] },
+  { id: 56, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">3</span>.', options: ['6','8','9','12','14','15'], answer: ['6','9','12','15'] },
+  { id: 57, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">24</span>.', options: ['1','2','3','4','6','8','12','24'], answer: ['1','2','3','4','6','8','12','24'] },
+  { id: 58, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">6</span>.', options: ['6','10','12','14','18','24'], answer: ['6','12','18','24'] },
+  { id: 59, type: 'multi', text: 'Выбери все числа, которые делят <span class="inline-math">12</span> и кратны <span class="inline-math">2</span>.', options: ['1','2','3','4','6','12'], answer: ['2','4','6','12'] },
+  { id: 60, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">10</span>.', options: ['10','15','20','25','30','50'], answer: ['10','20','30','50'] },
+
+  // ---------- FACTOR-INPUT ----------
+  { id: 61, type: 'input', text: 'Запиши разложение числа <span class="inline-math">24</span> на простые множители в ряд (например, 2*2*2*3).', accept: ['2*2*2*3','2·2·2·3','2×2×2×3','2 2 2 3'] },
+  { id: 62, type: 'input', text: 'Запиши разложение числа <span class="inline-math">36</span> на простые множители в ряд (например, 2*2*3*3).', accept: ['2*2*3*3','2·2·3·3','2×2×3×3','2 2 3 3'] },
+  { id: 63, type: 'input', text: 'Запиши разложение числа <span class="inline-math">60</span> на простые множители в ряд (например, 2*2*3*5).', accept: ['2*2*3*5','2·2·3·5','2×2×3×5','2 2 3 5'] },
+  { id: 64, type: 'input', text: 'Запиши разложение числа <span class="inline-math">48</span> на простые множители в ряд (например, 2*2*2*2*3).', accept: ['2*2*2*2*3','2·2·2·2·3','2×2×2×2×3','2 2 2 2 3'] },
+  { id: 65, type: 'input', text: 'Запиши разложение числа <span class="inline-math">72</span> на простые множители в ряд (например, 2*2*2*3*3).', accept: ['2*2*2*3*3','2·2·2·3·3','2×2×2×3×3','2 2 2 3 3'] },
+  { id: 66, type: 'input', text: 'Запиши разложение числа <span class="inline-math">120</span> на простые множители в ряд (например, 2*2*2*3*5).', accept: ['2*2*2*3*5','2·2·2·3·5','2×2×2×3×5','2 2 2 3 5'] },
+
+  // ---------- FACTOR-SINGLE ----------
+  { 
+    id: 67, type: 'single', text: 'В каком разложении числа <span class="inline-math">18</span> в столбик допущена ошибка?', 
+    options: [
+      '<div class="opt-table"><div class="ln">18</div><div class="rn">2</div><div class="ln">9</div><div class="rn">3</div><div class="ln">3</div><div class="rn">3</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">18</div><div class="rn">3</div><div class="ln">6</div><div class="rn">2</div><div class="ln">3</div><div class="rn">3</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">18</div><div class="rn">2</div><div class="ln">9</div><div class="rn">9</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">18</div><div class="rn">3</div><div class="ln">6</div><div class="rn">3</div><div class="ln">2</div><div class="rn">2</div><div class="ln">1</div><div class="rn"></div></div>'
+    ], 
+    answer: '<div class="opt-table"><div class="ln">18</div><div class="rn">2</div><div class="ln">9</div><div class="rn">9</div><div class="ln">1</div><div class="rn"></div></div>' 
+  },
+  { 
+    id: 68, type: 'single', text: 'В каком разложении числа <span class="inline-math">45</span> в столбик допущена ошибка?', 
+    options: [
+      '<div class="opt-table"><div class="ln">45</div><div class="rn">3</div><div class="ln">15</div><div class="rn">3</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">45</div><div class="rn">5</div><div class="ln">9</div><div class="rn">3</div><div class="ln">3</div><div class="rn">3</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">45</div><div class="rn">3</div><div class="ln">15</div><div class="rn">5</div><div class="ln">3</div><div class="rn">3</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">45</div><div class="rn">9</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>'
+    ], 
+    answer: '<div class="opt-table"><div class="ln">45</div><div class="rn">9</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>' 
+  },
+  { 
+    id: 69, type: 'single', text: 'В каком разложении числа <span class="inline-math">50</span> в столбик допущена ошибка?', 
+    options: [
+      '<div class="opt-table"><div class="ln">50</div><div class="rn">2</div><div class="ln">25</div><div class="rn">5</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">50</div><div class="rn">5</div><div class="ln">10</div><div class="rn">2</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">50</div><div class="rn">2</div><div class="ln">25</div><div class="rn">25</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">50</div><div class="rn">10</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>'
+    ], 
+    answer: '<div class="opt-table"><div class="ln">50</div><div class="rn">2</div><div class="ln">25</div><div class="rn">25</div><div class="ln">1</div><div class="rn"></div></div>' 
+  },
+  { 
+    id: 70, type: 'single', text: 'В каком разложении числа <span class="inline-math">84</span> в столбик допущена ошибка?', 
+    options: [
+      '<div class="opt-table"><div class="ln">84</div><div class="rn">2</div><div class="ln">42</div><div class="rn">2</div><div class="ln">21</div><div class="rn">3</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">84</div><div class="rn">2</div><div class="ln">42</div><div class="rn">3</div><div class="ln">14</div><div class="rn">2</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">84</div><div class="rn">4</div><div class="ln">21</div><div class="rn">3</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">84</div><div class="rn">3</div><div class="ln">28</div><div class="rn">2</div><div class="ln">14</div><div class="rn">2</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>'
+    ], 
+    answer: '<div class="opt-table"><div class="ln">84</div><div class="rn">4</div><div class="ln">21</div><div class="rn">3</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>' 
+  },
+  { 
+    id: 71, type: 'single', text: 'В каком разложении числа <span class="inline-math">90</span> в столбик допущена ошибка?', 
+    options: [
+      '<div class="opt-table"><div class="ln">90</div><div class="rn">2</div><div class="ln">45</div><div class="rn">3</div><div class="ln">15</div><div class="rn">3</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">90</div><div class="rn">3</div><div class="ln">30</div><div class="rn">3</div><div class="ln">10</div><div class="rn">2</div><div class="ln">5</div><div class="rn">5</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">90</div><div class="rn">2</div><div class="ln">45</div><div class="rn">5</div><div class="ln">9</div><div class="rn">3</div><div class="ln">3</div><div class="rn">3</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">90</div><div class="rn">9</div><div class="ln">10</div><div class="rn">10</div><div class="ln">1</div><div class="rn"></div></div>'
+    ], 
+    answer: '<div class="opt-table"><div class="ln">90</div><div class="rn">9</div><div class="ln">10</div><div class="rn">10</div><div class="ln">1</div><div class="rn"></div></div>' 
+  },
+  { 
+    id: 72, type: 'single', text: 'В каком разложении числа <span class="inline-math">126</span> в столбик допущена ошибка?', 
+    options: [
+      '<div class="opt-table"><div class="ln">126</div><div class="rn">2</div><div class="ln">63</div><div class="rn">3</div><div class="ln">21</div><div class="rn">3</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">126</div><div class="rn">3</div><div class="ln">42</div><div class="rn">2</div><div class="ln">21</div><div class="rn">3</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">126</div><div class="rn">2</div><div class="ln">63</div><div class="rn">7</div><div class="ln">9</div><div class="rn">3</div><div class="ln">3</div><div class="rn">3</div><div class="ln">1</div><div class="rn"></div></div>',
+      '<div class="opt-table"><div class="ln">126</div><div class="rn">6</div><div class="ln">21</div><div class="rn">3</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>'
+    ], 
+    answer: '<div class="opt-table"><div class="ln">126</div><div class="rn">6</div><div class="ln">21</div><div class="rn">3</div><div class="ln">7</div><div class="rn">7</div><div class="ln">1</div><div class="rn"></div></div>' 
+  }
+];
+
+/* ============================================================
+   ЛОГИКА ТЕСТА
+============================================================ */
+let selectedQuestions = [];
+let userAnswers = [];
+let timeLeft = 600;
+let timerInterval = null;
+let quizFinished = false;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  selectedQuestions = shuffle(QUESTION_BANK).slice(0, 10);
+  userAnswers = selectedQuestions.map(() => ({ value: null }));
+  
+  renderQuiz();
+  startTimer();
+}
+
+function renderQuiz() {
+  const quizContainer = document.getElementById('quiz');
+  quizContainer.innerHTML = '';
+  
+  selectedQuestions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard-' + idx;
+
+    const head = document.createElement('div');
+    head.className = 'q-head';
+    const num = document.createElement('div');
+    num.className = 'q-num';
+    num.textContent = idx + 1;
+    const text = document.createElement('div');
+    text.className = 'q-text';
+    text.innerHTML = q.text;
+    head.appendChild(num);
+    head.appendChild(text);
+    card.appendChild(head);
+
+    const body = document.createElement('div');
+    body.className = 'q-body';
+
+    if (q.type === 'input') {
+      const row = document.createElement('div');
+      row.className = 'row';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.placeholder = q.id >= 61 ? 'например, 2*2*3' : 'Введи ответ';
+      inp.dataset.idx = idx;
+      inp.addEventListener('input', () => {
+        userAnswers[idx].value = inp.value.trim();
+      });
+      row.appendChild(inp);
+      body.appendChild(row);
+    } else if (q.type === 'single') {
+      const fs = document.createElement('div');
+      fs.className = 'fake-select';
+      q.options.forEach(opt => {
+        const el = document.createElement('div');
+        el.className = 'opt';
+        el.innerHTML = opt;
+        el.addEventListener('click', () => {
+          fs.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+          el.classList.add('sel');
+          userAnswers[idx].value = opt;
+        });
+        fs.appendChild(el);
+      });
+      body.appendChild(fs);
+    } else if (q.type === 'multi') {
+      const cg = document.createElement('div');
+      cg.className = 'chip-group';
+      q.options.forEach(opt => {
+        const el = document.createElement('span');
+        el.className = 'chip';
+        el.textContent = opt;
+        el.dataset.val = opt;
+        el.addEventListener('click', () => {
+          el.classList.toggle('selected');
+          const selected = [];
+          cg.querySelectorAll('.chip.selected').forEach(c => selected.push(c.dataset.val));
+          userAnswers[idx].value = selected.length ? selected : null;
+        });
+        cg.appendChild(el);
+      });
+      body.appendChild(cg);
+    }
+    card.appendChild(body);
+    quizContainer.appendChild(card);
+  });
+}
+
+function startTimer() {
+  timeLeft = 600;
+  updateTimerDisplay();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (quizFinished) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (timeLeft <= 60) el.classList.add('warn');
+  else el.classList.remove('warn');
+}
+
+function isCorrect(q, userVal) {
+  if (q.type === 'input') {
+    if (userVal === null || userVal === undefined) return false;
+    const u = String(userVal).trim().toLowerCase().replace(/\s+/g, '').replace(/×/g, '*').replace(/·/g, '*').replace(/,/g, '');
+    return q.accept.some(a => String(a).toLowerCase().replace(/\s+/g, '').replace(/×/g, '*').replace(/·/g, '*').replace(/,/g, '') === u);
+  }
+  if (q.type === 'single') {
+    if (userVal === null || userVal === undefined) return false;
+    return String(userVal) === String(q.answer);
+  }
+  if (q.type === 'multi') {
+    if (!userVal || userVal.length === 0) return false;
+    const u = userVal.map(String).sort().join(',');
+    const a = q.answer.map(String).sort().join(',');
+    return u === a;
+  }
+  return false;
+}
+
+async function finishQuiz(auto = false) {
+  if (quizFinished) return;
+  quizFinished = true;
+  clearInterval(timerInterval);
+
+  document.getElementById('checkBtn').disabled = true;
+  document.querySelectorAll('input').forEach(i => i.disabled = true);
+  document.querySelectorAll('.chip, .opt').forEach(el => {
+    el.style.pointerEvents = 'none';
+  });
+
+  let correctCount = 0;
+  const wrongDetails = [];
+
+  selectedQuestions.forEach((q, idx) => {
+    const userVal = userAnswers[idx].value;
+    const ok = isCorrect(q, userVal);
+    if (ok) {
+      correctCount++;
+    } else {
+      let userDisplay;
+      if (userVal === null || userVal === undefined || (Array.isArray(userVal) && userVal.length === 0) || userVal === '') {
+        userDisplay = '— (нет ответа)';
+      } else if (Array.isArray(userVal)) {
+        userDisplay = userVal.join(', ');
+      } else {
+        userDisplay = String(userVal);
+      }
+      let correctDisplay;
+      if (q.type === 'input') correctDisplay = q.accept[0];
+      else if (q.type === 'single') correctDisplay = q.answer;
+      else if (q.type === 'multi') correctDisplay = q.answer.join(', ');
+      
+      wrongDetails.push({
+        num: idx + 1,
+        text: q.text,
+        userDisplay: userDisplay,
+        correctDisplay: correctDisplay,
+        isFactorTable: q.id >= 67 && q.id <= 72
+      });
+    }
+  });
+
+  let markText = '2', markClass = 'mark2';
+  if (correctCount >= 9) { markText = '5'; markClass = 'mark5'; }
+  else if (correctCount >= 7) { markText = '4'; markClass = 'mark4'; }
+  else if (correctCount >= 5) { markText = '3'; markClass = 'mark3'; }
+
+  // Отправка в Google Таблицу
+  const date = new Date().toLocaleString('ru-RU');
+  try {
+    await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'addResult',
+        fio: studentName,
+        klass: studentClass,
+        topic: 'НОД и НОК',
+        grade: markText,
+        datetime: date,
+        correct: correctCount
+      })
+    });
+  } catch (e) {
+    console.log('Ошибка отправки результата:', e);
+  }
+
+  // Показ результатов
+  const resultBox = document.getElementById('resultBox');
+  resultBox.classList.add('show');
+
+  const markEl = document.getElementById('resultMark');
+  markEl.textContent = markText;
+  markEl.className = 'result-mark ' + markClass;
+
+  const summary = document.getElementById('resultSummary');
+  summary.innerHTML = `Правильно выполнено: <b>${correctCount} из 10</b> заданий. ` +
+    (auto ? '<br><span style="color:#d9544d;font-weight:600;">⏰ Время вышло — тест завершён автоматически.</span>' : '');
+
+  const wc = document.getElementById('wrongContainer');
+  wc.innerHTML = '';
+  if (wrongDetails.length === 0) {
+    const okDiv = document.createElement('div');
+    okDiv.className = 'all-ok';
+    okDiv.textContent = '🎉 Отлично! Все задания выполнены без ошибок.';
+    wc.appendChild(okDiv);
+  } else {
+    const title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;color:#173a5e;margin-bottom:0.8rem;font-size:1.1rem;';
+    title.textContent = `❌ Ошибки в заданиях (${wrongDetails.length}):`;
+    wc.appendChild(title);
+
+    const ul = document.createElement('ul');
+    ul.className = 'wrong-list';
+    wrongDetails.forEach(w => {
+      const li = document.createElement('li');
+      li.className = 'wrong-item';
+      
+      let userHtml = w.userDisplay;
+      let correctHtml = w.correctDisplay;
+      
+      if (w.isFactorTable) {
+        userHtml = w.userDisplay.includes('opt-table') ? w.userDisplay : `<i>Не выбран вариант</i>`;
+      }
+
+      li.innerHTML = `
+        <div class="wq">Задание ${w.num}: ${w.text}</div>
+        <div class="wdetail">Твой ответ: <br><b>${userHtml}</b></div>
+        <div class="wcorrect">Правильный ответ:<br>${correctHtml}</div>
+      `;
+      ul.appendChild(li);
+    });
+    wc.appendChild(ul);
+  }
+
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('beforeunload', (e) => {
+  if (quizStarted && !quizFinished) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
