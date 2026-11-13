@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Делители и кратные — интерактивный тренажёр</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.5;
+  }
+  .wrap {
+    max-width: 980px;
+    width: 100%;
+  }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.3rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.4rem;
+  }
+  .subtitle {
+    color: #4a5f78;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  .task {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 1.8rem 2rem;
+    margin-bottom: 1.8rem;
+    box-shadow: 0 14px 30px -12px rgba(20, 60, 120, 0.2);
+    border: 1px solid #cfe2ff;
+    transition: 0.2s;
+  }
+  .task:hover { box-shadow: 0 18px 36px -12px rgba(20, 60, 120, 0.3); }
+  .task-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+  }
+  .level {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.3rem 0.9rem;
+    border-radius: 30px;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .lvl-easy { background: #2fbf71; }
+  .lvl-mid { background: #f2a03d; }
+  .lvl-hard { background: #d9544d; }
+  .lvl-olymp { background: #7b4fd1; }
+  .task-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #173a5e;
+    flex: 1;
+  }
+  .task p.desc { margin-bottom: 1rem; color: #2c3e50; font-size: 1.05rem; }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 0.8rem;
+  }
+  input[type="text"], input[type="number"] {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.05rem;
+    padding: 0.55rem 1rem;
+    border-radius: 16px;
+    border: 2px solid #bcd4f0;
+    outline: none;
+    background: #fff;
+    min-width: 100px;
+    transition: 0.15s;
+  }
+  input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  button {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.6rem 1.4rem;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #2a4f9e;
+    transition: 0.1s;
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 6px 0 #2a4f9e; }
+  button:active { transform: translateY(3px); box-shadow: 0 2px 0 #2a4f9e; }
+  button.hint-btn {
+    background: linear-gradient(135deg, #f2a03d, #e08a2a);
+    box-shadow: 0 5px 0 #b56718;
+  }
+  button.hint-btn:active { box-shadow: 0 2px 0 #b56718; }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  .chip {
+    font-weight: 600;
+    font-size: 1.15rem;
+    padding: 0.55rem 1.3rem;
+    border-radius: 40px;
+    background: #f2f7ff;
+    border: 2px solid #c4daf5;
+    color: #24425f;
+    cursor: pointer;
+    user-select: none;
+    transition: 0.12s;
+  }
+  .chip:hover { background: #e1edff; transform: translateY(-2px); }
+  .chip.selected { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  .chip.correct { background: #2fbf71 !important; border-color: #2fbf71 !important; color: #fff !important; }
+  .chip.wrong { background: #ff8f7a !important; border-color: #ff8f7a !important; color: #fff !important; }
+  .feedback {
+    margin-top: 1rem;
+    border-radius: 18px;
+    padding: 0.9rem 1.3rem;
+    font-size: 1rem;
+    display: none;
+    animation: fadeIn 0.25s ease-out;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #e3f9ec; border-left: 8px solid #2fbf71; color: #15623b; }
+  .feedback.err { background: #ffefec; border-left: 8px solid #e0644d; color: #8a2c1c; }
+  .feedback.hint { background: #fff6e5; border-left: 8px solid #f2a03d; color: #7a4a0d; }
+  .feedback.info { background: #eaf2ff; border-left: 8px solid #4a90e2; color: #1e3f6b; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .inline-math {
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    background: #eef5ff;
+    padding: 0.15rem 0.6rem;
+    border-radius: 10px;
+    color: #0b4a7a;
+  }
+  .fake-select {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 0.6rem;
+  }
+  .fake-select .opt {
+    padding: 0.5rem 1.2rem;
+    border-radius: 14px;
+    border: 2px solid #c4daf5;
+    background: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1.05rem;
+  }
+  .fake-select .opt.sel { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  .fake-select .opt.ok { background: #2fbf71; border-color: #2fbf71; color: #fff; }
+  .fake-select .opt.no { background: #ff8f7a; border-color: #ff8f7a; color: #fff; }
+  .sorted-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 0.8rem; }
+  .sort-item {
+    background: #fff;
+    border: 2px solid #c4daf5;
+    border-radius: 16px;
+    padding: 0.5rem 1.1rem;
+    font-weight: 700;
+    font-size: 1.15rem;
+    cursor: pointer;
+  }
+  .sort-item.done { border-color: #2fbf71; background: #e3f9ec; color: #15623b; }
+  .hint-box {
+    display: none;
+    background: #fff6e5;
+    border-radius: 14px;
+    padding: 0.9rem 1.3rem;
+    margin-top: 0.8rem;
+    border-left: 8px solid #f2a03d;
+    color: #6b4408;
+    font-size: 0.98rem;
+  }
+  .hint-box.show { display: block; }
+  .score-banner {
+    position: sticky;
+    bottom: 0;
+    background: #ffffffec;
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 1rem 1.8rem;
+    box-shadow: 0 -6px 30px rgba(30, 60, 120, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+    border: 1px solid #cfe2ff;
+  }
+  .score-banner .score { font-weight: 800; font-size: 1.2rem; color: #1d4e7a; }
+  .score-banner .reset {
+    background: linear-gradient(135deg, #8899aa, #667788);
+    box-shadow: 0 5px 0 #445566;
+    font-size: 0.9rem;
+    padding: 0.45rem 1.1rem;
+  }
+  
+  /* Стили для кнопки перехода */
+  .next-step-container {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    display: none; /* Скрыто по умолчанию */
+  }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #23995a);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #176d3e;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #176d3e;
+  }
+  .btn-next:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #176d3e;
+  }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.7rem; }
+    h1 { font-size: 1.7rem; }
+    .task { padding: 1.3rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧩 Делители и кратные: тренажёр</h1>
+  <p class="subtitle">8 заданий разного уровня — от простых до олимпиадных. Ошибся? Получишь подсказку!</p>
+
+  <!-- ============ ЗАДАНИЕ 1 ============ -->
+  <div class="task" id="task1">
+    <div class="task-head">
+      <span class="level lvl-easy">Уровень 1 · лёгкий</span>
+      <span class="task-title">Выбери все делители числа 12</span>
+    </div>
+    <p class="desc">Нажми на числа, которые делят 12 без остатка. Затем проверь себя.</p>
+    <div class="chip-group" id="t1-chips">
+      <span class="chip" data-val="1">1</span>
+      <span class="chip" data-val="2">2</span>
+      <span class="chip" data-val="3">3</span>
+      <span class="chip" data-val="4">4</span>
+      <span class="chip" data-val="5">5</span>
+      <span class="chip" data-val="6">6</span>
+      <span class="chip" data-val="8">8</span>
+      <span class="chip" data-val="12">12</span>
+    </div>
+    <div class="row">
+      <button onclick="checkT1()">Проверить</button>
+      <button class="hint-btn" onclick="hintT1()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t1-hint">💡 Вспомни: делитель — число, на которое данное число делится без остатка. Проверь каждое число: 12 : 1, 12 : 2, 12 : 3 и так далее.</div>
+    <div class="feedback" id="t1-fb"></div>
+  </div>
+
+  <!-- ============ ЗАДАНИЕ 2 ============ -->
+  <div class="task" id="task2">
+    <div class="task-head">
+      <span class="level lvl-easy">Уровень 1 · лёгкий</span>
+      <span class="task-title">Отметь все числа, кратные 7</span>
+    </div>
+    <p class="desc">Кратное 7 — это число, которое делится на 7 без остатка.</p>
+    <div class="chip-group" id="t2-chips">
+      <span class="chip" data-val="7">7</span>
+      <span class="chip" data-val="14">14</span>
+      <span class="chip" data-val="17">17</span>
+      <span class="chip" data-val="21">21</span>
+      <span class="chip" data-val="27">27</span>
+      <span class="chip" data-val="35">35</span>
+      <span class="chip" data-val="42">42</span>
+      <span class="chip" data-val="50">50</span>
+    </div>
+    <div class="row">
+      <button onclick="checkT2()">Проверить</button>
+      <button class="hint-btn" onclick="hintT2()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t2-hint">💡 Умножай 7 на 1, 2, 3, 4, 5, 6… Получается 7, 14, 21, 28, 35, 42… Ищи среди вариантов эти числа.</div>
+    <div class="feedback" id="t2-fb"></div>
+  </div>
+
+  <!-- ============ ЗАДАНИЕ 3 ============ -->
+  <div class="task" id="task3">
+    <div class="task-head">
+      <span class="level lvl-mid">Уровень 2 · средний</span>
+      <span class="task-title">Сколько делителей у числа 36?</span>
+    </div>
+    <p class="desc">Введи количество делителей числа 36 (считая 1 и само число 36).</p>
+    <div class="row">
+      <input type="number" id="t3-input" placeholder="напр. 5" min="1" max="99">
+      <button onclick="checkT3()">Проверить</button>
+      <button class="hint-btn" onclick="hintT3()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t3-hint">💡 Выпиши по парам: 1 и 36, 2 и 18, 3 и 12, 4 и 9, 6 и 6. Посчитай, сколько чисел получилось (пару 6–6 считаем один раз).</div>
+    <div class="feedback" id="t3-fb"></div>
+  </div>
+
+  <!-- ============ ЗАДАНИЕ 4 ============ -->
+  <div class="task" id="task4">
+    <div class="task-head">
+      <span class="level lvl-mid">Уровень 2 · средний</span>
+      <span class="task-title">Какое из чисел является кратным 9 и одновременно чётным?</span>
+    </div>
+    <p class="desc">Выбери один правильный вариант.</p>
+    <div class="fake-select" id="t4-opts">
+      <div class="opt" data-val="27">27</div>
+      <div class="opt" data-val="36">36</div>
+      <div class="opt" data-val="45">45</div>
+      <div class="opt" data-val="63">63</div>
+    </div>
+    <div class="row">
+      <button onclick="checkT4()">Проверить</button>
+      <button class="hint-btn" onclick="hintT4()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t4-hint">💡 Кратное 9 должно делиться на 9, а чётное — оканчиваться на 0, 2, 4, 6 или 8. Проверь каждое число по обоим признакам.</div>
+    <div class="feedback" id="t4-fb"></div>
+  </div>
+
+  <!-- ============ ЗАДАНИЕ 5 ============ -->
+  <div class="task" id="task5">
+    <div class="task-head">
+      <span class="level lvl-mid">Уровень 2 · средний+</span>
+      <span class="task-title">Заполни пропуски: делители и кратные</span>
+    </div>
+    <p class="desc">Для числа 8: найди количество делителей и наименьшее кратное, большее самого числа.</p>
+    <div class="row" style="margin-bottom:0.6rem;">
+      <span>Количество делителей числа 8:</span>
+      <input type="number" id="t5a" placeholder="?" min="1" max="20">
+    </div>
+    <div class="row">
+      <span>Наименьшее кратное 8, большее 8:</span>
+      <input type="number" id="t5b" placeholder="?" min="9" max="99">
+    </div>
+    <div class="row">
+      <button onclick="checkT5()">Проверить</button>
+      <button class="hint-btn" onclick="hintT5()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t5-hint">💡 Делители 8: 1, 2, 4, 8 — посчитай. Кратные 8: 8, 16, 24… Какое первое после 8?</div>
+    <div class="feedback" id="t5-fb"></div>
+  </div>
+
+  <!-- ============ ЗАДАНИЕ 6 ============ -->
+  <div class="task" id="task6">
+    <div class="task-head">
+      <span class="level lvl-hard">Уровень 3 · сложный</span>
+      <span class="task-title">Сумма всех делителей числа 28</span>
+    </div>
+    <p class="desc">Найди сумму всех натуральных делителей числа 28 (включая 1 и 28).</p>
+    <div class="row">
+      <input type="number" id="t6-input" placeholder="сумма" min="1" max="999">
+      <button onclick="checkT6()">Проверить</button>
+      <button class="hint-btn" onclick="hintT6()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t6-hint">💡 Сначала выпиши делители 28. Проверяй числа по порядку: 1, 2, 3, 4, 5, 6, 7, 8… Делители идут парами. Не забудь сложить все найденные числа.</div>
+    <div class="feedback" id="t6-fb"></div>
+  </div>
+
+  <!-- ============ ЗАДАНИЕ 7 ============ -->
+  <div class="task" id="task7">
+    <div class="task-head">
+      <span class="level lvl-hard">Уровень 3 · сложный</span>
+      <span class="task-title">Верно или неверно?</span>
+    </div>
+    <p class="desc">Для каждого утверждения выбери «Верно» или «Неверно».</p>
+    <div id="t7-list"></div>
+    <div class="row">
+      <button onclick="checkT7()">Проверить</button>
+      <button class="hint-btn" onclick="hintT7()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t7-hint">💡 Проверяй утверждения на примерах. Например, у числа 1 только один делитель — оно не считается ни простым, ни составным. А любое чётное число действительно делится на 2.</div>
+    <div class="feedback" id="t7-fb"></div>
+  </div>
+
+  <!-- ============ ЗАДАНИЕ 8 ============ -->
+  <div class="task" id="task8">
+    <div class="task-head">
+      <span class="level lvl-olymp">Олимпиадное</span>
+      <span class="task-title">Загадка о числе</span>
+    </div>
+    <p class="desc">
+      Натуральное число <span class="inline-math">n</span> имеет ровно <b>4 делителя</b>.
+      Известно, что среди его делителей есть числа 4 и 6.
+      Какое наименьшее такое число <span class="inline-math">n</span>?
+    </p>
+    <div class="row">
+      <input type="number" id="t8-input" placeholder="n = ?" min="1" max="9999">
+      <button onclick="checkT8()">Проверить</button>
+      <button class="hint-btn" onclick="hintT8()">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t8-hint">
+      💡 Если 4 и 6 — делители n, то n делится на 4 и на 6. Значит, n делится на их общее кратное. Наименьшее общее кратное 4 и 6 равно 12. Проверь 12: сколько у него делителей? Подходит ли? Если нет — ищи следующее кратное 12, у которого ровно 4 делителя.
+    </div>
+    <div class="feedback" id="t8-fb"></div>
+  </div>
+
+  <!-- ============ СЧЁТЧИК ============ -->
+  <div class="score-banner">
+    <span class="score" id="scoreDisplay">✅ Решено заданий: 0 / 8</span>
+    <button class="reset" onclick="resetAll()">Сбросить всё</button>
+  </div>
+
+  <!-- КОНТЕЙНЕР ДЛЯ КНОПКИ ПЕРЕХОДА -->
+  <div class="next-step-container" id="nextLevelContainer"></div>
+
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+/* ---------- Общий подсчёт ---------- */
+const totalTasks = 8;
+const solved = new Set();
+
+function markSolved(id) {
+  if (solved.has(id)) return;
+  solved.add(id);
+  updateScore();
+  checkAllSolved();
+}
+function updateScore() {
+  document.getElementById('scoreDisplay').textContent =
+    `✅ Решено заданий: ${solved.size} / ${totalTasks}`;
+}
+function resetAll() {
+  solved.clear();
+  updateScore();
+  location.reload();
+}
+
+// Если решено 3 задания, показываем кнопку перехода
+function checkAllSolved() {
+  if (solved.size >= 3) {
+    document.getElementById('nextLevelContainer').style.display = 'block';
+  }
+}
+
+/* ---------- Утилиты ---------- */
+function fb(id, text, cls) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'feedback show ' + cls;
+}
+function showHint(id) {
+  document.getElementById(id).classList.add('show');
+}
+function toggleChip(el) {
+  el.classList.toggle('selected');
+}
+
+/* ============================================================
+   ЗАДАНИЕ 1 — делители 12
+============================================================ */
+const t1Correct = [1,2,3,4,6,12];
+document.querySelectorAll('#t1-chips .chip').forEach(ch => {
+  ch.addEventListener('click', () => toggleChip(ch));
+});
+function hintT1() { showHint('t1-hint'); }
+function checkT1() {
+  const chips = document.querySelectorAll('#t1-chips .chip');
+  let selected = [], correctSet = new Set(t1Correct.map(String));
+  chips.forEach(ch => {
+    const val = ch.dataset.val;
+    ch.classList.remove('correct','wrong');
+    if (ch.classList.contains('selected')) selected.push(val);
+  });
+  let ok = true;
+  chips.forEach(ch => {
+    const val = ch.dataset.val;
+    const isSel = ch.classList.contains('selected');
+    const isCorrect = correctSet.has(val);
+    if (isSel && isCorrect) ch.classList.add('correct');
+    else if (isSel && !isCorrect) { ch.classList.add('wrong'); ok = false; }
+    else if (!isSel && isCorrect) { ok = false; }
+  });
+  if (ok && selected.length === t1Correct.length) {
+    fb('t1-fb', '🎉 Отлично! Все делители 12 найдены верно: 1, 2, 3, 4, 6, 12.', 'ok');
+    markSolved('t1');
+  } else {
+    let msg = '❌ Пока не всё верно. ';
+    const missing = t1Correct.filter(v => !selected.includes(String(v)));
+    const extra = selected.filter(v => !t1Correct.includes(Number(v)));
+    if (extra.length) msg += `Лишние: ${extra.join(', ')}. `;
+    if (missing.length) msg += `Не хватает: ${missing.join(', ')}. `;
+    msg += 'Попробуй ещё раз или открой подсказку.';
+    fb('t1-fb', msg, 'err');
+  }
+}
+
+/* ============================================================
+   ЗАДАНИЕ 2 — кратные 7
+============================================================ */
+const t2Correct = [7,14,21,35,42];
+document.querySelectorAll('#t2-chips .chip').forEach(ch => {
+  ch.addEventListener('click', () => toggleChip(ch));
+});
+function hintT2() { showHint('t2-hint'); }
+function checkT2() {
+  const chips = document.querySelectorAll('#t2-chips .chip');
+  let selected = [], correctSet = new Set(t2Correct.map(String));
+  chips.forEach(ch => {
+    ch.classList.remove('correct','wrong');
+    if (ch.classList.contains('selected')) selected.push(ch.dataset.val);
+  });
+  let ok = true;
+  chips.forEach(ch => {
+    const val = ch.dataset.val;
+    const isSel = ch.classList.contains('selected');
+    const isCorrect = correctSet.has(val);
+    if (isSel && isCorrect) ch.classList.add('correct');
+    else if (isSel && !isCorrect) { ch.classList.add('wrong'); ok = false; }
+    else if (!isSel && isCorrect) { ok = false; }
+  });
+  if (ok && selected.length === t2Correct.length) {
+    fb('t2-fb', '✅ Верно! Кратные 7: 7, 14, 21, 35, 42.', 'ok');
+    markSolved('t2');
+  } else {
+    let msg = '❌ Есть ошибки. ';
+    const missing = t2Correct.filter(v => !selected.includes(String(v)));
+    const extra = selected.filter(v => !t2Correct.includes(Number(v)));
+    if (extra.length) msg += `Среди выбранных есть не кратные 7: ${extra.join(', ')}. `;
+    if (missing.length) msg += `Пропущены: ${missing.join(', ')}. `;
+    msg += 'Вспомни таблицу умножения на 7.';
+    fb('t2-fb', msg, 'err');
+  }
+}
+
+/* ============================================================
+   ЗАДАНИЕ 3 — сколько делителей у 36
+============================================================ */
+function hintT3() { showHint('t3-hint'); }
+function checkT3() {
+  const val = parseInt(document.getElementById('t3-input').value, 10);
+  if (isNaN(val)) { fb('t3-fb', '⚠️ Введи число.', 'info'); return; }
+  if (val === 9) {
+    fb('t3-fb', '✅ Верно! У числа 36 ровно 9 делителей: 1, 2, 3, 4, 6, 9, 12, 18, 36.', 'ok');
+    markSolved('t3');
+  } else {
+    fb('t3-fb', `❌ Пока неверно (ты ввёл ${val}). Перечисли делители 36 по парам: 1×36, 2×18, 3×12, 4×9, 6×6. Посчитай уникальные числа.`, 'err');
+  }
+}
+
+/* ============================================================
+   ЗАДАНИЕ 4 — кратное 9 и чётное
+============================================================ */
+let t4Sel = null;
+document.querySelectorAll('#t4-opts .opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('#t4-opts .opt').forEach(o => o.classList.remove('sel'));
+    opt.classList.add('sel');
+    t4Sel = opt.dataset.val;
+  });
+});
+function hintT4() { showHint('t4-hint'); }
+function checkT4() {
+  if (!t4Sel) { fb('t4-fb', '⚠️ Выбери вариант.', 'info'); return; }
+  document.querySelectorAll('#t4-opts .opt').forEach(o => {
+    o.classList.remove('ok','no');
+    const v = o.dataset.val;
+    if (v === '36') o.classList.add('ok');
+    else if (v === t4Sel) o.classList.add('no');
+  });
+  if (t4Sel === '36') {
+    fb('t4-fb', '✅ Правильно! 36 делится на 9 (36:9=4) и чётное.', 'ok');
+    markSolved('t4');
+  } else {
+    let reason = '';
+    const num = Number(t4Sel);
+    if (num % 9 !== 0) reason = 'оно не делится на 9.';
+    else if (num % 2 !== 0) reason = 'оно нечётное.';
+    fb('t4-fb', `❌ ${t4Sel} не подходит: ${reason} Правильный ответ — 36.`, 'err');
+  }
+}
+
+/* ============================================================
+   ЗАДАНИЕ 5 — делители 8 (4) и наименьшее кратное >8 (16)
+============================================================ */
+function hintT5() { showHint('t5-hint'); }
+function checkT5() {
+  const a = parseInt(document.getElementById('t5a').value, 10);
+  const b = parseInt(document.getElementById('t5b').value, 10);
+  let okA = (a === 4);
+  let okB = (b === 16);
+  if (okA && okB) {
+    fb('t5-fb', '✅ Верно! У числа 8 четыре делителя (1,2,4,8), а следующее кратное после 8 — это 16.', 'ok');
+    markSolved('t5');
+  } else {
+    let msg = '❌ Проверь ответы. ';
+    if (!okA) msg += 'Количество делителей 8 — не ' + (isNaN(a) ? '?' : a) + '. ';
+    if (!okB) msg += 'Наименьшее кратное 8, большее 8, — не ' + (isNaN(b) ? '?' : b) + '. ';
+    msg += 'Загляни в подсказку.';
+    fb('t5-fb', msg, 'err');
+  }
+}
+
+/* ============================================================
+   ЗАДАНИЕ 6 — сумма делителей 28
+============================================================ */
+function hintT6() { showHint('t6-hint'); }
+function checkT6() {
+  const val = parseInt(document.getElementById('t6-input').value, 10);
+  if (isNaN(val)) { fb('t6-fb', '⚠️ Введи число.', 'info'); return; }
+  if (val === 56) {
+    fb('t6-fb', '✅ Точно! Делители 28: 1, 2, 4, 7, 14, 28. Их сумма = 56.', 'ok');
+    markSolved('t6');
+  } else {
+    fb('t6-fb', `❌ Пока неверно (${val}). Выпиши делители 28: 1, 2, 4, 7, 14, 28 — и сложи их.`, 'err');
+  }
+}
+
+/* ============================================================
+   ЗАДАНИЕ 7 — верно/неверно
+============================================================ */
+const t7Statements = [
+  { text: 'У числа 1 ровно один делитель.', correct: true },
+  { text: 'Любое чётное число делится на 2.', correct: true },
+  { text: 'Число 17 имеет больше двух делителей.', correct: false },
+  { text: 'Сумма делителей числа 6 равна 6.', correct: false },
+];
+let t7Answers = new Array(t7Statements.length).fill(null);
+const t7List = document.getElementById('t7-list');
+t7Statements.forEach((st, i) => {
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:10px 0;padding:8px 14px;background:#f7fbff;border-radius:16px;';
+  const txt = document.createElement('span');
+  txt.textContent = st.text;
+  txt.style.cssText = 'flex:1;min-width:200px;font-weight:500;';
+  const btnTrue = document.createElement('button');
+  btnTrue.textContent = 'Верно';
+  btnTrue.style.cssText = 'padding:0.4rem 1rem;font-size:0.95rem;box-shadow:0 4px 0 #2a4f9e;';
+  const btnFalse = document.createElement('button');
+  btnFalse.textContent = 'Неверно';
+  btnFalse.style.cssText = 'padding:0.4rem 1rem;font-size:0.95rem;box-shadow:0 4px 0 #2a4f9e;';
+  [btnTrue, btnFalse].forEach(b => b.classList.add('t7btn'));
+  btnTrue.onclick = () => { t7Answers[i] = true; highlightT7(i, true, btnTrue, btnFalse); };
+  btnFalse.onclick = () => { t7Answers[i] = false; highlightT7(i, false, btnTrue, btnFalse); };
+  div.appendChild(txt);
+  div.appendChild(btnTrue);
+  div.appendChild(btnFalse);
+  t7List.appendChild(div);
+});
+function highlightT7(i, val, bT, bF) {
+  bT.style.background = val === true ? '#4a90e2' : '#e0e8f0';
+  bF.style.background = val === false ? '#4a90e2' : '#e0e8f0';
+  bT.style.color = val === true ? '#fff' : '#333';
+  bF.style.color = val === false ? '#fff' : '#333';
+}
+function hintT7() { showHint('t7-hint'); }
+function checkT7() {
+  if (t7Answers.includes(null)) { fb('t7-fb', '⚠️ Ответь на все утверждения.', 'info'); return; }
+  let mistakes = [];
+  t7Statements.forEach((st, i) => {
+    if (t7Answers[i] !== st.correct) mistakes.push(i+1);
+  });
+  if (mistakes.length === 0) {
+    fb('t7-fb', '🎉 Всё верно! Ты отлично чувствуешь делители и кратные.', 'ok');
+    markSolved('t7');
+  } else {
+    let msg = `❌ Ошибки в утверждениях: ${mistakes.join(', ')}. `;
+    msg += 'Помни: у 1 только один делитель (оно не простое и не составное), 17 — простое (делители 1 и 17), а сумма делителей 6: 1+2+3+6 = 12, а не 6.';
+    fb('t7-fb', msg, 'err');
+  }
+}
+
+/* ============================================================
+   ЗАДАНИЕ 8 — олимпиадное
+============================================================ */
+function hintT8() { showHint('t8-hint'); }
+function checkT8() {
+  const val = parseInt(document.getElementById('t8-input').value, 10);
+  if (isNaN(val)) { fb('t8-fb', '⚠️ Введи число.', 'info'); return; }
+  if (val === 12) {
+    fb('t8-fb', '🎉 Верно! 12 делится на 4 и на 6. Его делители (не считая 1 и 12): 2, 3, 4, 6 — ровно четыре. И 4, и 6 среди них. Это наименьшее такое число.', 'ok');
+    markSolved('t8');
+  } else {
+    fb('t8-fb', `❌ Пока неверно (${val}). Вспомни: если 4 и 6 — делители, то число делится на 12. Проверь 12: его делители без 1 и самого числа — это 2, 3, 4, 6. Их ровно четыре, и 4, 6 среди них.`, 'err');
+  }
+}
+
+// --- УМНЫЙ ПЕРЕХОД ---
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  
+  container.innerHTML = '<span style="color:#4a5f78;">Поиск следующего задания...</span>';
+  
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      // Ищем текущий файл в таблице. Укажите точное имя ЭТОГО файла.
+      const currentTopic = data.topics.find(t => t.file === 'div_mult-5-1-uroven.html');
+      
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к следующему шагу →</a>`;
+      } else {
+        container.innerHTML = `<a href="index.html" class="btn-next home">Тема изучена, перейти на главную 🏠</a>`;
+      }
+    } else {
+      throw new Error('Данные не получены');
+    }
+  } catch (e) {
+    container.innerHTML = `<a href="index.html" class="btn-next home">Вернуться на главную 🏠</a>`;
+  }
+}
+
+// Вызываем при загрузке, чтобы сразу подгрузить кнопку (но она будет скрыта, пока не решат 3 задания)
+loadNextButton();
+</script>
+</body>
+</html>
