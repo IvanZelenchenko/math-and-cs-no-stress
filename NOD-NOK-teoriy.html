@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>НОД и НОК — полная теория</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1000px; width: 100%; }
+
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.3rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.4rem;
+  }
+  .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.8rem; }
+
+  h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.7rem;
+    color: #1d4e7a;
+    margin: 2.2rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  h2 .emoji-badge { font-size: 1.9rem; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1)); }
+
+  h3 {
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: #2f5d8a;
+    margin: 1.4rem 0 0.7rem;
+    display: inline-block;
+    border-left: 8px solid #ffb347;
+    padding-left: 14px;
+  }
+
+  /* ---------- Карточки ---------- */
+  .card {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 1.6rem 1.9rem;
+    margin-bottom: 1.4rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 12px 26px -14px rgba(20, 60, 120, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .card-accent { border-left: 8px solid #4a90e2; }
+  .card-accent-green { border-left: 8px solid #2fbf71; }
+  .card-accent-orange { border-left: 8px solid #f2a03d; }
+  .card-accent-purple { border-left: 8px solid #7b4fd1; }
+
+  .highlight {
+    background: linear-gradient(120deg, #f9f3b0 0%, #f9f3b0 40%, #ffeaa5 90%);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    font-weight: 700;
+    color: #2d3e6b;
+  }
+
+  .def-text { font-size: 1.12rem; }
+  .def-text strong { color: #0b4a7a; }
+
+  /* ---------- Сравнительная таблица ---------- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 1.2rem 0;
+  }
+  .compare-col {
+    background: #f7fbff;
+    border-radius: 20px;
+    padding: 1.3rem 1.5rem;
+    border: 2px solid #cfe2ff;
+  }
+  .compare-col.nok-col {
+    background: #f6fff9;
+    border-color: #b8ecd0;
+  }
+  .compare-col h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    color: #1d4e7a;
+  }
+  .compare-col.nok-col h4 { color: #1a6e42; }
+  .compare-col .short {
+    font-size: 0.95rem;
+    color: #5a6f88;
+    margin-bottom: 0.6rem;
+  }
+  .compare-col ul { padding-left: 1.2rem; }
+  .compare-col li { margin-bottom: 0.35rem; }
+
+  /* ---------- Примеры ---------- */
+  .example-box {
+    background: #f9fcff;
+    border-radius: 20px;
+    padding: 1.2rem 1.5rem;
+    margin: 1rem 0;
+    border: 1px solid #d6e8ff;
+  }
+  .example-box .ex-title {
+    font-weight: 700;
+    color: #0b4a7a;
+    margin-bottom: 0.5rem;
+  }
+  .math {
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    font-size: 1.15rem;
+    background: #eef6ff;
+    display: inline-block;
+    padding: 0.25rem 0.85rem;
+    border-radius: 12px;
+    color: #004b87;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+    margin: 0.15rem 0;
+  }
+  .math-green {
+    background: #e3f9ec;
+    color: #15623b;
+  }
+  .math-orange {
+    background: #fff6e5;
+    color: #7a4a0d;
+  }
+
+  /* ============================================================
+     РАЗЛОЖЕНИЕ ЧЕРЕЗ ВЕРТИКАЛЬНУЮ ЧЕРТУ
+  ============================================================ */
+  .factor-block {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+    margin: 1.2rem 0;
+  }
+
+  .column-factor {
+    background: #fff;
+    border-radius: 18px;
+    padding: 1rem 1.6rem 1rem 1.4rem;
+    border: 2px solid #cfe2ff;
+    box-shadow: 0 6px 0 #e0edff;
+    font-family: 'Montserrat', monospace;
+    font-weight: 600;
+    font-size: 1.05rem;
+    min-width: 150px;
+  }
+
+  .column-factor .cf-title {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #5a6f88;
+    margin-bottom: 0.6rem;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .factor-table {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 14px;
+    row-gap: 4px;
+    align-items: center;
+    position: relative;
+  }
+
+  /* вертикальная черта */
+  .factor-table::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    background: linear-gradient(to bottom, #4a90e2, #7ad0ff);
+    border-radius: 3px;
+  }
+
+  .factor-table .left-num {
+    text-align: right;
+    color: #1d4e7a;
+    font-weight: 700;
+    padding-right: 14px;
+    position: relative;
+    z-index: 1;
+    background: #fff;
+  }
+
+  .factor-table .right-num {
+    text-align: left;
+    color: #0b6b3a;
+    font-weight: 700;
+    padding-left: 14px;
+    position: relative;
+    z-index: 1;
+    background: #fff;
+  }
+
+  .factor-table .right-num.prime {
+    color: #b3541e;
+  }
+
+  .factor-table .left-num.last {
+    color: #2fbf71;
+  }
+
+  .cf-result {
+    margin-top: 0.9rem;
+    text-align: center;
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    font-size: 1.05rem;
+    background: #eef6ff;
+    border-radius: 12px;
+    padding: 0.45rem 0.8rem;
+    color: #004b87;
+  }
+
+  .cf-result.green {
+    background: #e3f9ec;
+    color: #15623b;
+  }
+
+  /* ---------- Способ ---------- */
+  .method {
+    background: #fff;
+    border-radius: 20px;
+    padding: 1.3rem 1.6rem;
+    margin: 1rem 0;
+    border: 1px solid #d6e8ff;
+    box-shadow: 0 8px 18px -10px rgba(20, 60, 120, 0.2);
+  }
+  .method h4 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #1d4e7a;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-list {
+    counter-reset: step;
+    list-style: none;
+    padding: 0;
+  }
+  .step-list li {
+    position: relative;
+    padding-left: 2.4rem;
+    margin-bottom: 0.6rem;
+  }
+  .step-list li::before {
+    counter-increment: step;
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.05rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.9rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 0 #2a4f9e;
+  }
+  .step-list.green li::before {
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    box-shadow: 0 3px 0 #157040;
+  }
+
+  /* ---------- Примечания ---------- */
+  .note {
+    background: #fff6e5;
+    border-left: 8px solid #f2a03d;
+    border-radius: 16px;
+    padding: 1rem 1.4rem;
+    margin: 1rem 0;
+    color: #6b4408;
+    font-size: 1rem;
+  }
+  .note.note-green {
+    background: #e3f9ec;
+    border-left-color: #2fbf71;
+    color: #15623b;
+  }
+  .note.note-purple {
+    background: #f2efff;
+    border-left-color: #7b4fd1;
+    color: #3f2f7a;
+  }
+  .note strong { font-weight: 700; }
+
+  /* ---------- Мини-закрепление ---------- */
+  .mini-check {
+    background: #ffffffdd;
+    border-radius: 24px;
+    padding: 1.5rem 1.8rem;
+    margin: 1.4rem 0;
+    border: 2px dashed #b3d4f0;
+  }
+  .mini-check .mc-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #173a5e;
+    margin-bottom: 0.7rem;
+  }
+  .mini-check .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+  input[type="text"] {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.05rem;
+    padding: 0.55rem 1rem;
+    border-radius: 14px;
+    border: 2px solid #bcd4f0;
+    outline: none;
+    background: #fff;
+    min-width: 110px;
+    transition: 0.15s;
+  }
+  input[type="text"]:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  button {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 0.98rem;
+    padding: 0.55rem 1.3rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2a4f9e;
+    transition: 0.1s;
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 5px 0 #2a4f9e; }
+  button:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a4f9e; }
+  .mc-fb {
+    margin-top: 0.8rem;
+    border-radius: 14px;
+    padding: 0.8rem 1.1rem;
+    font-size: 0.98rem;
+    display: none;
+  }
+  .mc-fb.show { display: block; animation: fadeIn 0.25s ease-out; }
+  .mc-fb.ok { background: #e3f9ec; border-left: 8px solid #2fbf71; color: #15623b; }
+  .mc-fb.err { background: #ffefec; border-left: 8px solid #e0644d; color: #8a2c1c; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  /* Стили для кнопки перехода */
+  .next-step-container {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #157040;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #157040; }
+  .btn-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #157040; }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 680px) {
+    body { padding: 1.2rem 0.7rem; }
+    h1 { font-size: 1.7rem; }
+    h2 { font-size: 1.4rem; }
+    .compare { grid-template-columns: 1fr; }
+    .card { padding: 1.2rem 1.2rem; }
+    .factor-block { gap: 16px; }
+    .column-factor { min-width: 130px; padding: 0.8rem 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🔢 НОД и НОК — полная теория</h1>
+  <p class="subtitle">Наибольший общий делитель и наименьшее общее кратное · с примерами и способами нахождения</p>
+
+  <!-- ===================== ЧТО ЭТО ТАКОЕ ===================== -->
+  <h2><span class="emoji-badge">📖</span> Что такое НОД и НОК?</h2>
+
+  <div class="compare">
+    <!-- НОД -->
+    <div class="compare-col">
+      <h4>НОД</h4>
+      <div class="short">Наибольший общий делитель</div>
+      <p style="margin-bottom:0.6rem;font-size:1.02rem;">
+        <strong>НОД(a, b)</strong> — это <span class="highlight">наибольшее</span> число, на которое <strong>оба</strong> числа a и b делятся без остатка.
+      </p>
+      <ul>
+        <li>Ищем среди <em>делителей</em> чисел.</li>
+        <li>НОД(a, b) <strong>не больше</strong> каждого из чисел.</li>
+        <li>НОД(10, 15) = 5</li>
+        <li>НОД(12, 18) = 6</li>
+      </ul>
+    </div>
+    <!-- НОК -->
+    <div class="compare-col nok-col">
+      <h4>НОК</h4>
+      <div class="short">Наименьшее общее кратное</div>
+      <p style="margin-bottom:0.6rem;font-size:1.02rem;">
+        <strong>НОК(a, b)</strong> — это <span class="highlight">наименьшее</span> натуральное число, которое делится <strong>нацело на каждое</strong> из чисел a и b.
+      </p>
+      <ul>
+        <li>Ищем среди <em>кратных</em> чисел.</li>
+        <li>НОК(a, b) <strong>не меньше</strong> каждого из чисел.</li>
+        <li>НОК(6, 10) = 30</li>
+        <li>НОК(18, 24) = 72</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note note-purple">
+    <strong>💡 Главное отличие:</strong> НОД — это про <em>деление</em> (ищем общий делитель), НОК — про <em>умножение</em> (ищем общее кратное). НОД всегда <strong>меньше или равен</strong> наименьшему из чисел, а НОК всегда <strong>больше или равен</strong> наибольшему из чисел.
+  </div>
+
+  <!-- ===================== СПОСОБ 1: ПЕРЕБОР ===================== -->
+  <h2><span class="emoji-badge">🔍</span> Способ 1: Метод перебора</h2>
+
+  <div class="method">
+    <h4>🔹 НОД — перебор делителей</h4>
+    <ol class="step-list">
+      <li>Найти все делители каждого числа.</li>
+      <li>Найти общие делители.</li>
+      <li>Выбрать наибольший общий делитель.</li>
+    </ol>
+    <div class="example-box">
+      <div class="ex-title">Пример: найти НОД(10, 15)</div>
+      <div>Делители 10: <span class="math">1, 2, 5, 10</span></div>
+      <div>Делители 15: <span class="math">1, 3, 5, 15</span></div>
+      <div>Общие делители: <span class="math">1, 5</span></div>
+      <div style="margin-top:0.5rem;">Наибольший из них → <span class="math math-green">НОД(10, 15) = 5</span></div>
+    </div>
+  </div>
+
+  <div class="method">
+    <h4>🔸 НОК — перебор кратных</h4>
+    <ol class="step-list green">
+      <li>Взять большее из чисел.</li>
+      <li>Находить его кратные (умножая на 1, 2, 3, 4, 5…).</li>
+      <li>Каждое кратное проверять: делится ли оно на второе число? Первое такое кратное — это НОК.</li>
+    </ol>
+    <div class="example-box">
+      <div class="ex-title">Пример: найти НОК(18, 24)</div>
+      <div>Берём большее число — 24. Его кратные:</div>
+      <div><span class="math">24 · 1 = 24</span> — не делится на 18</div>
+      <div><span class="math">24 · 2 = 48</span> — не делится на 18</div>
+      <div><span class="math">24 · 3 = 72</span> — <strong>делится на 18</strong> ✅</div>
+      <div style="margin-top:0.5rem;"><span class="math math-green">НОК(18, 24) = 72</span></div>
+    </div>
+  </div>
+
+  <!-- ===================== СПОСОБ 2: РАЗЛОЖЕНИЕ ===================== -->
+  <h2><span class="emoji-badge">🌳</span> Способ 2: Разложение на простые множители</h2>
+
+  <div class="note">
+    <strong>Что такое простое число?</strong> Это число, которое делится только на 1 и на само себя: 2, 3, 5, 7, 11, 13, 17, 19… <br>
+    <strong>Разложить число на простые множители</strong> — значит представить его в виде произведения простых чисел, например: 24 = 2 · 2 · 2 · 3.
+  </div>
+
+  <div class="method">
+    <h4>🔹 НОД через разложение</h4>
+    <ol class="step-list">
+      <li>Разложить каждое число на простые множители.</li>
+      <li>Подчеркнуть <strong>одинаковые</strong> простые множители в обоих разложениях.</li>
+      <li>Найти произведение этих одинаковых множителей — это и есть НОД.</li>
+    </ol>
+
+    <div class="example-box">
+      <div class="ex-title">Пример: найти НОД(48, 36)</div>
+
+      <div class="factor-block">
+        <!-- Разложение 48 -->
+        <div class="column-factor">
+          <div class="cf-title">48</div>
+          <div class="factor-table">
+            <div class="left-num">48</div><div class="right-num">2</div>
+            <div class="left-num">24</div><div class="right-num">2</div>
+            <div class="left-num">12</div><div class="right-num">2</div>
+            <div class="left-num">6</div><div class="right-num">2</div>
+            <div class="left-num">3</div><div class="right-num prime">3</div>
+            <div class="left-num last">1</div><div class="right-num"></div>
+          </div>
+          <div class="cf-result">48 = 2·2·2·2·3</div>
+        </div>
+
+        <!-- Разложение 36 -->
+        <div class="column-factor">
+          <div class="cf-title">36</div>
+          <div class="factor-table">
+            <div class="left-num">36</div><div class="right-num">2</div>
+            <div class="left-num">18</div><div class="right-num">2</div>
+            <div class="left-num">9</div><div class="right-num prime">3</div>
+            <div class="left-num">3</div><div class="right-num prime">3</div>
+            <div class="left-num last">1</div><div class="right-num"></div>
+          </div>
+          <div class="cf-result">36 = 2·2·3·3</div>
+        </div>
+      </div>
+
+      <div>Общие множители: <span class="math math-orange">2, 2, 3</span></div>
+      <div style="margin-top:0.5rem;">НОД(48, 36) = 2 · 2 · 3 = <span class="math math-green">12</span></div>
+    </div>
+  </div>
+
+  <div class="method">
+    <h4>🔸 НОК через разложение</h4>
+    <ol class="step-list green">
+      <li>Разложить каждое число на простые множители.</li>
+      <li>Выписать все множители из разложения <strong>одного</strong> числа.</li>
+      <li>Добавить к ним <strong>недостающие</strong> множители из разложения другого числа.</li>
+      <li>Найти произведение получившихся множителей.</li>
+    </ol>
+
+    <div class="example-box">
+      <div class="ex-title">Пример: найти НОК(24, 60)</div>
+
+      <div class="factor-block">
+        <!-- Разложение 24 -->
+        <div class="column-factor">
+          <div class="cf-title">24</div>
+          <div class="factor-table">
+            <div class="left-num">24</div><div class="right-num">2</div>
+            <div class="left-num">12</div><div class="right-num">2</div>
+            <div class="left-num">6</div><div class="right-num">2</div>
+            <div class="left-num">3</div><div class="right-num prime">3</div>
+            <div class="left-num last">1</div><div class="right-num"></div>
+          </div>
+          <div class="cf-result">24 = 2·2·2·3</div>
+        </div>
+
+        <!-- Разложение 60 -->
+        <div class="column-factor">
+          <div class="cf-title">60</div>
+          <div class="factor-table">
+            <div class="left-num">60</div><div class="right-num">2</div>
+            <div class="left-num">30</div><div class="right-num">2</div>
+            <div class="left-num">15</div><div class="right-num prime">3</div>
+            <div class="left-num">5</div><div class="right-num prime">5</div>
+            <div class="left-num last">1</div><div class="right-num"></div>
+          </div>
+          <div class="cf-result">60 = 2·2·3·5</div>
+        </div>
+      </div>
+
+      <div>Берём разложение 60: <span class="math">2·2·3·5</span></div>
+      <div>В разложении 24 не хватает ещё одной «2» → добавляем: <span class="math math-orange">·2</span></div>
+      <div style="margin-top:0.5rem;">НОК(24, 60) = 2·2·3·5·2 = <span class="math math-green">120</span></div>
+    </div>
+  </div>
+
+  <div class="note note-green">
+    <strong>🧠 Лайфхак для НОК:</strong> можно брать разложение <em>любого</em> числа и дополнять его до «полного» набора множителей. Результат будет одинаковым. Главное — не потерять ни одного простого множителя из обоих чисел.
+  </div>
+
+  <!-- ===================== ОСОБЫЕ СЛУЧАИ ===================== -->
+  <h2><span class="emoji-badge">✨</span> Особые случаи (примечания)</h2>
+
+  <div class="card card-accent">
+    <h3>Взаимно простые числа</h3>
+    <p class="def-text">
+      Два числа называются <span class="highlight">взаимно простыми</span>, если у них нет общих делителей, кроме 1.
+    </p>
+    <div class="compare" style="margin-top:1rem;">
+      <div class="compare-col">
+        <h4>Для НОД</h4>
+        <p>Если a и b взаимно простые, то <strong>НОД(a, b) = 1</strong>.</p>
+        <p style="margin-top:0.5rem;"><span class="math">НОД(4, 9) = 1</span></p>
+      </div>
+      <div class="compare-col nok-col">
+        <h4>Для НОК</h4>
+        <p>Если a и b взаимно простые, то <strong>НОК(a, b) = a · b</strong>.</p>
+        <p style="margin-top:0.5rem;"><span class="math math-green">НОК(4, 9) = 4 · 9 = 36</span></p>
+      </div>
+    </div>
+    <div class="note note-purple" style="margin-top:1rem;">
+      <strong>Как узнать, что числа взаимно простые?</strong><br>
+      • Любые два простых числа взаимно просты (например, 7 и 11).<br>
+      • Два соседних натуральных числа всегда взаимно просты (например, 24 и 25).
+    </div>
+  </div>
+
+  <div class="card card-accent-green">
+    <h3>Если одно число делится на другое</h3>
+    <p class="def-text">
+      Если число <strong>a делится на b</strong>, то:
+    </p>
+    <div class="compare" style="margin-top:1rem;">
+      <div class="compare-col">
+        <h4>НОД</h4>
+        <p><strong>НОД(a, b) = b</strong></p>
+        <p style="margin-top:0.5rem;"><span class="math">НОД(120, 60) = 60</span></p>
+      </div>
+      <div class="compare-col nok-col">
+        <h4>НОК</h4>
+        <p><strong>НОК(a, b) = a</strong></p>
+        <p style="margin-top:0.5rem;"><span class="math math-green">НОК(120, 60) = 120</span></p>
+      </div>
+    </div>
+    <div class="note note-green" style="margin-top:1rem;">
+      <strong>Почему?</strong> Если a делится на b, то b — делитель a, и он же наибольший общий делитель (ничего больше быть не может). А a уже кратно b, и оно же наименьшее общее кратное.
+    </div>
+  </div>
+
+  <!-- ===================== СВЯЗЬ НОД И НОК ===================== -->
+  <h2><span class="emoji-badge">🔗</span> Связь НОД и НОК (бонус)</h2>
+
+  <div class="card card-accent-purple">
+    <p class="def-text">
+      Для любых двух натуральных чисел a и b выполняется замечательное равенство:
+    </p>
+    <div style="text-align:center; margin:1.2rem 0;">
+      <span class="math" style="font-size:1.4rem; padding:0.6rem 1.6rem;">НОД(a, b) · НОК(a, b) = a · b</span>
+    </div>
+    <p class="def-text">
+      То есть <strong>произведение НОД и НОК двух чисел равно произведению самих чисел</strong>.
+    </p>
+    <div class="example-box">
+      <div class="ex-title">Проверим на примере: a = 12, b = 18</div>
+      <div>НОД(12, 18) = 6</div>
+      <div>НОК(12, 18) = 36</div>
+      <div>6 · 36 = <span class="math math-green">216</span></div>
+      <div>12 · 18 = <span class="math math-green">216</span> ✅</div>
+      <div style="margin-top:0.5rem;font-weight:600;">Равенство выполняется!</div>
+    </div>
+    <div class="note">
+      <strong>Как это использовать?</strong> Если знаешь НОД и одно из чисел, можно найти НОК: <br>
+      <span class="math math-orange">НОК(a, b) = (a · b) / НОД(a, b)</span>
+    </div>
+  </div>
+
+  <!-- ===================== АЛГОРИТМ ВЫБОРА СПОСОБА ===================== -->
+  <h2><span class="emoji-badge">🧭</span> Какой способ выбрать?</h2>
+
+  <div class="card">
+    <div class="method" style="margin-top:0;">
+      <h4>📌 Если числа небольшие (до 30–40)</h4>
+      <p>Удобен <strong>метод перебора</strong>: выписать делители (для НОД) или кратные (для НОК).</p>
+      <p style="margin-top:0.4rem;color:#5a6f88;">Пример: НОД(10, 15) или НОК(6, 10) — легко перебрать вручную.</p>
+    </div>
+    <div class="method">
+      <h4>📌 Если числа большие</h4>
+      <p>Лучше использовать <strong>разложение на простые множители</strong>: меньше вычислений и меньше шансов ошибиться.</p>
+      <p style="margin-top:0.4rem;color:#5a6f88;">Пример: НОД(48, 36) или НОК(24, 60) — перебор был бы долгим.</p>
+    </div>
+    <div class="method">
+      <h4>📌 Если числа взаимно простые</h4>
+      <p>Сразу пишем: <strong>НОД = 1</strong>, <strong>НОК = a · b</strong>. Проверять не нужно.</p>
+    </div>
+    <div class="method">
+      <h4>📌 Если одно число делится на другое</h4>
+      <p>Сразу пишем: <strong>НОД = меньшему числу</strong>, <strong>НОК = большему числу</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ===================== МИНИ-ПРОВЕРКА ===================== -->
+  <h2><span class="emoji-badge">✅</span> Проверь себя</h2>
+
+  <div class="mini-check">
+    <div class="mc-title">1) Найди НОД(10, 15)</div>
+    <div class="row">
+      <input type="text" id="mc1" placeholder="НОД = ?">
+      <button onclick="checkMini(1, ['5'], 'mc1', 'mc1fb')">Проверить</button>
+    </div>
+    <div class="mc-fb" id="mc1fb"></div>
+  </div>
+
+  <div class="mini-check">
+    <div class="mc-title">2) Найди НОК(18, 24)</div>
+    <div class="row">
+      <input type="text" id="mc2" placeholder="НОК = ?">
+      <button onclick="checkMini(2, ['72'], 'mc2', 'mc2fb')">Проверить</button>
+    </div>
+    <div class="mc-fb" id="mc2fb"></div>
+  </div>
+
+  <div class="mini-check">
+    <div class="mc-title">3) Найди НОД(48, 36)</div>
+    <div class="row">
+      <input type="text" id="mc3" placeholder="НОД = ?">
+      <button onclick="checkMini(3, ['12'], 'mc3', 'mc3fb')">Проверить</button>
+    </div>
+    <div class="mc-fb" id="mc3fb"></div>
+  </div>
+
+  <div class="mini-check">
+    <div class="mc-title">4) Найди НОК(24, 60)</div>
+    <div class="row">
+      <input type="text" id="mc4" placeholder="НОК = ?">
+      <button onclick="checkMini(4, ['120'], 'mc4', 'mc4fb')">Проверить</button>
+    </div>
+    <div class="mc-fb" id="mc4fb"></div>
+  </div>
+
+  <div class="mini-check">
+    <div class="mc-title">5) Если a и b взаимно простые, чему равно НОК(a, b)?</div>
+    <div class="row">
+      <input type="text" id="mc5" placeholder="Введи выражение или число для 4 и 9">
+      <button onclick="checkMini(5, ['a*b','a·b','ab','36'], 'mc5', 'mc5fb')">Проверить</button>
+    </div>
+    <div class="mc-fb" id="mc5fb"></div>
+  </div>
+
+  <!-- КОНТЕЙНЕР ДЛЯ КНОПКИ ПЕРЕХОДА -->
+  <div class="next-step-container" id="nextLevelContainer"></div>
+
+  <div style="text-align:right; margin-top:2.5rem; font-size:1rem; color:#3b5c7a; font-weight:500; border-top:2px solid #cfe4ff; padding-top:1.2rem;">
+    ✨ Теория: НОД и НОК ✨ <br>
+    <span style="opacity:0.7;">(по материалам страницы 2 + дополнения)</span>
+  </div>
+</div>
+
+<script>
+// ВАША ССЫЛКА НА GOOGLE APPS SCRIPT
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+// Логика для мини-теста
+function checkMini(num, accepts, inputId, fbId) {
+  const inp = document.getElementById(inputId);
+  const val = inp.value.trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
+  const ok = accepts.some(a => a.toLowerCase() === val);
+  const fb = document.getElementById(fbId);
+  fb.classList.add('show');
+  if (ok) {
+    fb.className = 'mc-fb show ok';
+    fb.textContent = '✅ Верно!';
+  } else {
+    fb.className = 'mc-fb show err';
+    if (num === 1) fb.textContent = '❌ Пока неверно. Делители 10: 1, 2, 5, 10. Делители 15: 1, 3, 5, 15. Наибольший общий — 5.';
+    else if (num === 2) fb.textContent = '❌ Пока неверно. Кратные 24: 24, 48, 72… 72 делится на 18. Значит, НОК = 72.';
+    else if (num === 3) fb.textContent = '❌ Пока неверно. 48 = 2·2·2·2·3, 36 = 2·2·3·3. Общие множители: 2, 2, 3. Произведение = 12.';
+    else if (num === 4) fb.textContent = '❌ Пока неверно. 60 = 2·2·3·5, 24 = 2·2·2·3. Берём 60 и добавляем недостающую 2: 2·2·3·5·2 = 120.';
+    else if (num === 5) fb.textContent = '❌ Пока неверно. Если числа взаимно простые, их НОК равно произведению: a · b. Для 4 и 9 это 36.';
+  }
+}
+
+// --- УМНЫЙ ПЕРЕХОД (без строгой привязки) ---
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего задания...</span>';
+  
+  // Получаем имя текущего файла из URL браузера
+  const path = window.location.pathname;
+  const currentFile = path.substring(path.lastIndexOf('/') + 1);
+  
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      // Ищем в таблице файл, имя которого совпадает с текущим
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к следующему шагу →</a>`;
+      } else {
+        container.innerHTML = `<a href="index.html" class="btn-next home">Тема изучена, перейти на главную 🏠</a>`;
+      }
+    } else {
+      throw new Error('Данные не получены');
+    }
+  } catch (e) {
+    container.innerHTML = `<a href="index.html" class="btn-next home">Вернуться на главную 🏠</a>`;
+  }
+}
+
+// Вызываем при загрузке
+loadNextButton();
+</script>
+</body>
+</html>
