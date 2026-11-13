@@ -9,16 +9,13 @@
   body { background: linear-gradient(145deg, #1e1e2f 0%, #2a2a40 100%); min-height: 100vh; margin: 0; padding: 20px; color: #e0e0ff; display: flex; justify-content: center; }
   .app { max-width: 1000px; width: 100%; background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border-radius: 48px; padding: 28px 32px; box-shadow: 0 25px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.08); }
   
-  /* Верхняя панель */
   .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
   .breadcrumb { color: #a0a0c0; font-size: 0.95rem; }
   .breadcrumb a { color: #80deea; text-decoration: none; }
-  .breadcrumb a:hover { text-decoration: underline; }
-  .btn-group { display: flex; gap: 10px; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; transition: 0.15s; }
+  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
   .btn:hover { background: #6252a5; }
-  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; border: 1px solid #5f5f92; }
+  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; }
   .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
   .btn-success:hover { background: #3e9d6e; }
 
@@ -45,7 +42,7 @@
   .table-input.correct { border-color: #6effb0; background: #1f4a37; }
   .table-input.wrong { border-color: #ff8a9b; background: #4a1f2a; }
   
-  .expr { font-family: monospace; font-size: 1.4rem; padding: 12px; background: #14141f; border-radius: 12px; margin: 10px 0; text-align: center; color: #ffe484; font-weight: bold; }
+  .expr { font-family: monospace; font-size: 1.6rem; padding: 12px; background: #14141f; border-radius: 12px; margin: 10px 0; text-align: center; color: #ffe484; font-weight: bold; }
   
   .row-buttons { display: flex; gap: 15px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
   
@@ -58,17 +55,16 @@
 </head>
 <body>
 <div class="app">
-  <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
   <div class="topbar">
     <div class="breadcrumb">🏠 <a href="index.html">Главная</a> / Информатика / Алгебра логики / 1 уровень</div>
-    <div class="btn-group">
+    <div style="display:flex; gap:10px;">
       <a href="index.html" class="btn btn-secondary">← Назад</a>
       <a href="index.html" class="btn">🏠 Главная</a>
     </div>
   </div>
 
   <h1>Уровень 1. Операции и таблицы</h1>
-  <div class="subtitle">Пройди все шаги, чтобы перейти на 2 уровень</div>
+  <div class="subtitle">Пройди все шаги, чтобы завершить уровень</div>
 
   <div class="card" id="step1">
     <div class="task-title">Шаг 1. Вспомним основы</div>
@@ -105,7 +101,9 @@
 
   <div class="card hidden" id="step3">
     <div class="task-title">Шаг 3. Сложные выражения</div>
-    <div class="expr">A ∨ B ∧ C</div>
+    <!-- ИСПРАВЛЕНИЕ: Добавлена сама формула -->
+    <p>Дано выражение: <span class="expr">A ∨ B ∧ C</span></p>
+    <p>Какое действие выполняется первым?</p>
     <div class="options">
       <button class="option-btn" onclick="checkAnswer(this, false, 'h3')">A ∨ B</button>
       <button class="option-btn" onclick="checkAnswer(this, true, 'h3')">B ∧ C</button>
@@ -135,40 +133,35 @@
       <div id="wheelHint" class="hint hidden">💡 Вспомни приоритет: НЕ (¬) -> И (∧) -> ИЛИ (∨).</div>
     </div>
 
-    <div class="row-buttons">
-      <button class="btn btn-success" onclick="window.location.href='Logika-5-2-uroven.html'">Перейти на 2 уровень →</button>
+    <!-- ИСПРАВЛЕНИЕ: Умная кнопка перехода -->
+    <div class="row-buttons" id="nextLevelContainer">
+      <!-- Сюда скрипт вставит нужную кнопку -->
     </div>
   </div>
 </div>
 
 <script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6QJww/exec';
+
 function checkAnswer(btn, isCorrect, hintId) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
   const hint = document.getElementById(hintId);
-  
-  if (isCorrect) {
-    btn.classList.add('correct');
-    hint.classList.add('hidden');
-  } else {
-    btn.classList.add('wrong');
-    hint.classList.remove('hidden');
-  }
+  if (isCorrect) { btn.classList.add('correct'); hint.classList.add('hidden'); }
+  else { btn.classList.add('wrong'); hint.classList.remove('hidden'); }
 }
 
 function nextStep(current, next) {
   document.getElementById('step' + current).classList.add('hidden');
   document.getElementById('step' + next).classList.remove('hidden');
+  if (next === 4) loadNextButton('Logika-5-1-uroven.html'); // Загружаем кнопку для текущего файла
 }
 
 function checkStep2() {
   let ok = true;
   document.querySelectorAll('#step2 .table-input').forEach(inp => {
-    if (inp.value.trim() !== inp.dataset.ans) {
-      inp.classList.add('wrong'); ok = false;
-    } else {
-      inp.classList.remove('wrong'); inp.classList.add('correct');
-    }
+    if (inp.value.trim() !== inp.dataset.ans) { inp.classList.add('wrong'); ok = false; }
+    else { inp.classList.remove('wrong'); inp.classList.add('correct'); }
   });
   const fb = document.getElementById('feedback2');
   fb.classList.remove('hidden');
@@ -180,6 +173,35 @@ function checkStep2() {
   }
 }
 
+// Логика поиска следующего уровня в БД
+async function loadNextButton(currentFile) {
+  const container = document.getElementById('nextLevelContainer');
+  container.innerHTML = '<span style="color:#a0a0c0;">Поиск следующего задания...</span>';
+  
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      // Ищем тему, в которой текущий файл является уровнем
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      
+      if (currentTopic && currentTopic.next) {
+        // Если есть следующий файл
+        container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='${currentTopic.next}'" style="font-size:1.1rem; padding:14px 32px;">Перейти к следующему заданию →</button>`;
+      } else {
+        // Если следующий файл пустой
+        container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'" style="font-size:1.1rem; padding:14px 32px; background:#4f3f8a;">Тема изучена, перейти на главную 🏠</button>`;
+      }
+    } else {
+      container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='Logika-5-2-uroven.html'">Перейти на 2 уровень →</button>`;
+    }
+  } catch (e) {
+    // Если нет интернета или ошибка скрипта, используем запасную ссылку
+    container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='Logika-5-2-uroven.html'">Перейти на 2 уровень →</button>`;
+  }
+}
+
+// --- КОЛЕСО ---
 const wheelTasks = [
   {expr: 'A ∧ B ∨ C', opts: ['∧', '∨'], ans: '∧'},
   {expr: '¬A ∧ (B ∨ C)', opts: ['¬', '∨', '∧'], ans: '¬'},
@@ -239,13 +261,8 @@ function checkWheelAns(btn, val, correct) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
   const hint = document.getElementById('wheelHint');
-  if (val === correct) {
-    btn.classList.add('correct');
-    hint.classList.add('hidden');
-  } else {
-    btn.classList.add('wrong');
-    hint.classList.remove('hidden');
-  }
+  if (val === correct) { btn.classList.add('correct'); hint.classList.add('hidden'); }
+  else { btn.classList.add('wrong'); hint.classList.remove('hidden'); }
 }
 
 drawWheel();
