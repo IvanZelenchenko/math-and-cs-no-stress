@@ -12,10 +12,11 @@
   .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
   .breadcrumb { color: #a0a0c0; font-size: 0.95rem; }
   .breadcrumb a { color: #80deea; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
   
-  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; }
+  .btn { background: #4f3f8a; border: none; color: white; padding: 10px 20px; border-radius: 40px; font-size: 0.95rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; box-shadow: 0 5px 0 #1e1835; transition: 0.15s; }
   .btn:hover { background: #6252a5; }
-  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; }
+  .btn-secondary { background: #3a3a5c; box-shadow: 0 5px 0 #14141f; border: 1px solid #5f5f92; }
   .btn-success { background: #2e7d5e; box-shadow: 0 5px 0 #10462f; }
   .btn-success:hover { background: #3e9d6e; }
 
@@ -101,7 +102,6 @@
 
   <div class="card hidden" id="step3">
     <div class="task-title">Шаг 3. Сложные выражения</div>
-    <!-- ИСПРАВЛЕНИЕ: Добавлена сама формула -->
     <p>Дано выражение: <span class="expr">A ∨ B ∧ C</span></p>
     <p>Какое действие выполняется первым?</p>
     <div class="options">
@@ -133,16 +133,14 @@
       <div id="wheelHint" class="hint hidden">💡 Вспомни приоритет: НЕ (¬) -> И (∧) -> ИЛИ (∨).</div>
     </div>
 
-    <!-- ИСПРАВЛЕНИЕ: Умная кнопка перехода -->
-    <div class="row-buttons" id="nextLevelContainer">
-      <!-- Сюда скрипт вставит нужную кнопку -->
+    <!-- Кнопка перехода -->
+    <div class="row-buttons" id="nextLevelContainer" style="display: none; margin-top: 30px;">
+      <a href="Logika-5-2-teoriy.html" class="btn btn-success" style="font-size:1.1rem; padding:14px 32px;">Перейти к следующему заданию →</a>
     </div>
   </div>
 </div>
 
 <script>
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6QJww/exec';
-
 function checkAnswer(btn, isCorrect, hintId) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
@@ -154,7 +152,11 @@ function checkAnswer(btn, isCorrect, hintId) {
 function nextStep(current, next) {
   document.getElementById('step' + current).classList.add('hidden');
   document.getElementById('step' + next).classList.remove('hidden');
-  if (next === 4) loadNextButton('Logika-5-1-uroven.html'); // Загружаем кнопку для текущего файла
+  
+  // Как только ученик дошел до шага 4 (Колесо), показываем кнопку перехода на следующий файл
+  if (next === 4) {
+    document.getElementById('nextLevelContainer').style.display = 'flex';
+  }
 }
 
 function checkStep2() {
@@ -170,34 +172,6 @@ function checkStep2() {
     setTimeout(() => nextStep(2, 3), 1500);
   } else {
     fb.innerHTML = '<span style="color:#ff8a9b">💡 Проверь красные поля. Конъюнкция даёт 1 только если оба 1.</span>';
-  }
-}
-
-// Логика поиска следующего уровня в БД
-async function loadNextButton(currentFile) {
-  const container = document.getElementById('nextLevelContainer');
-  container.innerHTML = '<span style="color:#a0a0c0;">Поиск следующего задания...</span>';
-  
-  try {
-    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
-    const data = await resp.json();
-    if (data.ok) {
-      // Ищем тему, в которой текущий файл является уровнем
-      const currentTopic = data.topics.find(t => t.file === currentFile);
-      
-      if (currentTopic && currentTopic.next) {
-        // Если есть следующий файл
-        container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='${currentTopic.next}'" style="font-size:1.1rem; padding:14px 32px;">Перейти к следующему заданию →</button>`;
-      } else {
-        // Если следующий файл пустой
-        container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'" style="font-size:1.1rem; padding:14px 32px; background:#4f3f8a;">Тема изучена, перейти на главную 🏠</button>`;
-      }
-    } else {
-      container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='Logika-5-2-uroven.html'">Перейти на 2 уровень →</button>`;
-    }
-  } catch (e) {
-    // Если нет интернета или ошибка скрипта, используем запасную ссылку
-    container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='Logika-5-2-uroven.html'">Перейти на 2 уровень →</button>`;
   }
 }
 
@@ -261,34 +235,16 @@ function checkWheelAns(btn, val, correct) {
   const parent = btn.parentElement;
   parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct', 'wrong'));
   const hint = document.getElementById('wheelHint');
-  if (val === correct) { btn.classList.add('correct'); hint.classList.add('hidden'); }
-  else { btn.classList.add('wrong'); hint.classList.remove('hidden'); }
+  if (val === correct) { 
+    btn.classList.add('correct'); 
+    hint.classList.add('hidden'); 
+  } else { 
+    btn.classList.add('wrong'); 
+    hint.classList.remove('hidden'); 
+  }
 }
 
 drawWheel();
- // --- УМНЫЙ ПЕРЕХОД ---
-async function loadNextButton(currentFile) {
-  const container = document.getElementById('nextLevelContainer');
-  if (!container) return;
-  
-  container.innerHTML = '<span style="color:#a0a0c0;">Поиск следующего задания...</span>';
-  
-  try {
-    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
-    const data = await resp.json();
-    if (data.ok) {
-      const currentTopic = data.topics.find(t => t.file === currentFile);
-      
-      if (currentTopic && currentTopic.next) {
-        container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='${currentTopic.next}'" style="font-size:1.1rem; padding:14px 32px;">Перейти к следующему заданию →</button>`;
-      } else {
-        container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'" style="font-size:1.1rem; padding:14px 32px; background:#4f3f8a;">Тема изучена, перейти на главную 🏠</button>`;
-      }
-    }
-  } catch (e) {
-    container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'">Вернуться на главную</button>`;
-  }
-}
 </script>
 </body>
 </html>
