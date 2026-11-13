@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Признаки делимости — яркая теория</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #fdf0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1020px; width: 100%; }
+
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, #2b3a8c, #1e8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: #4a5f78;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  /* ---------- Сетка карточек ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: #ffffffdd;
+    backdrop-filter: blur(10px);
+    border-radius: 28px;
+    padding: 1.6rem 1.8rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 14px 30px -14px rgba(20, 60, 120, 0.25);
+    position: relative;
+    overflow: hidden;
+    transition: 0.25s;
+  }
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.35);
+  }
+
+  /* Цветная полоса сверху карточки */
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+  }
+  .card.c2::before { background: linear-gradient(90deg, #ff9a9e, #fecfef); }
+  .card.c3::before { background: linear-gradient(90deg, #a1c4fd, #c2e9fb); }
+  .card.c4::before { background: linear-gradient(90deg, #fbc2eb, #a6c1ee); }
+  .card.c5::before { background: linear-gradient(90deg, #84fab0, #8fd3f4); }
+  .card.c6::before { background: linear-gradient(90deg, #fccb90, #d57eeb); }
+  .card.c7::before { background: linear-gradient(90deg, #e0c3fc, #8ec5fc); }
+  .card.c8::before { background: linear-gradient(90deg, #f093fb, #f5576c); }
+  .card.c9::before { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+  .card.c10::before { background: linear-gradient(90deg, #43e97b, #38f9d7); }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1rem;
+  }
+  .digit-badge {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    color: #fff;
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+  .d2 { background: linear-gradient(135deg, #ff6b8b, #d9385e); }
+  .d3 { background: linear-gradient(135deg, #4a90e2, #2a5f9e); }
+  .d4 { background: linear-gradient(135deg, #b06ab3, #4568dc); }
+  .d5 { background: linear-gradient(135deg, #2fbf71, #1e8a4f); }
+  .d6 { background: linear-gradient(135deg, #f2a03d, #d97a12); }
+  .d7 { background: linear-gradient(135deg, #9b51e0, #6b2c9e); }
+  .d8 { background: linear-gradient(135deg, #eb5757, #b02a2a); }
+  .d9 { background: linear-gradient(135deg, #1e8f9e, #0b5e6b); }
+  .d10 { background: linear-gradient(135deg, #f2994a, #c96d18); }
+
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #173a5e;
+    line-height: 1.2;
+  }
+  .card-title small {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6b7f95;
+    margin-top: 2px;
+  }
+
+  .rule {
+    background: #f4f9ff;
+    border-radius: 14px;
+    padding: 0.8rem 1rem;
+    font-size: 1.02rem;
+    margin-bottom: 0.9rem;
+    border-left: 6px solid #4a90e2;
+  }
+  .rule strong { color: #0b4a7a; }
+
+  .example-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 0.8rem 1rem;
+    border: 1px dashed #b3d4f0;
+    font-size: 0.98rem;
+  }
+  .example-box .ex-title {
+    font-weight: 700;
+    color: #173a5e;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ex-yes { color: #15623b; font-weight: 600; }
+  .ex-no { color: #b02a2a; font-weight: 600; }
+  .math {
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    background: #eef6ff;
+    padding: 0.1rem 0.5rem;
+    border-radius: 8px;
+    color: #004b87;
+  }
+  .math-red {
+    background: #ffefec;
+    color: #8a2c1c;
+  }
+  .math-green {
+    background: #e3f9ec;
+    color: #15623b;
+  }
+
+  /* ---------- Блок-памятка ---------- */
+  .cheat-sheet {
+    background: linear-gradient(135deg, #ffffff, #f0f7ff);
+    border-radius: 28px;
+    padding: 2rem 2.2rem;
+    border: 2px solid #cfe2ff;
+    box-shadow: 0 18px 36px -16px rgba(20, 60, 120, 0.3);
+    margin-top: 2rem;
+  }
+  .cheat-sheet h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #173a5e;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .cheat-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 0.8rem 1rem;
+    border: 1px solid #d6e8ff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.98rem;
+  }
+  .cheat-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #fff;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cheat-item .cheat-text { font-weight: 500; color: #2c3e50; }
+  .cheat-item .cheat-text b { color: #0b4a7a; }
+
+  /* ---------- Блок-предупреждение ---------- */
+  .warning {
+    background: #fff6e5;
+    border-left: 8px solid #f2a03d;
+    border-radius: 16px;
+    padding: 1rem 1.4rem;
+    margin-top: 1.5rem;
+    color: #6b4408;
+    font-size: 1rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .warning .warn-icon { font-size: 1.4rem; }
+
+  /* ---------- Мини-тест ---------- */
+  .mini-check {
+    background: #ffffffdd;
+    border-radius: 24px;
+    padding: 1.5rem 1.8rem;
+    margin-top: 2rem;
+    border: 2px dashed #b3d4f0;
+  }
+  .mini-check .mc-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #173a5e;
+    margin-bottom: 0.7rem;
+  }
+  .mini-check .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 0.5rem;
+  }
+  input[type="text"] {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.05rem;
+    padding: 0.55rem 1rem;
+    border-radius: 14px;
+    border: 2px solid #bcd4f0;
+    outline: none;
+    background: #fff;
+    min-width: 110px;
+    transition: 0.15s;
+  }
+  input[type="text"]:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  button {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 0.98rem;
+    padding: 0.55rem 1.3rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2a4f9e;
+    transition: 0.1s;
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 5px 0 #2a4f9e; }
+  button:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a4f9e; }
+  .mc-fb {
+    margin-top: 0.8rem;
+    border-radius: 14px;
+    padding: 0.8rem 1.1rem;
+    font-size: 0.98rem;
+    display: none;
+  }
+  .mc-fb.show { display: block; animation: fadeIn 0.25s ease-out; }
+  .mc-fb.ok { background: #e3f9ec; border-left: 8px solid #2fbf71; color: #15623b; }
+  .mc-fb.err { background: #ffefec; border-left: 8px solid #e0644d; color: #8a2c1c; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- Кнопка перехода ---------- */
+  .next-step-container {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #157040;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #157040; }
+  .btn-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #157040; }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 1.2rem 0.7rem; }
+    h1 { font-size: 1.8rem; }
+    .card { padding: 1.2rem 1.2rem; }
+    .cheat-sheet { padding: 1.4rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✨ Признаки делимости</h1>
+  <p class="subtitle">Как быстро узнать, делится ли число на 2, 3, 4, 5, 6, 7, 8, 9 или 10 — без калькулятора!</p>
+
+  <div class="grid">
+    <!-- 2 -->
+    <div class="card c2">
+      <div class="card-head">
+        <div class="digit-badge d2">2</div>
+        <div class="card-title">На 2 <small>«Чётное число»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>2</strong>, если его последняя цифра — <strong>чётная</strong> (0, 2, 4, 6, 8).
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 4, 32, 50, 112, 2174 — делятся (последняя цифра чётная).</div>
+        <div class="ex-no">❌ 5, 11, 37, 53, 123, 1071 — не делятся (последняя цифра нечётная).</div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="card c3">
+      <div class="card-head">
+        <div class="digit-badge d3">3</div>
+        <div class="card-title">На 3 <small>«Сумма цифр»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>3</strong>, если <strong>сумма всех его цифр</strong> делится на 3.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 132: 1+3+2 = 6, а 6 : 3 = 2 — делится.</div>
+        <div class="ex-no">❌ 614: 6+1+4 = 11, а 11 не делится на 3 — не делится.</div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="card c4">
+      <div class="card-head">
+        <div class="digit-badge d4">4</div>
+        <div class="card-title">На 4 <small>«Две последние цифры»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>4</strong>, если <strong>две его последние цифры</strong> образуют число, которое делится на 4.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 344: последние цифры 44, а 44 : 4 = 11 — делится.</div>
+        <div class="ex-no">❌ 5219: последние цифры 19, а 19 не делится на 4 — не делится.</div>
+      </div>
+      <div style="font-size:0.9rem; color:#5a6f88; margin-top:0.6rem;">
+        <b>Подсказка для двузначных:</b> удвой цифру десятков и прибавь цифру единиц. <br>
+        64: 6·2 + 4 = 16, 16 : 4 = 4 ✅<br>
+        35: 3·2 + 5 = 11, 11 : 4 — не делится ❌
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="card c5">
+      <div class="card-head">
+        <div class="digit-badge d5">5</div>
+        <div class="card-title">На 5 <small>«Ноль или пять»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>5</strong>, если его последняя цифра — <strong>0 или 5</strong>.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 10, 65, 125, 300, 3480 — делятся.</div>
+        <div class="ex-no">❌ 13, 67, 108, 649, 16793 — не делятся.</div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="card c6">
+      <div class="card-head">
+        <div class="digit-badge d6">6</div>
+        <div class="card-title">На 6 <small>«И на 2, и на 3»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>6</strong>, если оно делится <strong>и на 2, и на 3</strong> одновременно.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 486: чётное (последняя 6) и 4+8+6 = 18, 18 : 3 = 6 — делится.</div>
+        <div class="ex-no">❌ 712: чётное, но 7+1+2 = 10, 10 не делится на 3 — не делится.</div>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="card c7">
+      <div class="card-head">
+        <div class="digit-badge d7">7</div>
+        <div class="card-title">На 7 <small>«Хитрый признак»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>7</strong>, если <strong>утроенное число десятков плюс цифра единиц</strong> делится на 7.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 91: 9·3 + 1 = 28, а 28 : 7 = 4 — делится.</div>
+        <div class="ex-yes">✅ 105: 10·3 + 5 = 35, а 35 : 7 = 5 — делится.</div>
+        <div class="ex-no">❌ 302: 30·3 + 2 = 92, а 92 не делится на 7 — не делится.</div>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="card c8">
+      <div class="card-head">
+        <div class="digit-badge d8">8</div>
+        <div class="card-title">На 8 <small>«Три последние цифры»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>8</strong>, если <strong>три его последние цифры</strong> образуют число, делящееся на 8.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 2336: последние три цифры 336, а 336 : 8 = 42 — делится.</div>
+        <div class="ex-no">❌ 12547: последние три цифры 547, а 547 не делится на 8 — не делится.</div>
+      </div>
+      <div style="font-size:0.9rem; color:#5a6f88; margin-top:0.6rem;">
+        <b>Подсказка для трёхзначных:</b> сложи цифру единиц, удвоенную цифру десятков и учетверённую цифру сотен. <br>
+        264: 2·4 + 6·2 + 4 = 24, 24 : 8 = 3 ✅
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="card c9">
+      <div class="card-head">
+        <div class="digit-badge d9">9</div>
+        <div class="card-title">На 9 <small>«Сумма цифр»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>9</strong>, если <strong>сумма всех его цифр</strong> делится на 9.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 324: 3+2+4 = 9, а 9 : 9 = 1 — делится.</div>
+        <div class="ex-no">❌ 921: 9+2+1 = 12, а 12 не делится на 9 — не делится.</div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="card c10">
+      <div class="card-head">
+        <div class="digit-badge d10">10</div>
+        <div class="card-title">На 10 <small>«Ноль в конце»</small></div>
+      </div>
+      <div class="rule">
+        Число делится на <strong>10</strong>, если оно оканчивается на <strong>0</strong>.
+      </div>
+      <div class="example-box">
+        <div class="ex-title">📌 Примеры</div>
+        <div class="ex-yes">✅ 10, 110, 1500, 12760 — делятся.</div>
+        <div class="ex-no">❌ 53, 117, 1254, 2763 — не делятся.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Блок-памятка -->
+  <div class="cheat-sheet">
+    <h2>🧠 Шпаргалка «всё в одном месте»</h2>
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <div class="cheat-num d2">2</div>
+        <div class="cheat-text">Последняя цифра — <b>чётная</b> (0, 2, 4, 6, 8)</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d3">3</div>
+        <div class="cheat-text">Сумма цифр <b>делится на 3</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d4">4</div>
+        <div class="cheat-text">Две последние цифры <b>делятся на 4</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d5">5</div>
+        <div class="cheat-text">Последняя цифра — <b>0 или 5</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d6">6</div>
+        <div class="cheat-text">Делится <b>и на 2, и на 3</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d7">7</div>
+        <div class="cheat-text"><b>Утроенные десятки + единицы</b> делятся на 7</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d8">8</div>
+        <div class="cheat-text">Три последние цифры <b>делятся на 8</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d9">9</div>
+        <div class="cheat-text">Сумма цифр <b>делится на 9</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num d10">10</div>
+        <div class="cheat-text">Оканчивается на <b>0</b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Предупреждение -->
+  <div class="warning">
+    <div class="warn-icon">⚠️</div>
+    <div>
+      <b>Внимание!</b> Признак делимости на 6 работает только потому, что 2 и 3 — <i>взаимно простые</i> числа. А вот на 12 нельзя проверять «делится на 2 и на 6» — нужно проверять делимость на 3 и на 4 (тоже взаимно простые). Это правило полезно запомнить!
+    </div>
+  </div>
+
+  <!-- Мини-тест -->
+  <div class="mini-check">
+    <div class="mc-title">✅ Проверь себя: делится ли число 378 на 2, 3, 4, 5, 6, 9, 10?</div>
+    <p style="color:#5a6f88; font-size:0.95rem; margin-bottom:0.6rem;">Введи «да» или «нет» для каждого пункта.</p>
+    <div class="row"><span>На 2:</span> <input type="text" id="q1" placeholder="да/нет"> <span>На 3:</span> <input type="text" id="q2" placeholder="да/нет"> <span>На 4:</span> <input type="text" id="q3" placeholder="да/нет"></div>
+    <div class="row"><span>На 5:</span> <input type="text" id="q4" placeholder="да/нет"> <span>На 6:</span> <input type="text" id="q5" placeholder="да/нет"> <span>На 9:</span> <input type="text" id="q6" placeholder="да/нет"> <span>На 10:</span> <input type="text" id="q7" placeholder="да/нет"></div>
+    <div class="row">
+      <button onclick="checkMini()">Проверить</button>
+    </div>
+    <div class="mc-fb" id="mini-fb"></div>
+  </div>
+
+  <!-- КОНТЕЙНЕР ДЛЯ КНОПКИ ПЕРЕХОДА -->
+  <div class="next-step-container" id="nextLevelContainer"></div>
+
+  <div style="text-align:right; margin-top:2.5rem; font-size:1rem; color:#3b5c7a; font-weight:500; border-top:2px solid #cfe4ff; padding-top:1.2rem;">
+    ✨ Признаки делимости ✨ <br>
+    <span style="opacity:0.7;">(по материалам темы «Делители и кратные»)</span>
+  </div>
+</div>
+
+<script>
+// ВАША ССЫЛКА НА GOOGLE APPS SCRIPT
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+function checkMini() {
+  const ans = {
+    q1: 'да', // 378 чётное
+    q2: 'да', // 3+7+8=18, 18:3=6
+    q3: 'нет', // 78 не делится на 4
+    q4: 'нет', // оканчивается на 8
+    q5: 'да', // чётное и сумма 18 делится на 3
+    q6: 'да', // сумма 18 делится на 9
+    q7: 'нет' // не оканчивается на 0
+  };
+  let correctCount = 0;
+  let wrong = [];
+  for (let key in ans) {
+    const inp = document.getElementById(key).value.trim().toLowerCase();
+    if (inp === ans[key]) {
+      correctCount++;
+    } else {
+      wrong.push(key);
+    }
+  }
+  const fb = document.getElementById('mini-fb');
+  fb.classList.add('show');
+  if (correctCount === 7) {
+    fb.className = 'mc-fb show ok';
+    fb.innerHTML = '🎉 Отлично! Все ответы верные. Ты отлично знаешь признаки делимости!';
+  } else {
+    fb.className = 'mc-fb show err';
+    let msg = `Правильно: ${correctCount} из 7. `;
+    if (wrong.includes('q1')) msg += 'На 2 — число чётное (последняя цифра 8). ';
+    if (wrong.includes('q2')) msg += 'На 3 — сумма 3+7+8 = 18, делится на 3. ';
+    if (wrong.includes('q3')) msg += 'На 4 — последние две цифры 78, а 78 не делится на 4. ';
+    if (wrong.includes('q4')) msg += 'На 5 — последняя цифра не 0 и не 5. ';
+    if (wrong.includes('q5')) msg += 'На 6 — чётное и сумма 18 делится на 3, значит, делится. ';
+    if (wrong.includes('q6')) msg += 'На 9 — сумма 18 делится на 9. ';
+    if (wrong.includes('q7')) msg += 'На 10 — не оканчивается на 0. ';
+    fb.innerHTML = msg;
+  }
+}
+
+// --- УМНЫЙ ПЕРЕХОД (без строгой привязки) ---
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего задания...</span>';
+  
+  // Получаем имя текущего файла из URL браузера
+  const path = window.location.pathname;
+  const currentFile = path.substring(path.lastIndexOf('/') + 1);
+  
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к следующему шагу →</a>`;
+      } else {
+        container.innerHTML = `<a href="index.html" class="btn-next home">Тема изучена, перейти на главную 🏠</a>`;
+      }
+    } else {
+      throw new Error('Данные не получены');
+    }
+  } catch (e) {
+    container.innerHTML = `<a href="index.html" class="btn-next home">Вернуться на главную 🏠</a>`;
+  }
+}
+
+// Вызываем при загрузке
+loadNextButton();
+</script>
+</body>
+</html>
