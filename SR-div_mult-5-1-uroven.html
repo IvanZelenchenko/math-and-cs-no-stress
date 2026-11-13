@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Самостоятельная работа: Делители и кратные</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem 6rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; width: 100%; }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.1rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.4rem; }
+
+  /* ---------- ЭКРАН АВТОРИЗАЦИИ ---------- */
+  .auth-box {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .auth-box h2 { color: #173a5e; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif; }
+  .auth-box p { color: #4a5f78; margin-bottom: 1.5rem; }
+  .auth-row { margin-bottom: 1.2rem; text-align: left; }
+  .auth-row label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #173a5e; }
+  .auth-row input {
+    width: 100%; padding: 0.8rem 1rem; border-radius: 14px;
+    border: 2px solid #bcd4f0; font-size: 1.05rem; font-family: 'Rubik', sans-serif;
+  }
+  .auth-row input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .auth-error { color: #d9544d; font-weight: 600; margin-bottom: 1rem; min-height: 1.2rem; display: none; }
+  .auth-error.show { display: block; }
+  .btn-start {
+    width: 100%; padding: 1rem; border-radius: 16px; font-size: 1.2rem;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    border: none; font-weight: 700; font-family: 'Rubik', sans-serif;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+  }
+  .btn-start:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-start:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+
+  /* ---------- Критерии ---------- */
+  .criteria {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.2rem 1.6rem; margin-bottom: 1.6rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 10px 24px -12px rgba(20, 60, 120, 0.2);
+    display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center;
+  }
+  .criteria .crit-title { font-weight: 700; color: #173a5e; font-size: 1.05rem; width: 100%; margin-bottom: 0.2rem; }
+  .crit-item { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 0.98rem; }
+  .crit-mark { font-weight: 800; font-size: 1.1rem; color: #fff; padding: 0.15rem 0.7rem; border-radius: 30px; }
+  .mark5 { background: #2fbf71; } .mark4 { background: #4a90e2; }
+  .mark3 { background: #f2a03d; } .mark2 { background: #d9544d; }
+
+  /* ---------- Таймер ---------- */
+  .timer-bar {
+    position: sticky; top: 10px; z-index: 50;
+    background: #ffffffec; backdrop-filter: blur(8px);
+    border-radius: 20px; padding: 0.8rem 1.6rem; margin-bottom: 1.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; border: 1px solid #cfe2ff;
+    box-shadow: 0 8px 20px -10px rgba(20, 60, 120, 0.3); flex-wrap: wrap;
+  }
+  .timer-label { font-weight: 600; color: #173a5e; }
+  .timer-value {
+    font-family: 'Montserrat', monospace; font-weight: 800;
+    font-size: 1.5rem; color: #1d4e7a; min-width: 90px; text-align: right;
+  }
+  .timer-value.warn { color: #d9544d; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+  /* ---------- Задания ---------- */
+  .q-card {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.5rem 1.7rem; margin-bottom: 1.3rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 12px 26px -14px rgba(20, 60, 120, 0.25); transition: 0.2s;
+  }
+  .q-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0.9rem; }
+  .q-num {
+    font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.05rem;
+    color: #fff; background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    min-width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 0 #2a4f9e; flex-shrink: 0;
+  }
+  .q-text { font-weight: 600; font-size: 1.08rem; color: #173a5e; padding-top: 6px; }
+  .q-text .inline-math {
+    font-family: 'Montserrat', monospace; font-weight: 700;
+    background: #eef5ff; padding: 0.1rem 0.55rem; border-radius: 10px; color: #0b4a7a;
+  }
+  .q-body { margin-top: 0.4rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 0.6rem; }
+  input[type="text"] {
+    font-family: 'Rubik', sans-serif; font-size: 1.05rem;
+    padding: 0.55rem 1rem; border-radius: 14px; border: 2px solid #bcd4f0;
+    outline: none; background: #fff; min-width: 110px; transition: 0.15s;
+  }
+  input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 0.4rem; }
+  .chip {
+    font-weight: 600; font-size: 1.05rem; padding: 0.45rem 1.1rem;
+    border-radius: 40px; background: #f2f7ff; border: 2px solid #c4daf5;
+    color: #24425f; cursor: pointer; user-select: none; transition: 0.12s;
+  }
+  .chip:hover { background: #e1edff; }
+  .chip.selected { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  .fake-select { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 0.4rem; }
+  .fake-select .opt {
+    padding: 0.45rem 1.1rem; border-radius: 14px; border: 2px solid #c4daf5;
+    background: #fff; font-weight: 600; cursor: pointer; font-size: 1.02rem; transition: 0.12s;
+  }
+  .fake-select .opt:hover { background: #eef5ff; }
+  .fake-select .opt.sel { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+
+  /* ---------- Результаты ---------- */
+  .result-box {
+    margin-top: 2rem; background: #ffffffdd; backdrop-filter: blur(8px);
+    border-radius: 28px; padding: 2rem 2.2rem; border: 2px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3); display: none;
+  }
+  .result-box.show { display: block; animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .result-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.6rem; margin-bottom: 0.6rem; color: #173a5e; }
+  .result-mark {
+    display: inline-block; font-family: 'Montserrat', sans-serif; font-weight: 800;
+    font-size: 3rem; padding: 0.3rem 1.6rem; border-radius: 28px; color: #fff;
+    margin: 0.6rem 0; box-shadow: 0 10px 0 rgba(0,0,0,0.12);
+  }
+  .result-summary { font-size: 1.1rem; margin: 0.6rem 0 1.2rem; color: #2c3e50; }
+  .wrong-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .wrong-item {
+    background: #fff5f3; border-left: 8px solid #e0644d; border-radius: 16px;
+    padding: 0.9rem 1.2rem; font-size: 1rem;
+  }
+  .wrong-item .wq { font-weight: 700; color: #8a2c1c; margin-bottom: 4px; }
+  .wrong-item .wdetail { color: #4a3a37; }
+  .wrong-item .wdetail b { color: #8a2c1c; }
+  .wrong-item .wcorrect { color: #15623b; font-weight: 600; }
+  .all-ok { background: #e3f9ec; border-left: 8px solid #2fbf71; border-radius: 16px; padding: 1rem 1.3rem; color: #15623b; font-weight: 600; font-size: 1.05rem; }
+  .btn-check {
+    font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.2rem;
+    padding: 0.9rem 2.4rem; border: none; border-radius: 20px;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    display: block; width: 100%; margin-top: 1.6rem;
+  }
+  .btn-check:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-check:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-check:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+  .btn-restart {
+    font-family: 'Rubik', sans-serif; font-weight: 600; font-size: 1rem;
+    padding: 0.6rem 1.6rem; border: none; border-radius: 16px;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    cursor: pointer; box-shadow: 0 5px 0 #445566; margin-top: 1.2rem;
+  }
+  .btn-restart:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+  .hidden { display: none !important; }
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.7rem 5rem; }
+    h1 { font-size: 1.6rem; }
+    .q-card { padding: 1.2rem 1.1rem; }
+    .criteria { padding: 1rem 1.1rem; }
+    .result-box { padding: 1.4rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- ЭКРАН 1: АВТОРИЗАЦИЯ -->
+  <div id="authScreen" class="auth-box">
+    <h1 style="text-align:center; margin-bottom: 1.5rem;">📝 Вход в тест</h1>
+    <p style="text-align:center;">Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
+    
+    <div style="background:#f0f6ff; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #3a5f8a; text-align: center;">
+      Пример: <b>Иванов Иван</b> и класс <b>5Л</b>
+    </div>
+
+    <div class="auth-row">
+      <label>ФИО (как в журнале)</label>
+      <input type="text" id="inpFIO" placeholder="Иванов Иван" autocomplete="off">
+    </div>
+    <div class="auth-row">
+      <label>Класс</label>
+      <input type="text" id="inpKlass" placeholder="5Л" autocomplete="off">
+    </div>
+    <div class="auth-error" id="authError"></div>
+    
+    <button class="btn-start" id="btnStart" onclick="checkStudent()">Проверить и начать</button>
+  </div>
+
+  <!-- ЭКРАН 2: САМ ТЕСТ (скрыт) -->
+  <div id="quizScreen" class="hidden">
+    <h1>📝 Самостоятельная работа</h1>
+    <p class="subtitle">Тема: Делители и кратные · 10 вопросов · 10 минут</p>
+
+    <!-- Критерии -->
+    <div class="criteria">
+      <div class="crit-title">📊 Критерии оценивания (из 10 заданий):</div>
+      <div class="crit-item"><span class="crit-mark mark5">5</span> 9–10 верных</div>
+      <div class="crit-item"><span class="crit-mark mark4">4</span> 7–8 верных</div>
+      <div class="crit-item"><span class="crit-mark mark3">3</span> 5–6 верных</div>
+      <div class="crit-item"><span class="crit-mark mark2">2</span> 0–4 верных</div>
+    </div>
+
+    <!-- Таймер -->
+    <div class="timer-bar">
+      <span class="timer-label">⏱️ Осталось времени:</span>
+      <span class="timer-value" id="timer">10:00</span>
+    </div>
+
+    <!-- Вопросы -->
+    <div id="quiz"></div>
+
+    <!-- Кнопка -->
+    <button class="btn-check" id="checkBtn" onclick="finishQuiz()">Проверить результаты</button>
+
+    <!-- Результаты -->
+    <div class="result-box" id="resultBox">
+      <div class="result-title">📋 Результат</div>
+      <div id="resultMark" class="result-mark"></div>
+      <div class="result-summary" id="resultSummary"></div>
+      <div id="wrongContainer"></div>
+      <button class="btn-restart" onclick="location.reload()">Пройти заново</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+let studentName = '';
+let studentClass = '';
+let quizStarted = false;
+
+/* ============================================================
+   АВТОРИЗАЦИЯ
+============================================================ */
+async function checkStudent() {
+  const fio = document.getElementById('inpFIO').value.trim();
+  const klass = document.getElementById('inpKlass').value.trim().toUpperCase();
+  const err = document.getElementById('authError');
+  err.classList.remove('show');
+
+  if (fio.length < 5) { err.textContent = 'Введите имя и фамилию полностью.'; err.classList.add('show'); return; }
+  if (klass.length < 1) { err.textContent = 'Введите ваш класс (например, 5Л).'; err.classList.add('show'); return; }
+
+  const btn = document.getElementById('btnStart');
+  btn.disabled = true; btn.innerText = 'Проверяем...';
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=checkStudent&fio=${encodeURIComponent(fio)}&klass=${encodeURIComponent(klass)}`);
+    const data = await resp.json();
+    if (!data.found) {
+      err.textContent = 'Ошибка: ученик не найден в списке этого класса.';
+      err.classList.add('show');
+      btn.disabled = false; btn.innerText = 'Проверить и начать';
+      return;
+    }
+  } catch (e) {
+    err.textContent = 'Ошибка сети. Попробуйте позже.';
+    err.classList.add('show');
+    btn.disabled = false; btn.innerText = 'Проверить и начать';
+    return;
+  }
+
+  studentName = fio;
+  studentClass = klass;
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  
+  startQuiz();
+}
+
+/* ============================================================
+   БАНК ВОПРОСОВ
+============================================================ */
+const QUESTION_BANK = [
+  { id: 1, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">18</span>?', answer: '6', accept: ['6'] },
+  { id: 2, type: 'input', text: 'Наименьшее кратное числа <span class="inline-math">7</span>, большее самого числа 7 — это?', answer: '14', accept: ['14'] },
+  { id: 3, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">10</span> равна?', answer: '18', accept: ['18'] },
+  { id: 4, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">24</span>?', answer: '8', accept: ['8'] },
+  { id: 5, type: 'input', text: 'Введи наибольший делитель числа <span class="inline-math">48</span>, меньший самого числа 48.', answer: '24', accept: ['24'] },
+  { id: 6, type: 'input', text: 'Наименьшее общее кратное чисел <span class="inline-math">4</span> и <span class="inline-math">6</span> — это?', answer: '12', accept: ['12'] },
+  { id: 7, type: 'input', text: 'Сумма делителей числа <span class="inline-math">12</span> равна?', answer: '28', accept: ['28'] },
+  { id: 8, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">30</span>?', answer: '8', accept: ['8'] },
+  { id: 9, type: 'input', text: 'Наименьшее кратное числа <span class="inline-math">11</span>, большее 11, — это?', answer: '22', accept: ['22'] },
+  { id: 10, type: 'input', text: 'Введи количество делителей числа <span class="inline-math">16</span>.', answer: '5', accept: ['5'] },
+  { id: 11, type: 'input', text: 'Наибольший делитель числа <span class="inline-math">20</span>, меньший 20, — это?', answer: '10', accept: ['10'] },
+  { id: 12, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">9</span> равна?', answer: '13', accept: ['13'] },
+  { id: 13, type: 'input', text: 'Наименьшее общее кратное чисел <span class="inline-math">3</span> и <span class="inline-math">5</span> — это?', answer: '15', accept: ['15'] },
+  { id: 14, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">25</span>?', answer: '3', accept: ['3'] },
+  { id: 15, type: 'input', text: 'Наименьшее кратное числа <span class="inline-math">13</span>, большее 13, — это?', answer: '26', accept: ['26'] },
+  { id: 16, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">8</span> равна?', answer: '15', accept: ['15'] },
+  { id: 17, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">36</span>?', answer: '9', accept: ['9'] },
+  { id: 18, type: 'input', text: 'Наибольший делитель числа <span class="inline-math">72</span>, меньший 72, — это?', answer: '36', accept: ['36'] },
+  { id: 19, type: 'input', text: 'Наименьшее общее кратное чисел <span class="inline-math">8</span> и <span class="inline-math">12</span> — это?', answer: '24', accept: ['24'] },
+  { id: 20, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">6</span> равна?', answer: '12', accept: ['12'] },
+  { id: 21, type: 'input', text: 'Сколько делителей у числа <span class="inline-math">100</span>?', answer: '9', accept: ['9'] },
+  { id: 22, type: 'input', text: 'Наименьшее кратное числа <span class="inline-math">17</span>, большее 17, — это?', answer: '34', accept: ['34'] },
+  { id: 23, type: 'input', text: 'Сумма всех делителей числа <span class="inline-math">15</span> равна?', answer: '24', accept: ['24'] },
+  { id: 24, type: 'input', text: 'Наибольший делитель числа <span class="inline-math">60</span>, меньший 60, — это?', answer: '30', accept: ['30'] },
+  { id: 25, type: 'input', text: 'Наименьшее общее кратное чисел <span class="inline-math">9</span> и <span class="inline-math">12</span> — это?', answer: '36', accept: ['36'] },
+  { id: 26, type: 'single', text: 'Какое из чисел является делителем числа <span class="inline-math">24</span>?', options: ['5','7','8','9'], answer: '8' },
+  { id: 27, type: 'single', text: 'Какое из чисел кратно <span class="inline-math">6</span>?', options: ['14','18','22','26'], answer: '18' },
+  { id: 28, type: 'single', text: 'Какое число имеет ровно 2 делителя?', options: ['9','11','15','21'], answer: '11' },
+  { id: 29, type: 'single', text: 'Какое из чисел является кратным <span class="inline-math">9</span> и чётным одновременно?', options: ['27','36','45','63'], answer: '36' },
+  { id: 30, type: 'single', text: 'Наибольший общий делитель чисел <span class="inline-math">12</span> и <span class="inline-math">18</span> — это:', options: ['2','3','6','9'], answer: '6' },
+  { id: 31, type: 'single', text: 'Какое число не является делителем <span class="inline-math">40</span>?', options: ['4','5','8','12'], answer: '12' },
+  { id: 32, type: 'single', text: 'Наименьшее общее кратное чисел <span class="inline-math">6</span> и <span class="inline-math">10</span> — это:', options: ['20','30','40','60'], answer: '30' },
+  { id: 33, type: 'single', text: 'Какое из чисел имеет больше всего делителей?', options: ['12','16','18','20'], answer: '18' },
+  { id: 34, type: 'single', text: 'Какое из чисел кратно <span class="inline-math">4</span>?', options: ['34','46','52','58'], answer: '52' },
+  { id: 35, type: 'single', text: 'Какое из чисел является делителем <span class="inline-math">36</span> и кратным <span class="inline-math">3</span>?', options: ['4','6','8','10'], answer: '6' },
+  { id: 36, type: 'single', text: 'Сумма делителей числа <span class="inline-math">5</span> равна:', options: ['5','6','7','10'], answer: '6' },
+  { id: 37, type: 'single', text: 'Какое из чисел не кратно <span class="inline-math">3</span>?', options: ['123','231','312','421'], answer: '421' },
+  { id: 38, type: 'single', text: 'Наибольший общий делитель чисел <span class="inline-math">20</span> и <span class="inline-math">30</span> — это:', options: ['5','10','15','20'], answer: '10' },
+  { id: 39, type: 'single', text: 'Наименьшее общее кратное чисел <span class="inline-math">4</span> и <span class="inline-math">10</span> — это:', options: ['10','20','30','40'], answer: '20' },
+  { id: 40, type: 'single', text: 'Какое из чисел является кратным <span class="inline-math">11</span>?', options: ['99','101','112','123'], answer: '99' },
+  { id: 41, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">16</span>.', options: ['1','2','3','4','8','16'], answer: ['1','2','4','8','16'] },
+  { id: 42, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">5</span>.', options: ['10','12','15','20','22','25'], answer: ['10','15','20','25'] },
+  { id: 43, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">20</span>.', options: ['1','2','3','4','5','10','20'], answer: ['1','2','4','5','10','20'] },
+  { id: 44, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">4</span>.', options: ['8','10','12','16','18','20'], answer: ['8','12','16','20'] },
+  { id: 45, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">18</span>.', options: ['1','2','3','6','9','18','24'], answer: ['1','2','3','6','9','18'] },
+  { id: 46, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">3</span>.', options: ['6','8','9','12','14','15'], answer: ['6','9','12','15'] },
+  { id: 47, type: 'multi', text: 'Выбери все делители числа <span class="inline-math">24</span>.', options: ['1','2','3','4','6','8','12','24'], answer: ['1','2','3','4','6','8','12','24'] },
+  { id: 48, type: 'multi', text: 'Выбери все числа, кратные <span class="inline-math">6</span>.', options: ['6','10','12','14','18','24'], answer: ['6','12','18','24'] },
+  { id: 49, type: 'multi', text: 'Выбери все числа, которые являются делителями <span class="inline-math">12</span> и одновременно кратны <span class="inline-math">2</span>.', options: ['1','2','3','4','6','12'], answer: ['2','4','6','12'] },
+  { id: 50, type: 'multi', text: 'Выбери все числа, которые кратны <span class="inline-math">10</span>.', options: ['10','15','20','25','30','50'], answer: ['10','20','30','50'] },
+];
+
+/* ============================================================
+   ЛОГИКА ТЕСТА
+============================================================ */
+let selectedQuestions = [];
+let userAnswers = [];
+let timeLeft = 600;
+let timerInterval = null;
+let quizFinished = false;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  selectedQuestions = shuffle(QUESTION_BANK).slice(0, 10);
+  userAnswers = selectedQuestions.map(() => ({ value: null }));
+  
+  renderQuiz();
+  startTimer();
+}
+
+function renderQuiz() {
+  const quizContainer = document.getElementById('quiz');
+  quizContainer.innerHTML = '';
+  
+  selectedQuestions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard-' + idx;
+
+    const head = document.createElement('div');
+    head.className = 'q-head';
+    const num = document.createElement('div');
+    num.className = 'q-num';
+    num.textContent = idx + 1;
+    const text = document.createElement('div');
+    text.className = 'q-text';
+    text.innerHTML = q.text;
+    head.appendChild(num);
+    head.appendChild(text);
+    card.appendChild(head);
+
+    const body = document.createElement('div');
+    body.className = 'q-body';
+
+    if (q.type === 'input') {
+      const row = document.createElement('div');
+      row.className = 'row';
+      const inp = document.createElement('input');
+      inp.type = 'text';
+      inp.placeholder = 'Введи ответ';
+      inp.dataset.idx = idx;
+      inp.addEventListener('input', () => {
+        userAnswers[idx].value = inp.value.trim();
+      });
+      row.appendChild(inp);
+      body.appendChild(row);
+    } else if (q.type === 'single') {
+      const fs = document.createElement('div');
+      fs.className = 'fake-select';
+      q.options.forEach(opt => {
+        const el = document.createElement('div');
+        el.className = 'opt';
+        el.textContent = opt;
+        el.addEventListener('click', () => {
+          fs.querySelectorAll('.opt').forEach(o => o.classList.remove('sel'));
+          el.classList.add('sel');
+          userAnswers[idx].value = opt;
+        });
+        fs.appendChild(el);
+      });
+      body.appendChild(fs);
+    } else if (q.type === 'multi') {
+      const cg = document.createElement('div');
+      cg.className = 'chip-group';
+      q.options.forEach(opt => {
+        const el = document.createElement('span');
+        el.className = 'chip';
+        el.textContent = opt;
+        el.dataset.val = opt;
+        el.addEventListener('click', () => {
+          el.classList.toggle('selected');
+          const selected = [];
+          cg.querySelectorAll('.chip.selected').forEach(c => selected.push(c.dataset.val));
+          userAnswers[idx].value = selected.length ? selected : null;
+        });
+        cg.appendChild(el);
+      });
+      body.appendChild(cg);
+    }
+    card.appendChild(body);
+    quizContainer.appendChild(card);
+  });
+}
+
+function startTimer() {
+  timeLeft = 600;
+  updateTimerDisplay();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (quizFinished) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (timeLeft <= 60) el.classList.add('warn');
+  else el.classList.remove('warn');
+}
+
+function isCorrect(q, userVal) {
+  if (q.type === 'input') {
+    if (userVal === null || userVal === undefined) return false;
+    const u = String(userVal).trim().toLowerCase();
+    return q.accept.some(a => String(a).toLowerCase() === u);
+  }
+  if (q.type === 'single') {
+    if (userVal === null || userVal === undefined) return false;
+    return String(userVal) === String(q.answer);
+  }
+  if (q.type === 'multi') {
+    if (!userVal || userVal.length === 0) return false;
+    const u = userVal.map(String).sort().join(',');
+    const a = q.answer.map(String).sort().join(',');
+    return u === a;
+  }
+  return false;
+}
+
+async function finishQuiz(auto = false) {
+  if (quizFinished) return;
+  quizFinished = true;
+  clearInterval(timerInterval);
+
+  document.getElementById('checkBtn').disabled = true;
+  document.querySelectorAll('input').forEach(i => i.disabled = true);
+  document.querySelectorAll('.chip, .opt').forEach(el => { el.style.pointerEvents = 'none'; });
+
+  let correctCount = 0;
+  const wrongDetails = [];
+
+  selectedQuestions.forEach((q, idx) => {
+    const userVal = userAnswers[idx].value;
+    const ok = isCorrect(q, userVal);
+    if (ok) {
+      correctCount++;
+    } else {
+      let userDisplay = userVal;
+      if (userVal === null || userVal === undefined || (Array.isArray(userVal) && userVal.length === 0) || userVal === '') {
+        userDisplay = '— (нет ответа)';
+      } else if (Array.isArray(userVal)) {
+        userDisplay = userVal.join(', ');
+      }
+      
+      let correctDisplay = q.type === 'multi' ? q.answer.join(', ') : (q.type === 'input' ? q.accept[0] : q.answer);
+      
+      wrongDetails.push({
+        num: idx + 1,
+        text: q.text,
+        userDisplay: userDisplay,
+        correctDisplay: correctDisplay
+      });
+    }
+  });
+
+  let markText = '2', markClass = 'mark2';
+  if (correctCount >= 9) { markText = '5'; markClass = 'mark5'; }
+  else if (correctCount >= 7) { markText = '4'; markClass = 'mark4'; }
+  else if (correctCount >= 5) { markText = '3'; markClass = 'mark3'; }
+
+  // Отправка в Google Таблицу
+  const date = new Date().toLocaleString('ru-RU');
+  try {
+    await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'addResult',
+        fio: studentName,
+        klass: studentClass,
+        topic: 'Делители и кратные',
+        grade: markText,
+        datetime: date,
+        correct: correctCount
+      })
+    });
+  } catch (e) {
+    console.log('Ошибка отправки результата:', e);
+  }
+
+  // Показ результатов
+  const resultBox = document.getElementById('resultBox');
+  resultBox.classList.add('show');
+
+  const markEl = document.getElementById('resultMark');
+  markEl.textContent = markText;
+  markEl.className = 'result-mark ' + markClass;
+
+  const summary = document.getElementById('resultSummary');
+  summary.innerHTML = `Правильно выполнено: <b>${correctCount} из 10</b> заданий. ` +
+    (auto ? '<br><span style="color:#d9544d;font-weight:600;">⏰ Время вышло — тест завершён автоматически.</span>' : '');
+
+  const wc = document.getElementById('wrongContainer');
+  wc.innerHTML = '';
+  if (wrongDetails.length === 0) {
+    const okDiv = document.createElement('div');
+    okDiv.className = 'all-ok';
+    okDiv.textContent = '🎉 Отлично! Все задания выполнены без ошибок.';
+    wc.appendChild(okDiv);
+  } else {
+    const title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;color:#173a5e;margin-bottom:0.8rem;font-size:1.1rem;';
+    title.textContent = `❌ Ошибки в заданиях (${wrongDetails.length}):`;
+    wc.appendChild(title);
+
+    const ul = document.createElement('ul');
+    ul.className = 'wrong-list';
+    wrongDetails.forEach(w => {
+      const li = document.createElement('li');
+      li.className = 'wrong-item';
+      li.innerHTML = `
+        <div class="wq">Задание ${w.num}: ${w.text}</div>
+        <div class="wdetail">Твой ответ: <b>${w.userDisplay}</b></div>
+        <div class="wcorrect">Правильный ответ: ${w.correctDisplay}</div>
+      `;
+      ul.appendChild(li);
+    });
+    wc.appendChild(ul);
+  }
+
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('beforeunload', (e) => {
+  if (quizStarted && !quizFinished) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
