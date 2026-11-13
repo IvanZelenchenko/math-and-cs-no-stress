@@ -40,8 +40,8 @@
     max-width: 500px;
     margin: 0 auto;
   }
-  .auth-box h2 { color: #173a5e; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif; }
-  .auth-box p { color: #4a5f78; margin-bottom: 1.5rem; }
+  .auth-box h2 { color: #173a5e; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif; text-align: center; }
+  .auth-box p { color: #4a5f78; margin-bottom: 1.5rem; text-align: center; }
   .auth-row { margin-bottom: 1.2rem; text-align: left; }
   .auth-row label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #173a5e; }
   .auth-row input {
@@ -49,17 +49,27 @@
     border: 2px solid #bcd4f0; font-size: 1.05rem; font-family: 'Rubik', sans-serif;
   }
   .auth-row input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
-  .auth-error { color: #d9544d; font-weight: 600; margin-bottom: 1rem; min-height: 1.2rem; display: none; }
+  .auth-error { color: #d9544d; font-weight: 600; margin-bottom: 1rem; min-height: 1.2rem; display: none; text-align: center; }
   .auth-error.show { display: block; }
+  
   .btn-start {
     width: 100%; padding: 1rem; border-radius: 16px; font-size: 1.2rem;
     background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
     border: none; font-weight: 700; font-family: 'Rubik', sans-serif;
     cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    margin-bottom: 1.5rem;
   }
   .btn-start:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
   .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
   .btn-start:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+
+  .btn-home {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    padding: 0.8rem; border-radius: 16px; font-size: 1rem;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    font-weight: 600; box-shadow: 0 5px 0 #445566; transition: 0.1s;
+  }
+  .btn-home:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
 
   /* ---------- Критерии ---------- */
   .criteria {
@@ -159,6 +169,7 @@
   .wrong-item .wdetail b { color: #8a2c1c; }
   .wrong-item .wcorrect { color: #15623b; font-weight: 600; }
   .all-ok { background: #e3f9ec; border-left: 8px solid #2fbf71; border-radius: 16px; padding: 1rem 1.3rem; color: #15623b; font-weight: 600; font-size: 1.05rem; }
+  
   .btn-check {
     font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.2rem;
     padding: 0.9rem 2.4rem; border: none; border-radius: 20px;
@@ -169,13 +180,17 @@
   .btn-check:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
   .btn-check:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
   .btn-check:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+  
+  /* Кнопка возврата в результатах */
   .btn-restart {
     font-family: 'Rubik', sans-serif; font-weight: 600; font-size: 1rem;
     padding: 0.6rem 1.6rem; border: none; border-radius: 16px;
     background: linear-gradient(135deg, #8899aa, #667788); color: white;
     cursor: pointer; box-shadow: 0 5px 0 #445566; margin-top: 1.2rem;
+    display: inline-block; text-decoration: none;
   }
   .btn-restart:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+  
   .hidden { display: none !important; }
   @media (max-width: 600px) {
     body { padding: 1rem 0.7rem 5rem; }
@@ -190,8 +205,8 @@
 <div class="wrap">
   <!-- ЭКРАН 1: АВТОРИЗАЦИЯ -->
   <div id="authScreen" class="auth-box">
-    <h1 style="text-align:center; margin-bottom: 1.5rem;">📝 Вход в тест</h1>
-    <p style="text-align:center;">Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
+    <h2>📝 Вход в тест</h2>
+    <p>Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
     
     <div style="background:#f0f6ff; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #3a5f8a; text-align: center;">
       Пример: <b>Иванов Иван</b> и класс <b>5Л</b>
@@ -208,6 +223,9 @@
     <div class="auth-error" id="authError"></div>
     
     <button class="btn-start" id="btnStart" onclick="checkStudent()">Проверить и начать</button>
+    
+    <!-- Кнопка возврата на главную -->
+    <a href="index.html" class="btn-home">🏠 Вернуться на главную</a>
   </div>
 
   <!-- ЭКРАН 2: САМ ТЕСТ (скрыт) -->
@@ -242,7 +260,9 @@
       <div id="resultMark" class="result-mark"></div>
       <div class="result-summary" id="resultSummary"></div>
       <div id="wrongContainer"></div>
-      <button class="btn-restart" onclick="location.reload()">Пройти заново</button>
+      
+      <!-- Кнопка возврата в результатах -->
+      <a href="index.html" class="btn-restart">🏠 Вернуться на главную</a>
     </div>
   </div>
 </div>
