@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Делители и кратные | Интерактивный урок</title>
+    <!-- Google Fonts для яркой типографики -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f6f0ff 0%, #e6f7ff 100%);
+            font-family: 'Rubik', sans-serif;
+            color: #1e2b3c;
+            padding: 2rem 1.5rem;
+            display: flex;
+            justify-content: center;
+            line-height: 1.5;
+        }
+
+        .lesson-card {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 60px 20px 60px 20px;
+            box-shadow: 0 30px 50px rgba(0, 50, 80, 0.15), 0 10px 20px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255,255,255,0.6);
+            padding: 2.5rem 2.8rem;
+            transition: all 0.2s;
+            border: 1px solid rgba(120, 200, 255, 0.3);
+        }
+
+        /* Заголовки */
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 2.5rem;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #2b3a8c, #3e6bb0, #1e8f9e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.8rem;
+            display: inline-block;
+            border-bottom: 6px dotted #a3d8ff;
+            padding-bottom: 0.5rem;
+            text-shadow: 2px 2px 10px rgba(70, 130, 200, 0.2);
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.9rem;
+            color: #1d4e7a;
+            margin: 1.8rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2 .emoji-badge {
+            font-size: 2rem;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+        }
+
+        h3 {
+            font-weight: 600;
+            font-size: 1.4rem;
+            color: #2f5d8a;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            display: inline-block;
+            border-left: 8px solid #ffb347;
+            padding-left: 16px;
+        }
+
+        /* Карточки определений */
+        .definition-card {
+            background: white;
+            border-radius: 24px;
+            padding: 1.6rem 2rem;
+            margin: 1.2rem 0;
+            box-shadow: 0 10px 20px -8px rgba(0, 70, 120, 0.2);
+            border: 1px solid #cce6ff;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .definition-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 10px;
+            height: 100%;
+            background: linear-gradient(to bottom, #4f9fff, #7ad0ff);
+        }
+
+        .definition-card .highlight {
+            background: linear-gradient(120deg, #f9f3b0 0%, #f9f3b0 40%, #ffeaa5 90%);
+            padding: 0.15rem 0.5rem;
+            border-radius: 12px;
+            font-weight: 700;
+            color: #2d3e6b;
+        }
+
+        /* Примеры — стильные блоки */
+        .example-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 1.5rem 0;
+        }
+
+        .example-item {
+            background: #f9fcff;
+            border-radius: 28px;
+            padding: 1.2rem 1.6rem;
+            flex: 1 1 180px;
+            box-shadow: 0 8px 0 #b3d4f0, 0 10px 20px -5px rgba(0, 70, 120, 0.2);
+            border: 1px solid #ffffff;
+            transition: transform 0.1s;
+        }
+
+        .example-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .math {
+            font-family: 'Montserrat', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: #eef6ff;
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            color: #004b87;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .divisor-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: #41b883;
+            color: white;
+            border-radius: 50%;
+            font-weight: 800;
+            margin-right: 8px;
+            box-shadow: 0 6px 0 #1e6e4b;
+            border: 2px solid white;
+        }
+
+        .not-divisor {
+            background: #ff8a7a;
+            box-shadow: 0 6px 0 #b33f2e;
+        }
+
+        /* Список делителей */
+        .divisors-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 1.2rem 0;
+            align-items: center;
+        }
+
+        .divisor-pill {
+            background: #ffffff;
+            border-radius: 60px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1f5a8a;
+            box-shadow: 0 6px 0 #b0cde0, 0 8px 12px -6px #00000020;
+            border: 1px solid #b5d8ff;
+            transition: 0.1s;
+        }
+
+        .divisor-pill:hover {
+            transform: scale(1.02);
+            background: #d9edff;
+        }
+
+        .multiples-stream {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .multiples-stream span {
+            background: #ffeab3;
+            border-radius: 16px;
+            padding: 0.3rem 1rem;
+            font-weight: 600;
+            color: #5a4600;
+            box-shadow: 0 4px 0 #dbbd7a;
+            border: 1px solid #fff5d6;
+        }
+
+        /* Декор */
+        .sticker {
+            background: #fde16d;
+            padding: 0.3rem 1.2rem;
+            display: inline-block;
+            border-radius: 40px 8px 40px 8px;
+            font-weight: 700;
+            color: #3e2c00;
+            transform: rotate(-1deg);
+            box-shadow: 0 6px 0 #b3943b;
+            margin: 0.5rem 0;
+            font-size: 1rem;
+        }
+
+        .badge-prime {
+            background: #c3a6ff;
+            color: #2f0f5a;
+            border-radius: 30px;
+            padding: 0.25rem 1rem;
+            font-weight: 600;
+        }
+
+        hr {
+            border: none;
+            height: 4px;
+            background: linear-gradient(90deg, #b3e0ff, #d4b3ff, #b3ffdd, #ffe6b3);
+            border-radius: 4px;
+            margin: 2rem 0;
+        }
+
+        /* Кнопка перехода (в стиле сайта) */
+        .btn-next {
+            display: inline-block;
+            background: #2e7d5e;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 6px 0 #10462f;
+            border: 1px solid #6effb0;
+            transition: 0.15s;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-next:hover {
+            background: #3e9d6e;
+            transform: translateY(-2px);
+        }
+        .btn-next:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #10462f;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 680px) {
+            .lesson-card {
+                padding: 1.8rem 1.2rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.6rem;
+            }
+            .example-item {
+                flex: 1 1 100%;
+            }
+        }
+
+        /* Анимация для цифр */
+        @keyframes softPop {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-pop {
+            animation: softPop 0.4s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="lesson-card">
+        <!-- Главный заголовок -->
+        <h1>🔢 Делители и кратные</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 1.5rem; background: #e6f2ff; padding: 0.75rem 1.5rem; border-radius: 60px; display: inline-block; color: #0a3860;">
+            ⚡ Интерактивный конспект — страница 1
+        </p>
+
+        <!-- Что такое делитель? -->
+        <h2><span class="emoji-badge">📌</span> Что такое делитель?</h2>
+        <div class="definition-card">
+            <p style="font-size: 1.25rem; margin-bottom: 0.8rem;">
+                <span class="highlight">Делитель</span> — это число, показывающее, на сколько частей нужно разделить делимое.
+            </p>
+            <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 30px; margin-top: 1rem;">
+                <div>
+                    <span class="math" style="font-size: 1.8rem;">8 : 2 = 4</span>
+                    <p style="margin-top: 8px; font-weight: 500;"><span class="divisor-badge">2</span> — делитель числа 8</p>
+                </div>
+                <div>
+                    <span class="math" style="font-size: 1.8rem;">9 : 3 = 3</span>
+                    <p style="margin-top: 8px; font-weight: 500;"><span class="divisor-badge">3</span> — делитель числа 9</p>
+                </div>
+                <div>
+                    <span class="math" style="font-size: 1.8rem;">10 : 4 = 2 (ост.)</span>
+                    <p style="margin-top: 8px; font-weight: 500;"><span class="divisor-badge not-divisor">4</span> — не делитель числа 10</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Определение с переменной -->
+        <div class="definition-card" style="background: #f1f9ff;">
+            <p style="font-size: 1.2rem;">
+                <strong>Делителем числа <em>a</em></strong> называется число, на которое число <em>a</em> делится без остатка.
+            </p>
+            <p style="margin-top: 12px; font-style: italic; color: #0b4b6b;">
+                ✨ Пример: делителем числа 12 называется число, на которое 12 делится без остатка.
+            </p>
+        </div>
+
+        <!-- Делители 12 -->
+        <h3>🔹 Все делители числа 12</h3>
+        <div class="divisors-list">
+            <span class="divisor-pill">1</span>
+            <span class="divisor-pill">2</span>
+            <span class="divisor-pill">3</span>
+            <span class="divisor-pill">4</span>
+            <span class="divisor-pill">6</span>
+            <span class="divisor-pill">12</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px 24px; font-size: 1.2rem; background: #ffffffb8; border-radius: 20px; padding: 1rem 1.5rem; border: 1px solid #c4deff; margin-top: 0.5rem;">
+            <span>12 : 1 = 12</span>
+            <span>12 : 2 = 6</span>
+            <span>12 : 3 = 4</span>
+            <span>12 : 4 = 3</span>
+            <span>12 : 6 = 2</span>
+            <span>12 : 12 = 1</span>
+        </div>
+
+        <hr>
+
+        <!-- Кратные числа -->
+        <h2><span class="emoji-badge">📈</span> Кратные числа</h2>
+        <div class="definition-card" style="background: #fff7e9;">
+            <p style="font-size: 1.25rem;">
+                Если какое-нибудь число без остатка разделилось на другое, то его называют <span class="highlight">кратным</span> этого числа.
+            </p>
+            <p style="margin: 10px 0; font-weight: 500; background: #fff2d0; padding: 6px 16px; border-radius: 50px; display: inline-block;">
+                6 без остатка делится на 3 → 6 кратно 3
+            </p>
+            <div style="margin-top: 1rem; font-size: 1.5rem;">
+                <span class="math">6 : 3 = 2</span>
+            </div>
+        </div>
+
+        <div class="definition-card" style="background: #f2efff;">
+            <p style="font-size: 1.2rem;">
+                <strong>Кратным числа <em>a</em></strong> называется число, которое делится без остатка на <em>a</em>.
+            </p>
+            <p style="margin-top: 12px; font-style: italic; color: #3f2f7a;">
+                💡 Например: кратным числа 5 называется число, которое делится без остатка на 5.
+            </p>
+        </div>
+
+        <!-- Пример с кратными 5 -->
+        <h3>🔸 Первые кратные числа 5</h3>
+        <div class="multiples-stream">
+            <span>5</span>
+            <span>10</span>
+            <span>15</span>
+            <span>20</span>
+            <span>25</span>
+            <span>...</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 12px 30px; margin-top: 0.8rem; background: #fffbee; padding: 1rem 1.5rem; border-radius: 20px; border: 1px dashed #f0c27b; font-weight: 500;">
+            <span>5 : 5 = 1</span>
+            <span>10 : 5 = 2</span>
+            <span>15 : 5 = 3</span>
+            <span>20 : 5 = 4</span>
+            <span>25 : 5 = 5</span>
+        </div>
+        <p style="margin-top: 1rem; font-size: 1.1rem; background: #d9f0ff; padding: 0.7rem 1.2rem; border-radius: 40px; display: inline-block;">
+            ⭐ У любого числа <strong>бесконечно много кратных</strong>
+        </p>
+
+        <hr>
+
+        <!-- Забавный факт / стикер -->
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-top: 1.8rem;">
+            <div class="sticker">
+                🔍 8 имеет 4 делителя: 1, 2, 4, 8
+            </div>
+            <div class="sticker" style="background: #b8e4ff; box-shadow: 0 6px 0 #5e93b3; transform: rotate(1deg);">
+                ♾️ Кратные 8: 8, 16, 24, 32, 40...
+            </div>
+        </div>
+
+        <!-- Мини-пример из файла (число 12 и 5) -->
+        <div style="margin-top: 2.2rem; background: #ffffffd0; border-radius: 32px; padding: 1.5rem 1.8rem; border-left: 10px solid #ffa75e;">
+            <p style="font-weight: 700; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;">
+                <span style="background: #ffb882; padding: 6px 12px; border-radius: 20px; color: #3a2800;">📘 Пример из конспекта</span>
+            </p>
+            <p style="margin-top: 12px; font-size: 1.2rem;">
+                <strong>Делители 12:</strong> 1, 2, 3, 4, 6, 12 &nbsp; | &nbsp; 
+                <strong>Кратные 12:</strong> 12, 24, 36, 48, 60 ...
+            </p>
+            <p style="margin-top: 8px; font-size: 1.2rem;">
+                <strong>Делители 5:</strong> 1, 5 &nbsp; | &nbsp; 
+                <strong>Кратные 5:</strong> 5, 10, 15, 20, 25 ...
+            </p>
+        </div>
+
+        <!-- Подпись и украшение -->
+        <div style="text-align: right; margin-top: 2.5rem; font-size: 1rem; color: #3b5c7a; font-weight: 500; border-top: 2px solid #cfe4ff; padding-top: 1.2rem;">
+            ✨ Тема: Делители числа. Кратные числа ✨ <br>
+            <span style="opacity: 0.7;">(по материалам страницы 1)</span>
+        </div>
+
+        <!-- ⬇️ КОНТЕЙНЕР ДЛЯ КНОПКИ ПЕРЕХОДА ⬇️ -->
+        <div id="nextLevelContainer" style="text-align: center; margin-top: 30px; margin-bottom: 10px;"></div>
+
+    </div>
+
+    <script>
+        // ВАША ССЫЛКА НА GOOGLE APPS SCRIPT
+        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+        async function loadNextButton(currentFile) {
+            const container = document.getElementById('nextLevelContainer');
+            if (!container) return;
+            
+            try {
+                const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+                const data = await resp.json();
+                
+                if (data.ok) {
+                    // Ищем тему, в которой текущий файл является уровнем
+                    const currentTopic = data.topics.find(t => t.file === currentFile);
+                    
+                    if (currentTopic && currentTopic.next) {
+                        // Если следующий файл есть в таблице
+                        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к следующему шагу →</a>`;
+                    } else {
+                        // Если следующий файл пустой (или это конец темы)
+                        container.innerHTML = `<a href="index.html" class="btn-next" style="background: #4f3f8a; box-shadow: 0 6px 0 #1e1835; border-color: #8c7be0;">Тема изучена, перейти на главную 🏠</a>`;
+                    }
+                } else {
+                     throw new Error('Ошибка данных');
+                }
+            } catch (e) {
+                // Если нет интернета или ошибка скрипта, показываем кнопку на главную
+                container.innerHTML = `<a href="index.html" class="btn-next" style="background: #4f3f8a; box-shadow: 0 6px 0 #1e1835; border-color: #8c7be0;">Вернуться на главную 🏠</a>`;
+            }
+        }
+
+        // Укажите здесь точное имя ЭТОГО файла, чтобы скрипт знал, где он находится
+        loadNextButton('div_mult-5-1-teoriy.html');
+    </script>
+</body>
+</html>
