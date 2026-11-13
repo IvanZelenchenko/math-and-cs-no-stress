@@ -161,12 +161,9 @@
   .column-factor {
     background: #fff;
     border-radius: 18px;
-    padding: 1rem 1.6rem 1rem 1.4rem;
+    padding: 1rem 1.4rem 1rem 1.2rem;
     border: 2px solid #cfe2ff;
     box-shadow: 0 6px 0 #e0edff;
-    font-family: 'Montserrat', monospace;
-    font-weight: 600;
-    font-size: 1.05rem;
     min-width: 150px;
   }
 
@@ -182,53 +179,37 @@
 
   .factor-table {
     display: grid;
-    grid-template-columns: 1fr auto;
-    column-gap: 14px;
-    row-gap: 4px;
-    align-items: center;
-    position: relative;
-  }
-
-  /* вертикальная черта */
-  .factor-table::before {
-    content: "";
-    position: absolute;
-    top: -4px;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 3px;
-    background: linear-gradient(to bottom, #4a90e2, #7ad0ff);
-    border-radius: 3px;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 0;
+    row-gap: 2px;
+    align-items: stretch;
   }
 
   .factor-table .left-num {
     text-align: right;
     color: #1d4e7a;
     font-weight: 700;
-    padding-right: 14px;
-    position: relative;
-    z-index: 1;
-    background: #fff;
+    padding: 2px 16px 2px 0;
+    font-family: 'Montserrat', monospace;
+    font-size: 1.05rem;
+    line-height: 1.6;
   }
 
   .factor-table .right-num {
     text-align: left;
     color: #0b6b3a;
     font-weight: 700;
-    padding-left: 14px;
-    position: relative;
-    z-index: 1;
-    background: #fff;
+    padding: 2px 0 2px 16px;
+    border-left: 3px solid #4a90e2;
+    font-family: 'Montserrat', monospace;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
   }
 
-  .factor-table .right-num.prime {
-    color: #b3541e;
-  }
-
-  .factor-table .left-num.last {
-    color: #2fbf71;
-  }
+  .factor-table .right-num.prime { color: #b3541e; }
+  .factor-table .left-num.last { color: #2fbf71; }
 
   .cf-result {
     margin-top: 0.9rem;
@@ -241,7 +222,6 @@
     padding: 0.45rem 0.8rem;
     color: #004b87;
   }
-
   .cf-result.green {
     background: #e3f9ec;
     color: #15623b;
@@ -430,7 +410,6 @@
   <h2><span class="emoji-badge">📖</span> Что такое НОД и НОК?</h2>
 
   <div class="compare">
-    <!-- НОД -->
     <div class="compare-col">
       <h4>НОД</h4>
       <div class="short">Наибольший общий делитель</div>
@@ -444,7 +423,6 @@
         <li>НОД(12, 18) = 6</li>
       </ul>
     </div>
-    <!-- НОК -->
     <div class="compare-col nok-col">
       <h4>НОК</h4>
       <div class="short">Наименьшее общее кратное</div>
@@ -520,7 +498,6 @@
       <div class="ex-title">Пример: найти НОД(48, 36)</div>
 
       <div class="factor-block">
-        <!-- Разложение 48 -->
         <div class="column-factor">
           <div class="cf-title">48</div>
           <div class="factor-table">
@@ -534,7 +511,6 @@
           <div class="cf-result">48 = 2·2·2·2·3</div>
         </div>
 
-        <!-- Разложение 36 -->
         <div class="column-factor">
           <div class="cf-title">36</div>
           <div class="factor-table">
@@ -566,7 +542,6 @@
       <div class="ex-title">Пример: найти НОК(24, 60)</div>
 
       <div class="factor-block">
-        <!-- Разложение 24 -->
         <div class="column-factor">
           <div class="cf-title">24</div>
           <div class="factor-table">
@@ -579,7 +554,6 @@
           <div class="cf-result">24 = 2·2·2·3</div>
         </div>
 
-        <!-- Разложение 60 -->
         <div class="column-factor">
           <div class="cf-title">60</div>
           <div class="factor-table">
@@ -764,7 +738,6 @@
 // ВАША ССЫЛКА НА GOOGLE APPS SCRIPT
 const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
 
-// Логика для мини-теста
 function checkMini(num, accepts, inputId, fbId) {
   const inp = document.getElementById(inputId);
   const val = inp.value.trim().toLowerCase().replace(/\s+/g, '').replace(/,/g, '.');
@@ -799,7 +772,6 @@ async function loadNextButton() {
     const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
     const data = await resp.json();
     if (data.ok) {
-      // Ищем в таблице файл, имя которого совпадает с текущим
       const currentTopic = data.topics.find(t => t.file === currentFile);
       
       if (currentTopic && currentTopic.next) {
