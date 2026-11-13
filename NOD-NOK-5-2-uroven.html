@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практика: НОД и НОК</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1000px; width: 100%; }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.2rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.8rem; }
+
+  /* ---------- Карточка задания ---------- */
+  .task {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 26px;
+    padding: 1.7rem 2rem;
+    margin-bottom: 1.6rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 14px 30px -14px rgba(20, 60, 120, 0.25);
+    transition: 0.2s;
+  }
+  .task:hover { box-shadow: 0 18px 36px -14px rgba(20, 60, 120, 0.32); }
+  .task-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 0.9rem;
+  }
+  .task-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    min-width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 #2a4f9e;
+    flex-shrink: 0;
+  }
+  .task-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .tag-choose { background: #2fbf71; }
+  .tag-input { background: #4a90e2; }
+  .tag-multi { background: #f2a03d; }
+  .tag-order { background: #7b4fd1; }
+  .tag-text { background: #d9544d; }
+  .tag-build { background: #1e8f9e; }
+  .task-title { font-weight: 700; font-size: 1.12rem; color: #173a5e; flex: 1; }
+  .task-desc { color: #2c3e50; font-size: 1.02rem; margin-bottom: 0.7rem; }
+  .task-desc .math {
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    background: #eef6ff;
+    padding: 0.1rem 0.55rem;
+    border-radius: 10px;
+    color: #0b4a7a;
+  }
+
+  /* ---------- Кнопки и поля ---------- */
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 0.7rem; }
+  input[type="text"], input[type="number"] {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.05rem;
+    padding: 0.55rem 1rem;
+    border-radius: 14px;
+    border: 2px solid #bcd4f0;
+    outline: none;
+    background: #fff;
+    min-width: 120px;
+    transition: 0.15s;
+  }
+  input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  button {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 0.98rem;
+    padding: 0.55rem 1.3rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2a4f9e;
+    transition: 0.1s;
+  }
+  button:hover { transform: translateY(-1px); box-shadow: 0 5px 0 #2a4f9e; }
+  button:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a4f9e; }
+  button.hint-btn {
+    background: linear-gradient(135deg, #f2a03d, #e08a2a);
+    box-shadow: 0 4px 0 #b56718;
+  }
+  button.hint-btn:active { box-shadow: 0 2px 0 #b56718; }
+
+  /* ---------- Чипы (выбор нескольких) ---------- */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 0.6rem; }
+  .chip {
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 0.45rem 1.1rem;
+    border-radius: 40px;
+    background: #f2f7ff;
+    border: 2px solid #c4daf5;
+    color: #24425f;
+    cursor: pointer;
+    user-select: none;
+    transition: 0.12s;
+  }
+  .chip:hover { background: #e1edff; }
+  .chip.selected { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  .chip.correct { background: #2fbf71 !important; border-color: #2fbf71 !important; color: #fff !important; }
+  .chip.wrong { background: #ff8f7a !important; border-color: #ff8f7a !important; color: #fff !important; }
+
+  /* ---------- Одиночный выбор ---------- */
+  .fake-select { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 0.6rem; }
+  .fake-select .opt {
+    padding: 0.5rem 1.2rem;
+    border-radius: 14px;
+    border: 2px solid #c4daf5;
+    background: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1.02rem;
+    transition: 0.12s;
+  }
+  .fake-select .opt:hover { background: #eef5ff; }
+  .fake-select .opt.sel { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+  .fake-select .opt.ok { background: #2fbf71; border-color: #2fbf71; color: #fff; }
+  .fake-select .opt.no { background: #ff8f7a; border-color: #ff8f7a; color: #fff; }
+
+  /* ---------- Конструктор (сборка выражения) ---------- */
+  .builder {
+    background: #f9fcff;
+    border-radius: 18px;
+    padding: 1rem 1.2rem;
+    border: 1px dashed #b3d4f0;
+    margin-top: 0.6rem;
+  }
+  .builder .slots {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    min-height: 46px;
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .builder .slot {
+    min-width: 44px;
+    height: 40px;
+    border-radius: 10px;
+    border: 2px dashed #a8c8e8;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 8px;
+    color: #0b4a7a;
+    cursor: pointer;
+  }
+  .builder .slot.filled { border-style: solid; border-color: #4a90e2; background: #eef5ff; }
+  .pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.8rem;
+  }
+  .pool .piece {
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 10px;
+    background: #ffeab3;
+    border: 2px solid #e8c87a;
+    color: #5a4600;
+    cursor: pointer;
+    transition: 0.1s;
+  }
+  .pool .piece:hover { transform: translateY(-2px); }
+  .pool .piece.used { opacity: 0.3; pointer-events: none; }
+
+  /* ---------- Сортировка / порядок ---------- */
+  .sort-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 0.6rem;
+  }
+  .sort-item {
+    background: #fff;
+    border: 2px solid #c4daf5;
+    border-radius: 14px;
+    padding: 0.5rem 1.1rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: 0.12s;
+  }
+  .sort-item:hover { background: #eef5ff; }
+  .sort-item.sel { background: #4a90e2; color: #fff; border-color: #4a90e2; }
+
+  /* ---------- Обратная связь ---------- */
+  .feedback {
+    margin-top: 0.9rem;
+    border-radius: 16px;
+    padding: 0.85rem 1.2rem;
+    font-size: 0.98rem;
+    display: none;
+  }
+  .feedback.show { display: block; animation: fadeIn 0.25s ease-out; }
+  .feedback.ok { background: #e3f9ec; border-left: 8px solid #2fbf71; color: #15623b; }
+  .feedback.err { background: #ffefec; border-left: 8px solid #e0644d; color: #8a2c1c; }
+  .feedback.info { background: #eaf2ff; border-left: 8px solid #4a90e2; color: #1e3f6b; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  .hint-box {
+    display: none;
+    background: #fff6e5;
+    border-radius: 14px;
+    padding: 0.9rem 1.2rem;
+    margin-top: 0.8rem;
+    border-left: 8px solid #f2a03d;
+    color: #6b4408;
+    font-size: 0.96rem;
+  }
+  .hint-box.show { display: block; animation: fadeIn 0.25s ease-out; }
+
+  /* ---------- Прогресс ---------- */
+  .progress-banner {
+    position: sticky;
+    bottom: 0;
+    background: #ffffffec;
+    backdrop-filter: blur(8px);
+    border-radius: 22px;
+    padding: 1rem 1.7rem;
+    box-shadow: 0 -6px 30px rgba(30, 60, 120, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 1rem;
+    border: 1px solid #cfe2ff;
+  }
+  .progress-banner .score { font-weight: 800; font-size: 1.15rem; color: #1d4e7a; }
+  .progress-banner .reset {
+    background: linear-gradient(135deg, #8899aa, #667788);
+    box-shadow: 0 5px 0 #445566;
+    font-size: 0.9rem;
+    padding: 0.45rem 1.1rem;
+  }
+
+  /* Стили для кнопки перехода */
+  .next-step-container {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #157040;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #157040; }
+  .btn-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #157040; }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.7rem 5rem; }
+    h1 { font-size: 1.7rem; }
+    .task { padding: 1.2rem 1.1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧮 Практика: НОД и НОК</h1>
+  <p class="subtitle">10 заданий разного формата · подсказки при ошибках · по материалам файла nodnok.pdf</p>
+
+  <!-- ============ 1. Одиночный выбор ============ -->
+  <div class="task" id="t1">
+    <div class="task-head">
+      <div class="task-num">1</div>
+      <span class="task-tag tag-choose">Выбор ответа</span>
+      <span class="task-title">НОД(72, 108)</span>
+    </div>
+    <p class="task-desc">Выбери наибольший общий делитель чисел 72 и 108.</p>
+    <div class="fake-select" id="t1-opts">
+      <div class="opt" data-val="12">12</div>
+      <div class="opt" data-val="24">24</div>
+      <div class="opt" data-val="36">36</div>
+      <div class="opt" data-val="54">54</div>
+    </div>
+    <div class="row">
+      <button onclick="checkT1()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t1-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t1-hint">💡 Разложи на простые множители: 72 = 2 · 2 · 2 · 3 · 3, 108 = 2 · 2 · 3 · 3 · 3. В НОД берём только <strong>общие</strong> множители, каждый — столько раз, сколько он есть в <strong>меньшем</strong> количестве. Общие: две двойки и две тройки. Перемножь их.</div>
+    <div class="feedback" id="t1-fb"></div>
+  </div>
+
+  <!-- ============ 2. Ввод двух чисел (НОК) ============ -->
+  <div class="task" id="t2">
+    <div class="task-head">
+      <div class="task-num">2</div>
+      <span class="task-tag tag-input">Ввод ответа</span>
+      <span class="task-title">НОК(36, 48)</span>
+    </div>
+    <p class="task-desc">Найди наименьшее общее кратное чисел 36 и 48 и введи его.</p>
+    <div class="row">
+      <input type="number" id="t2-input" placeholder="НОК = ?" min="1">
+      <button onclick="checkT2()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t2-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t2-hint">💡 36 = 2 · 2 · 3 · 3, 48 = 2 · 2 · 2 · 2 · 3. В НОК каждый множитель берётся столько раз, сколько его <strong>больше</strong> в одном из разложений. Четыре двойки и две тройки. Перемножь.</div>
+    <div class="feedback" id="t2-fb"></div>
+  </div>
+
+  <!-- ============ 3. Мультивыбор (делители) ============ -->
+  <div class="task" id="t3">
+    <div class="task-head">
+      <div class="task-num">3</div>
+      <span class="task-tag tag-multi">Выбери все</span>
+      <span class="task-title">Общие делители 168 и 180</span>
+    </div>
+    <p class="task-desc">Отметь все числа, которые делят и 168, и 180 без остатка. (Их несколько!)</p>
+    <div class="chip-group" id="t3-chips">
+      <span class="chip" data-val="2">2</span>
+      <span class="chip" data-val="3">3</span>
+      <span class="chip" data-val="4">4</span>
+      <span class="chip" data-val="5">5</span>
+      <span class="chip" data-val="6">6</span>
+      <span class="chip" data-val="7">7</span>
+      <span class="chip" data-val="12">12</span>
+      <span class="chip" data-val="18">18</span>
+    </div>
+    <div class="row">
+      <button onclick="checkT3()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t3-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t3-hint">💡 Сначала найди НОД(168, 180). 168 = 2 · 2 · 2 · 3 · 7, 180 = 2 · 2 · 3 · 3 · 5. Общие множители: две двойки и одна тройка → НОД = 12. Значит, общие делители — это <strong>делители числа 12</strong>: 1, 2, 3, 4, 6, 12. Проверь, какие из них есть среди вариантов.</div>
+    <div class="feedback" id="t3-fb"></div>
+  </div>
+
+  <!-- ============ 4. Задача с текстом (Дед Мороз) ============ -->
+  <div class="task" id="t4">
+    <div class="task-head">
+      <div class="task-num">4</div>
+      <span class="task-tag tag-input">Задача</span>
+      <span class="task-title">Подарки Деда Мороза</span>
+    </div>
+    <p class="task-desc">
+      У Деда Мороза 525 мандаринов и 735 конфет. Нужно составить одинаковые наборы так, чтобы раздать их <strong>наибольшему количеству детей</strong>.
+      Сколько мандаринов и конфет будет в наборе и сколько детей получат подарки?
+    </p>
+    <div class="row" style="margin-bottom:0.4rem;">
+      <span>Мандаринов в наборе:</span>
+      <input type="number" id="t4a" placeholder="?" min="1">
+    </div>
+    <div class="row" style="margin-bottom:0.4rem;">
+      <span>Конфет в наборе:</span>
+      <input type="number" id="t4b" placeholder="?" min="1">
+    </div>
+    <div class="row">
+      <span>Детей получат подарки:</span>
+      <input type="number" id="t4c" placeholder="?" min="1">
+    </div>
+    <div class="row">
+      <button onclick="checkT4()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t4-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t4-hint">💡 Количество детей — это НОД(525, 735). Разложи: 525 = 3 · 5 · 5 · 7, 735 = 3 · 5 · 7 · 7. Общие множители: 3, 5 и 7. Их произведение — число детей. Теперь раздели мандарины и конфеты на это число.</div>
+    <div class="feedback" id="t4-fb"></div>
+  </div>
+
+  <!-- ============ 5. Шаги (НОК трёх чисел) ============ -->
+  <div class="task" id="t5">
+    <div class="task-head">
+      <div class="task-num">5</div>
+      <span class="task-tag tag-input">Ввод ответа</span>
+      <span class="task-title">НОК(72, 120, 264)</span>
+    </div>
+    <p class="task-desc">Найди наименьшее общее кратное трёх чисел. Введи только число.</p>
+    <div class="row">
+      <input type="number" id="t5-input" placeholder="НОК = ?" min="1">
+      <button onclick="checkT5()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t5-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t5-hint">💡 Разложи: 72 = 2·2·2·3·3, 120 = 2·2·2·3·5, 264 = 2·2·2·3·11. В НОК каждый множитель — столько раз, сколько его <strong>больше всего</strong> в одном из разложений. Три двойки, две тройки, одна пятёрка, одна одиннадцатка. Перемножь: 2·2·2·3·3·5·11.</div>
+    <div class="feedback" id="t5-fb"></div>
+  </div>
+
+  <!-- ============ 6. Сравнение дробей ============ -->
+  <div class="task" id="t6">
+    <div class="task-head">
+      <div class="task-num">6</div>
+      <span class="task-tag tag-choose">Выбор ответа</span>
+      <span class="task-title">Какая дробь больше?</span>
+    </div>
+    <p class="task-desc">Сравни дроби <span class="math">23/135</span> и <span class="math">31/180</span>. Выбери верное утверждение.</p>
+    <div class="fake-select" id="t6-opts">
+      <div class="opt" data-val="a">23/135 больше</div>
+      <div class="opt" data-val="b">31/180 больше</div>
+      <div class="opt" data-val="c">они равны</div>
+    </div>
+    <div class="row">
+      <button onclick="checkT6()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t6-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t6-hint">💡 Приведи к общему знаменателю — это НОК(135, 180). 135 = 3·3·3·5, 180 = 2·2·3·3·5. НОК = 2·2·3·3·3·5 = 540. Домножь числители: 23·4 = 92, 31·3 = 93. Сравни 92/540 и 93/540.</div>
+    <div class="feedback" id="t6-fb"></div>
+  </div>
+
+  <!-- ============ 7. Порядок (сортировка) ============ -->
+  <div class="task" id="t7">
+    <div class="task-head">
+      <div class="task-num">7</div>
+      <span class="task-tag tag-order">Расставь по порядку</span>
+      <span class="task-title">Дни Робинзона</span>
+    </div>
+    <p class="task-desc">
+      Робинзон пополняет воду каждый <strong>2-й</strong> день, собирает фрукты каждый <strong>3-й</strong>, охотится каждый <strong>5-й</strong>.
+      Первого января был «тяжёлый день» — все три дела сразу. Расставь числа так, чтобы получить следующие тяжёлые дни (по возрастанию).
+    </p>
+    <div class="sort-area" id="t7-sort">
+      <div class="sort-item" data-val="31">31 января</div>
+      <div class="sort-item" data-val="61">2 марта</div>
+      <div class="sort-item" data-val="91">1 апреля</div>
+      <div class="sort-item" data-val="121">1 мая</div>
+    </div>
+    <p style="margin-top:0.5rem;font-size:0.95rem;color:#5a6f88;">Нажимай на карточки по порядку, начиная с ближайшего тяжёлого дня.</p>
+    <div class="row">
+      <button onclick="checkT7()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t7-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t7-hint">💡 Тяжёлые дни повторяются через НОК(2, 3, 5) = 30 дней. Первый был 1 января, значит, следующие — через каждые 30 дней: 31 января, 2 марта (30 дней от 31 января), 1 апреля, 1 мая…</div>
+    <div class="feedback" id="t7-fb"></div>
+  </div>
+
+  <!-- ============ 8. Взаимно простые ============ -->
+  <div class="task" id="t8">
+    <div class="task-head">
+      <div class="task-num">8</div>
+      <span class="task-tag tag-multi">Выбери все</span>
+      <span class="task-title">Взаимно простые пары</span>
+    </div>
+    <p class="task-desc">Отметь все пары чисел, которые являются взаимно простыми (их НОД = 1).</p>
+    <div class="chip-group" id="t8-chips">
+      <span class="chip" data-val="175,198">175 и 198</span>
+      <span class="chip" data-val="12,18">12 и 18</span>
+      <span class="chip" data-val="9,28">9 и 28</span>
+      <span class="chip" data-val="24,25">24 и 25</span>
+      <span class="chip" data-val="14,21">14 и 21</span>
+    </div>
+    <div class="row">
+      <button onclick="checkT8()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t8-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t8-hint">💡 Взаимно простые — те, у кого нет общих делителей, кроме 1. Разложи: 175 = 5·5·7, 198 = 2·3·3·11 — общих нет. 9 = 3·3, 28 = 2·2·7 — общих нет. 24 и 25 — соседние числа, у них общих делителей нет. А 12 и 18 делятся на 6, 14 и 21 — на 7.</div>
+    <div class="feedback" id="t8-fb"></div>
+  </div>
+
+  <!-- ============ 9. Свойство НОД·НОК ============ -->
+  <div class="task" id="t9">
+    <div class="task-head">
+      <div class="task-num">9</div>
+      <span class="task-tag tag-input">Ввод ответа</span>
+      <span class="task-title">Свойство НОД · НОК</span>
+    </div>
+    <p class="task-desc">
+      Проверь на числах 96 и 112: чему равно произведение <span class="math">НОД(96, 112) · НОК(96, 112)</span>?
+      Введи получившееся число.
+    </p>
+    <div class="row">
+      <input type="number" id="t9-input" placeholder="Произведение = ?" min="1">
+      <button onclick="checkT9()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t9-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t9-hint">💡 Есть замечательное свойство: НОД(a, b) · НОК(a, b) = a · b. Значит, искомое произведение равно 96 · 112. Посчитай: 96 · 112 = 10752. (Для проверки: НОД = 16, НОК = 672.)</div>
+    <div class="feedback" id="t9-fb"></div>
+  </div>
+
+  <!-- ============ 10. Конструктор (каноническое разложение НОД) ============ -->
+  <div class="task" id="t10">
+    <div class="task-head">
+      <div class="task-num">10</div>
+      <span class="task-tag tag-build">Конструктор</span>
+      <span class="task-title">Собери НОД(120, 252)</span>
+    </div>
+    <p class="task-desc">
+      Даны разложения: 120 = 2 · 2 · 2 · 3 · 5, 252 = 2 · 2 · 3 · 3 · 7.
+      Собери правильное выражение для НОД: нажимай на «кирпичики» снизу, чтобы заполнить слоты. Лишние кирпичики не нужны.
+    </p>
+    <div class="builder">
+      <div class="slots" id="t10-slots">
+        <div class="slot" data-idx="0"></div>
+        <span>·</span>
+        <div class="slot" data-idx="1"></div>
+      </div>
+      <div class="pool" id="t10-pool">
+        <span class="piece" data-val="2^3">2·2·2</span>
+        <span class="piece" data-val="2^2">2·2</span>
+        <span class="piece" data-val="3^2">3·3</span>
+        <span class="piece" data-val="3">3</span>
+        <span class="piece" data-val="5">5</span>
+        <span class="piece" data-val="7">7</span>
+      </div>
+    </div>
+    <div class="row">
+      <button onclick="checkT10()">Проверить</button>
+      <button class="hint-btn" onclick="showHint('t10-hint')">Подсказка</button>
+    </div>
+    <div class="hint-box" id="t10-hint">💡 В НОД входят только <strong>общие</strong> простые множители, каждый — столько раз, сколько его <strong>меньше</strong> в одном из разложений. Общие: двойка (в 120 их три, в 252 — две, значит, берём две) и тройка (в 120 — одна, в 252 — две, берём одну). Значит, НОД = 2·2·3.</div>
+    <div class="feedback" id="t10-fb"></div>
+  </div>
+
+  <!-- ============ Прогресс ============ -->
+  <div class="progress-banner">
+    <span class="score" id="scoreDisplay">✅ Решено заданий: 0 / 10</span>
+    <button class="reset" onclick="location.reload()">Сбросить всё</button>
+  </div>
+
+  <!-- КОНТЕЙНЕР ДЛЯ КНОПКИ ПЕРЕХОДА -->
+  <div class="next-step-container" id="nextLevelContainer"></div>
+</div>
+
+<script>
+// ВАША ССЫЛКА НА GOOGLE APPS SCRIPT
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+/* ---------- Общий прогресс ---------- */
+const solved = new Set();
+function markSolved(id) {
+  if (solved.has(id)) return;
+  solved.add(id);
+  document.getElementById('scoreDisplay').textContent =
+    `✅ Решено заданий: ${solved.size} / 10`;
+}
+function fb(id, text, cls) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'feedback show ' + cls;
+}
+function showHint(id) {
+  document.getElementById(id).classList.toggle('show');
+}
+
+/* ============================================================
+   1. НОД(72, 108) = 36 — одиночный выбор
+============================================================ */
+let t1Sel = null;
+document.querySelectorAll('#t1-opts .opt').forEach(o => {
+  o.addEventListener('click', () => {
+    document.querySelectorAll('#t1-opts .opt').forEach(x => x.classList.remove('sel','ok','no'));
+    o.classList.add('sel');
+    t1Sel = o.dataset.val;
+  });
+});
+function checkT1() {
+  if (!t1Sel) { fb('t1-fb','⚠️ Выбери вариант.','info'); return; }
+  document.querySelectorAll('#t1-opts .opt').forEach(o => {
+    o.classList.remove('ok','no');
+    if (o.dataset.val === '36') o.classList.add('ok');
+    else if (o.dataset.val === t1Sel) o.classList.add('no');
+  });
+  if (t1Sel === '36') {
+    fb('t1-fb','✅ Верно! НОД(72, 108) = 36.','ok');
+    markSolved('t1');
+  } else {
+    fb('t1-fb','❌ Пока неверно. 72 = 2·2·2·3·3, 108 = 2·2·3·3·3. Общие множители: две двойки и две тройки. 2·2·3·3 = 36.','err');
+  }
+}
+
+/* ============================================================
+   2. НОК(36, 48) = 144 — ввод
+============================================================ */
+function checkT2() {
+  const val = parseInt(document.getElementById('t2-input').value, 10);
+  if (isNaN(val)) { fb('t2-fb','⚠️ Введи число.','info'); return; }
+  if (val === 144) {
+    fb('t2-fb','✅ Верно! НОК(36, 48) = 144.','ok');
+    markSolved('t2');
+  } else {
+    fb('t2-fb',`❌ Пока неверно (${val}). 36 = 2·2·3·3, 48 = 2·2·2·2·3. Берём четыре двойки и две тройки: 2·2·2·2·3·3 = 144.`,'err');
+  }
+}
+
+/* ============================================================
+   3. Общие делители 168 и 180 — мультивыбор
+============================================================ */
+const t3Correct = ['2','3','4','6','12'];
+document.querySelectorAll('#t3-chips .chip').forEach(ch => {
+  ch.addEventListener('click', () => ch.classList.toggle('selected'));
+});
+function checkT3() {
+  const chips = document.querySelectorAll('#t3-chips .chip');
+  let ok = true;
+  let selected = [];
+  chips.forEach(ch => {
+    ch.classList.remove('correct','wrong');
+    if (ch.classList.contains('selected')) selected.push(ch.dataset.val);
+  });
+  chips.forEach(ch => {
+    const v = ch.dataset.val;
+    const isSel = ch.classList.contains('selected');
+    const isCor = t3Correct.includes(v);
+    if (isSel && isCor) ch.classList.add('correct');
+    else if (isSel && !isCor) { ch.classList.add('wrong'); ok = false; }
+    else if (!isSel && isCor) ok = false;
+  });
+  if (ok && selected.length === t3Correct.length) {
+    fb('t3-fb','✅ Верно! Общие делители — это делители НОД(168, 180) = 12: 2, 3, 4, 6, 12.','ok');
+    markSolved('t3');
+  } else {
+    const missing = t3Correct.filter(v => !selected.includes(v));
+    const extra = selected.filter(v => !t3Correct.includes(v));
+    let msg = '❌ Пока неверно. ';
+    if (extra.length) msg += `Лишние: ${extra.join(', ')}. `;
+    if (missing.length) msg += `Не хватает: ${missing.join(', ')}. `;
+    msg += 'Помни: НОД(168, 180) = 12, значит, общие делители — делители 12.';
+    fb('t3-fb', msg, 'err');
+  }
+}
+
+/* ============================================================
+   4. Дед Мороз: 5 мандаринов, 7 конфет, 105 детей
+============================================================ */
+function checkT4() {
+  const a = parseInt(document.getElementById('t4a').value, 10);
+  const b = parseInt(document.getElementById('t4b').value, 10);
+  const c = parseInt(document.getElementById('t4c').value, 10);
+  if ([a,b,c].some(isNaN)) { fb('t4-fb','⚠️ Заполни все три поля.','info'); return; }
+  if (a === 5 && b === 7 && c === 105) {
+    fb('t4-fb','✅ Верно! НОД(525, 735) = 105 детей. В наборе 525:105 = 5 мандаринов и 735:105 = 7 конфет.','ok');
+    markSolved('t4');
+  } else {
+    let msg = '❌ Пока неверно. ';
+    if (c !== 105) msg += 'Количество детей — это НОД(525, 735). 525 = 3·5·5·7, 735 = 3·5·7·7. Общие: 3, 5, 7. НОД = 3·5·7 = 105. ';
+    if (a !== 5) msg += 'Мандаринов в наборе: 525 : 105 = 5. ';
+    if (b !== 7) msg += 'Конфет в наборе: 735 : 105 = 7.';
+    fb('t4-fb', msg, 'err');
+  }
+}
+
+/* ============================================================
+   5. НОК(72, 120, 264) = 3960 — ввод
+============================================================ */
+function checkT5() {
+  const val = parseInt(document.getElementById('t5-input').value, 10);
+  if (isNaN(val)) { fb('t5-fb','⚠️ Введи число.','info'); return; }
+  if (val === 3960) {
+    fb('t5-fb','✅ Верно! НОК(72, 120, 264) = 3960.','ok');
+    markSolved('t5');
+  } else {
+    fb('t5-fb',`❌ Пока неверно (${val}). 72 = 2·2·2·3·3, 120 = 2·2·2·3·5, 264 = 2·2·2·3·11. Берём три двойки, две тройки, пятёрку и одиннадцатку: 2·2·2·3·3·5·11 = 3960.`,'err');
+  }
+}
+
+/* ============================================================
+   6. Сравнение дробей: 31/180 больше (92/540 < 93/540)
+============================================================ */
+let t6Sel = null;
+document.querySelectorAll('#t6-opts .opt').forEach(o => {
+  o.addEventListener('click', () => {
+    document.querySelectorAll('#t6-opts .opt').forEach(x => x.classList.remove('sel','ok','no'));
+    o.classList.add('sel');
+    t6Sel = o.dataset.val;
+  });
+});
+function checkT6() {
+  if (!t6Sel) { fb('t6-fb','⚠️ Выбери вариант.','info'); return; }
+  document.querySelectorAll('#t6-opts .opt').forEach(o => {
+    o.classList.remove('ok','no');
+    if (o.dataset.val === 'b') o.classList.add('ok');
+    else if (o.dataset.val === t6Sel) o.classList.add('no');
+  });
+  if (t6Sel === 'b') {
+    fb('t6-fb','✅ Верно! НОК(135, 180) = 540. 23/135 = 92/540, 31/180 = 93/540. Вторая больше на 1/540.','ok');
+    markSolved('t6');
+  } else {
+    fb('t6-fb','❌ Пока неверно. Приведи к общему знаменателю 540: 23/135 = 92/540, 31/180 = 93/540. Сравни числители — 93 больше 92, значит, 31/180 больше.','err');
+  }
+}
+
+/* ============================================================
+   7. Порядок: 31 января → 2 марта → 1 апреля → 1 мая
+============================================================ */
+let t7Order = [];
+document.querySelectorAll('#t7-sort .sort-item').forEach(item => {
+  item.addEventListener('click', () => {
+    if (t7Order.includes(item.dataset.val)) return;
+    t7Order.push(item.dataset.val);
+    item.classList.add('sel');
+    item.textContent = t7Order.length + '. ' + item.textContent.replace(/^\d+\.\s*/, '');
+  });
+});
+function checkT7() {
+  const correct = ['31','61','91','121'];
+  if (t7Order.length < 4) { fb('t7-fb','⚠️ Выбери все четыре дня по порядку.','info'); return; }
+  if (t7Order.join(',') === correct.join(',')) {
+    fb('t7-fb','✅ Верно! Тяжёлые дни повторяются через НОК(2,3,5) = 30 дней: 31 января, 2 марта, 1 апреля, 1 мая.','ok');
+    markSolved('t7');
+  } else {
+    fb('t7-fb','❌ Порядок неверный. Тяжёлые дни повторяются каждые 30 дней. От 1 января: +30 = 31 января, +30 = 2 марта, +30 = 1 апреля, +30 = 1 мая.','err');
+  }
+}
+
+/* ============================================================
+   8. Взаимно простые: 175,198 ; 9,28 ; 24,25
+============================================================ */
+const t8Correct = ['175,198','9,28','24,25'];
+document.querySelectorAll('#t8-chips .chip').forEach(ch => {
+  ch.addEventListener('click', () => ch.classList.toggle('selected'));
+});
+function checkT8() {
+  const chips = document.querySelectorAll('#t8-chips .chip');
+  let ok = true;
+  let selected = [];
+  chips.forEach(ch => {
+    ch.classList.remove('correct','wrong');
+    if (ch.classList.contains('selected')) selected.push(ch.dataset.val);
+  });
+  chips.forEach(ch => {
+    const v = ch.dataset.val;
+    const isSel = ch.classList.contains('selected');
+    const isCor = t8Correct.includes(v);
+    if (isSel && isCor) ch.classList.add('correct');
+    else if (isSel && !isCor) { ch.classList.add('wrong'); ok = false; }
+    else if (!isSel && isCor) ok = false;
+  });
+  if (ok && selected.length === t8Correct.length) {
+    fb('t8-fb','✅ Верно! 175 и 198, 9 и 28, 24 и 25 — взаимно простые.','ok');
+    markSolved('t8');
+  } else {
+    const missing = t8Correct.filter(v => !selected.includes(v));
+    const extra = selected.filter(v => !t8Correct.includes(v));
+    let msg = '❌ Пока неверно. ';
+    if (extra.length) msg += `Лишние: ${extra.join('; ')}. `;
+    if (missing.length) msg += `Не хватает: ${missing.join('; ')}. `;
+    msg += 'Взаимно простые — те, у кого НОД = 1.';
+    fb('t8-fb', msg, 'err');
+  }
+}
+
+/* ============================================================
+   9. НОД(96,112)·НОК(96,112) = 96·112 = 10752
+============================================================ */
+function checkT9() {
+  const val = parseInt(document.getElementById('t9-input').value, 10);
+  if (isNaN(val)) { fb('t9-fb','⚠️ Введи число.','info'); return; }
+  if (val === 10752) {
+    fb('t9-fb','✅ Верно! Свойство: НОД(a,b) · НОК(a,b) = a · b = 96 · 112 = 10752.','ok');
+    markSolved('t9');
+  } else {
+    fb('t9-fb',`❌ Пока неверно (${val}). Используй свойство: произведение НОД и НОК равно произведению самих чисел. 96 · 112 = 10752.`,'err');
+  }
+}
+
+/* ============================================================
+   10. Конструктор: НОД(120, 252) = 2·2 · 3
+============================================================ */
+const t10Slots = document.querySelectorAll('#t10-slots .slot');
+const t10Pool = document.querySelectorAll('#t10-pool .piece');
+let t10State = [null, null];
+
+function renderT10() {
+  t10Slots.forEach((slot, i) => {
+    if (t10State[i]) {
+      slot.textContent = t10State[i].label;
+      slot.classList.add('filled');
+    } else {
+      slot.textContent = '';
+      slot.classList.remove('filled');
+    }
+  });
+  t10Pool.forEach(p => {
+    const used = t10State.some(s => s && s.val === p.dataset.val);
+    p.classList.toggle('used', used);
+  });
+}
+
+t10Pool.forEach(p => {
+  p.addEventListener('click', () => {
+    const idx = t10State.findIndex(s => s === null);
+    if (idx === -1) return;
+    t10State[idx] = { val: p.dataset.val, label: p.textContent };
+    renderT10();
+  });
+});
+
+t10Slots.forEach((slot, i) => {
+  slot.addEventListener('click', () => {
+    if (t10State[i]) {
+      t10State[i] = null;
+      renderT10();
+    }
+  });
+});
+
+function checkT10() {
+  const correct = ['2^2', '3'];
+  const current = t10State.map(s => s ? s.val : null);
+  if (current.includes(null)) { fb('t10-fb','⚠️ Заполни оба слота.','info'); return; }
+  if (current.join(',') === correct.join(',')) {
+    fb('t10-fb','✅ Верно! НОД(120, 252) = 2·2·3 = 12.','ok');
+    markSolved('t10');
+  } else {
+    fb('t10-fb','❌ Пока неверно. В НОД входят только общие простые множители, каждый — столько раз, сколько его меньше в одном из разложений. Общие: двойка (в 120 их три, в 252 — две, берём две) и тройка (в 120 — одна, в 252 — две, берём одну). Значит, НОД = 2·2·3.','err');
+  }
+}
+
+// --- УМНЫЙ ПЕРЕХОД ---
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего задания...</span>';
+  
+  const path = window.location.pathname;
+  const currentFile = path.substring(path.lastIndexOf('/') + 1);
+  
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к следующему шагу →</a>`;
+      } else {
+        container.innerHTML = `<a href="index.html" class="btn-next home">Тема изучена, перейти на главную 🏠</a>`;
+      }
+    } else {
+      throw new Error('Данные не получены');
+    }
+  } catch (e) {
+    container.innerHTML = `<a href="index.html" class="btn-next home">Вернуться на главную 🏠</a>`;
+  }
+}
+
+// Вызываем при загрузке
+loadNextButton();
+</script>
+</body>
+</html>
