@@ -238,9 +238,29 @@
     </div>
   </div>
 
-  <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-    <a href="index.html" class="btn" style="font-size: 1.1rem; padding: 15px 40px;">Вернуться на главную</a>
-  </div>
+ // --- УМНЫЙ ПЕРЕХОД ---
+async function loadNextButton(currentFile) {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  
+  container.innerHTML = '<span style="color:#a0a0c0;">Поиск следующего задания...</span>';
+  
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<button class="btn btn-success" onclick="window.location.href='${currentTopic.next}'" style="font-size:1.1rem; padding:14px 32px;">Перейти к следующему заданию →</button>`;
+      } else {
+        container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'" style="font-size:1.1rem; padding:14px 32px; background:#4f3f8a;">Тема изучена, перейти на главную 🏠</button>`;
+      }
+    }
+  } catch (e) {
+    container.innerHTML = `<button class="btn" onclick="window.location.href='index.html'">Вернуться на главную</button>`;
+  }
+}
 
 </div>
 </body>
