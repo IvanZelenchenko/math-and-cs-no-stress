@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Геометрия — теория</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #fdf0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1020px; width: 100%; }
+
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, #2b3a8c, #1e8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: #4a5f78;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  /* ---------- Карточки ---------- */
+  .card {
+    background: #ffffffdd;
+    backdrop-filter: blur(10px);
+    border-radius: 28px;
+    padding: 1.8rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 14px 30px -14px rgba(20, 60, 120, 0.25);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: 0.25s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.35);
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+  }
+  .card.c1::before { background: linear-gradient(90deg, #a1c4fd, #c2e9fb); }
+  .card.c2::before { background: linear-gradient(90deg, #fbc2eb, #a6c1ee); }
+  .card.c3::before { background: linear-gradient(90deg, #84fab0, #8fd3f4); }
+  .card.c4::before { background: linear-gradient(90deg, #fccb90, #d57eeb); }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1.2rem;
+  }
+  .icon-badge {
+    font-size: 1.5rem;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.12);
+  }
+  .b1 { background: linear-gradient(135deg, #4a90e2, #2a5f9e); }
+  .b2 { background: linear-gradient(135deg, #b06ab3, #4568dc); }
+  .b3 { background: linear-gradient(135deg, #2fbf71, #1e8a4f); }
+  .b4 { background: linear-gradient(135deg, #f2a03d, #d97a12); }
+
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #173a5e;
+    line-height: 1.2;
+  }
+  .card-title small {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6b7f95;
+    margin-top: 2px;
+  }
+
+  /* ---------- Элемент теории ---------- */
+  .theory-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 1rem 0;
+    border-bottom: 1px dashed #cdd9e5;
+  }
+  .theory-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .theory-text { flex: 1; line-height: 1.55; font-size: 1rem; }
+  .term {
+    font-weight: 700;
+    color: #0b4a7a;
+    background: #eef6ff;
+    padding: 0.1rem 0.5rem;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .theory-visual {
+    width: 160px;
+    min-width: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    padding: 10px;
+    border-radius: 14px;
+    border: 1px solid #d6e8ff;
+    box-shadow: 0 4px 10px -6px rgba(20,60,120,0.2);
+  }
+  .theory-visual svg { max-width: 100%; height: auto; }
+
+  .formula {
+    background: #eff6ff;
+    border-left: 5px solid #4a90e2;
+    padding: 0.9rem 1.2rem;
+    border-radius: 12px;
+    margin: 0.6rem 0;
+    font-size: 1.05rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #0b4a7a;
+    text-align: center;
+  }
+
+  /* ---------- Шпаргалка ---------- */
+  .cheat-sheet {
+    background: linear-gradient(135deg, #ffffff, #f0f7ff);
+    border-radius: 28px;
+    padding: 2rem 2.2rem;
+    border: 2px solid #cfe2ff;
+    box-shadow: 0 18px 36px -16px rgba(20, 60, 120, 0.3);
+    margin: 1.5rem 0;
+  }
+  .cheat-sheet h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #173a5e;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .cheat-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid #d6e8ff;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.98rem;
+  }
+  .cheat-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #fff;
+    min-width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cnum1 { background: linear-gradient(135deg, #4a90e2, #2a5f9e); }
+  .cnum2 { background: linear-gradient(135deg, #b06ab3, #4568dc); }
+  .cnum3 { background: linear-gradient(135deg, #2fbf71, #1e8a4f); }
+  .cnum4 { background: linear-gradient(135deg, #f2a03d, #d97a12); }
+  .cheat-item .cheat-text { font-weight: 500; color: #2c3e50; }
+  .cheat-item .cheat-text b { color: #0b4a7a; }
+
+  /* ---------- Предупреждение ---------- */
+  .warning {
+    background: #fff6e5;
+    border-left: 8px solid #f2a03d;
+    border-radius: 16px;
+    padding: 1rem 1.4rem;
+    margin: 1.5rem 0;
+    color: #6b4408;
+    font-size: 1rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .warning .warn-icon { font-size: 1.4rem; }
+
+  /* ---------- Мини-тест ---------- */
+  .mini-check {
+    background: #ffffffdd;
+    border-radius: 24px;
+    padding: 1.8rem 2rem;
+    margin-top: 1.5rem;
+    border: 2px dashed #b3d4f0;
+  }
+  .mini-check .mc-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #173a5e;
+    margin-bottom: 1rem;
+  }
+  .mini-check .q-row { margin-bottom: 0.9rem; font-size: 1rem; }
+  .mini-check .q-label {
+    font-weight: 600;
+    color: #173a5e;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+  .mini-check input[type="text"] {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.02rem;
+    padding: 0.5rem 1rem;
+    border-radius: 14px;
+    border: 2px solid #bcd4f0;
+    outline: none;
+    background: #fff;
+    min-width: 160px;
+    transition: 0.15s;
+  }
+  .mini-check input[type="text"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px #4a90e233;
+  }
+  button.check-btn {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.7rem 1.6rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2a4f9e;
+    transition: 0.1s;
+    margin-top: 0.6rem;
+  }
+  button.check-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 0 #2a4f9e; }
+  button.check-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a4f9e; }
+
+  .mc-fb {
+    margin-top: 1rem;
+    border-radius: 14px;
+    padding: 0.9rem 1.2rem;
+    font-size: 0.98rem;
+    display: none;
+  }
+  .mc-fb.show { display: block; animation: fadeIn 0.25s ease-out; }
+  .mc-fb.ok { background: #e3f9ec; border-left: 8px solid #2fbf71; color: #15623b; }
+  .mc-fb.err { background: #ffefec; border-left: 8px solid #e0644d; color: #8a2c1c; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- Кнопка перехода ---------- */
+  .next-step-container { text-align: center; margin: 2rem 0; }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #157040;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #157040; }
+  .btn-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #157040; }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  .footer-note {
+    text-align: right;
+    margin-top: 2.5rem;
+    font-size: 1rem;
+    color: #3b5c7a;
+    font-weight: 500;
+    border-top: 2px solid #cfe4ff;
+    padding-top: 1.2rem;
+  }
+  .footer-note span { opacity: 0.7; }
+
+  @media (max-width: 700px) {
+    body { padding: 1.2rem 0.7rem; }
+    h1 { font-size: 1.8rem; }
+    .card { padding: 1.4rem 1.3rem; }
+    .cheat-sheet { padding: 1.4rem 1.2rem; }
+    .mini-check { padding: 1.3rem 1.2rem; }
+    .theory-item { flex-direction: column; align-items: flex-start; }
+    .theory-visual { width: 100%; min-width: auto; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📐 Геометрия</h1>
+  <p class="subtitle">Прямые, углы, треугольники, окружность — теория и главное</p>
+
+  <!-- 1. Прямые на плоскости -->
+  <div class="card c1">
+    <div class="card-head">
+      <div class="icon-badge b1">📏</div>
+      <div class="card-title">Прямые на плоскости <small>Пересекающиеся, параллельные, перпендикулярные</small></div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Пересекающиеся прямые</span> — имеют ровно одну общую точку. (Пересекающиеся прямые не могут иметь двух общих точек).
+      </div>
+      <div class="theory-visual">
+        <svg width="100" height="60">
+          <line x1="10" y1="10" x2="90" y2="50" stroke="#4a90e2" stroke-width="2"/>
+          <line x1="10" y1="50" x2="90" y2="10" stroke="#e74c3c" stroke-width="2"/>
+          <circle cx="50" cy="30" r="3" fill="#333"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Параллельные прямые</span> — прямые на плоскости, которые не имеют общих точек. Через точку, не лежащую на прямой, можно провести <b>только одну</b> параллельную ей прямую.
+      </div>
+      <div class="theory-visual">
+        <svg width="100" height="60">
+          <line x1="10" y1="20" x2="90" y2="20" stroke="#4a90e2" stroke-width="2"/>
+          <line x1="10" y1="45" x2="90" y2="45" stroke="#4a90e2" stroke-width="2"/>
+          <circle cx="60" cy="10" r="2" fill="#333"/>
+          <text x="65" y="15" font-size="10" fill="#333">A</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Перпендикулярные прямые</span> — пересекаются под углом 90° (образуют четыре прямых угла). Через любую точку можно провести только один перпендикуляр к данной прямой.
+      </div>
+      <div class="theory-visual">
+        <svg width="100" height="60">
+          <line x1="10" y1="30" x2="90" y2="30" stroke="#4a90e2" stroke-width="2"/>
+          <line x1="50" y1="5" x2="50" y2="55" stroke="#e74c3c" stroke-width="2"/>
+          <rect x="50" y="20" width="10" height="10" fill="none" stroke="#333" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Углы -->
+  <div class="card c2">
+    <div class="card-head">
+      <div class="icon-badge b2">📐</div>
+      <div class="card-title">Углы <small>Смежные и вертикальные</small></div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Смежные углы</span> — два угла, у которых одна сторона общая, а две другие являются продолжениями одна другой. <b>Сумма смежных углов равна 180°.</b>
+      </div>
+      <div class="theory-visual">
+        <svg width="120" height="60">
+          <line x1="10" y1="50" x2="110" y2="50" stroke="#333" stroke-width="2"/>
+          <line x1="50" y1="50" x2="90" y2="10" stroke="#333" stroke-width="2"/>
+          <path d="M 60 50 A 10 10 0 0 1 57 40" fill="none" stroke="#e74c3c" stroke-width="2"/>
+          <path d="M 40 50 A 10 10 0 0 0 43 40" fill="none" stroke="#4a90e2" stroke-width="2"/>
+          <text x="30" y="45" font-size="12" fill="#4a90e2">α</text>
+          <text x="65" y="40" font-size="12" fill="#e74c3c">β</text>
+          <text x="50" y="65" font-size="10" fill="#333" text-anchor="middle">α + β = 180°</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Вертикальные углы</span> — углы, стороны одного из которых являются продолжениями сторон другого. <b>Вертикальные углы равны.</b> Любой острый угол меньше любого тупого.
+      </div>
+      <div class="theory-visual">
+        <svg width="100" height="60">
+          <line x1="10" y1="10" x2="90" y2="50" stroke="#333" stroke-width="2"/>
+          <line x1="10" y1="50" x2="90" y2="10" stroke="#333" stroke-width="2"/>
+          <path d="M 40 35 A 10 10 0 0 1 45 25" fill="none" stroke="#e74c3c" stroke-width="2"/>
+          <path d="M 60 25 A 10 10 0 0 1 55 35" fill="none" stroke="#e74c3c" stroke-width="2"/>
+          <text x="35" y="25" font-size="12" fill="#e74c3c">α</text>
+          <text x="60" y="45" font-size="12" fill="#e74c3c">α</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Треугольники -->
+  <div class="card c3">
+    <div class="card-head">
+      <div class="icon-badge b3">🔺</div>
+      <div class="card-title">Треугольники <small>Сумма углов, равнобедренный, неравенство</small></div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <b>Сумма углов треугольника</b> всегда равна 180°.
+      </div>
+      <div class="theory-visual">
+        <svg width="120" height="80">
+          <polygon points="20,60 100,60 60,15" fill="none" stroke="#333" stroke-width="2"/>
+          <text x="30" y="55" font-size="12" fill="#4a90e2">α</text>
+          <text x="80" y="55" font-size="12" fill="#4a90e2">β</text>
+          <text x="55" y="30" font-size="12" fill="#4a90e2">γ</text>
+          <text x="60" y="75" font-size="12" fill="#333" text-anchor="middle">α+β+γ=180°</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Равнобедренный треугольник</span> — у него две стороны равны (боковые). <b>Углы при основании равнобедренного треугольника равны.</b>
+      </div>
+      <div class="theory-visual">
+        <svg width="120" height="80">
+          <polygon points="20,60 100,60 60,15" fill="none" stroke="#333" stroke-width="2"/>
+          <line x1="35" y1="42" x2="45" y2="32" stroke="#e74c3c" stroke-width="2"/>
+          <line x1="75" y1="42" x2="85" y2="32" stroke="#e74c3c" stroke-width="2"/>
+          <text x="35" y="55" font-size="12" fill="#4a90e2">α</text>
+          <text x="75" y="55" font-size="12" fill="#4a90e2">α</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Неравенство треугольника:</span> Длина любой стороны треугольника всегда меньше суммы длин двух других его сторон (a &lt; b + c).
+      </div>
+      <div class="theory-visual">
+        <svg width="120" height="80">
+          <polygon points="20,60 100,60 50,15" fill="none" stroke="#333" stroke-width="2"/>
+          <text x="55" y="70" font-size="12" fill="#333">a</text>
+          <text x="30" y="35" font-size="12" fill="#333">b</text>
+          <text x="80" y="35" font-size="12" fill="#333">c</text>
+          <text x="60" y="10" font-size="10" fill="#e74c3c" text-anchor="middle">a &lt; b + c</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Окружность -->
+  <div class="card c4">
+    <div class="card-head">
+      <div class="icon-badge b4">⭕</div>
+      <div class="card-title">Окружность <small>Радиус, диаметр, углы</small></div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Радиус (R)</span> — отрезок от центра до точки окружности.<br>
+        <span class="term">Диаметр (D)</span> — хорда, проходящая через центр. <b>Диаметр в 2 раза больше радиуса.</b> Все диаметры одной окружности равны.
+      </div>
+      <div class="theory-visual">
+        <svg width="140" height="80">
+          <circle cx="70" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/>
+          <circle cx="70" cy="40" r="2" fill="#333"/>
+          <line x1="70" y1="40" x2="100" y2="40" stroke="#e74c3c" stroke-width="2"/>
+          <text x="85" y="35" font-size="12" fill="#e74c3c">R</text>
+          <line x1="40" y1="40" x2="100" y2="40" stroke="#4a90e2" stroke-width="2"/>
+          <text x="70" y="55" font-size="12" fill="#4a90e2" text-anchor="middle">D = 2R</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="theory-item">
+      <div class="theory-text">
+        <span class="term">Центральный угол</span> — вершина в центре окружности.<br>
+        <span class="term">Вписанный угол</span> — вершина на окружности, стороны пересекают её. <b>(Не всегда является острым!)</b>
+      </div>
+      <div class="theory-visual">
+        <svg width="140" height="80">
+          <circle cx="70" cy="40" r="30" fill="none" stroke="#333" stroke-width="2"/>
+          <circle cx="70" cy="40" r="2" fill="#333"/>
+          <line x1="70" y1="40" x2="100" y2="40" stroke="#4a90e2" stroke-width="2"/>
+          <line x1="70" y1="40" x2="50" y2="14" stroke="#4a90e2" stroke-width="2"/>
+          <text x="75" y="35" font-size="10" fill="#4a90e2">центр.</text>
+          <line x1="40" y1="40" x2="90" y2="65" stroke="#e74c3c" stroke-width="2"/>
+          <line x1="40" y1="40" x2="90" y2="15" stroke="#e74c3c" stroke-width="2"/>
+          <text x="40" y="30" font-size="10" fill="#e74c3c">впис.</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Шпаргалка -->
+  <div class="cheat-sheet">
+    <h2>🧠 Шпаргалка «всё в одном месте»</h2>
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <div class="cheat-num cnum1">1</div>
+        <div class="cheat-text">Сумма <b>смежных углов</b> = 180°</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum2">2</div>
+        <div class="cheat-text"><b>Вертикальные углы</b> равны</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum3">3</div>
+        <div class="cheat-text">Сумма углов <b>треугольника</b> = 180°</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum4">4</div>
+        <div class="cheat-text">Углы при <b>основании равнобедренного</b> треугольника равны</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum1">5</div>
+        <div class="cheat-text"><b>Диаметр</b> = 2 · радиус</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum2">6</div>
+        <div class="cheat-text">Любая сторона треугольника <b>меньше суммы</b> двух других</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum3">7</div>
+        <div class="cheat-text">Через точку вне прямой — <b>только одна</b> параллельная</div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum4">8</div>
+        <div class="cheat-text">Через точку на прямой — <b>только один</b> перпендикуляр</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Предупреждение -->
+  <div class="warning">
+    <div class="warn-icon">⚠️</div>
+    <div>
+      <b>Внимание!</b> Две прямые на плоскости могут быть параллельны, пересекаться (в том числе под прямым углом) — но <i>не любые две прямые</i> обязательно параллельны или перпендикулярны. А ещё «вписанный угол» — <b>не всегда острый</b>: он может быть и прямым, и тупым.
+    </div>
+  </div>
+
+  <!-- Мини-тест -->
+  <div class="mini-check">
+    <div class="mc-title">✅ Проверь себя: 4 коротких вопроса</div>
+
+    <div class="q-row">
+      <label class="q-label">1. Один из смежных углов равен 40°. Чему равен второй (в градусах)?</label>
+      <input type="text" id="q1" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">2. В треугольнике два угла равны 50° и 70°. Чему равен третий (в градусах)?</label>
+      <input type="text" id="q2" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">3. Радиус окружности 6 см. Чему равен диаметр (в см)?</label>
+      <input type="text" id="q3" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">4. Верно ли, что вертикальные углы равны? (да / нет)</label>
+      <input type="text" id="q4" placeholder="да/нет" autocomplete="off">
+    </div>
+
+    <button class="check-btn" onclick="checkMini()">Проверить</button>
+    <div class="mc-fb" id="mini-fb"></div>
+  </div>
+
+  <!-- Умный переход -->
+  <div class="next-step-container" id="nextLevelContainer"></div>
+
+  <div class="footer-note">
+    ✨ Геометрия · теория ✨<br>
+    <span>(по материалам темы «Начальные геометрические сведения»)</span>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+/* ---------- Мини-тест ---------- */
+function checkMini() {
+  const q1 = parseFloat(String(document.getElementById('q1').value).replace(',', '.'));
+  const q2 = parseFloat(String(document.getElementById('q2').value).replace(',', '.'));
+  const q3 = parseFloat(String(document.getElementById('q3').value).replace(',', '.'));
+  const q4 = document.getElementById('q4').value.trim().toLowerCase();
+
+  const ok1 = Math.abs(q1 - 140) < 0.01;
+  const ok2 = Math.abs(q2 - 60) < 0.01;
+  const ok3 = Math.abs(q3 - 12) < 0.01;
+  const ok4 = ['да', 'yes', 'верно'].includes(q4);
+  const okCount = [ok1, ok2, ok3, ok4].filter(Boolean).length;
+
+  const fb = document.getElementById('mini-fb');
+  fb.classList.add('show');
+  if (okCount === 4) {
+    fb.className = 'mc-fb show ok';
+    fb.innerHTML = '🎉 Отлично! Все 4 ответа верные. Можно переходить к практике!';
+  } else {
+    fb.className = 'mc-fb show err';
+    let msg = `Правильно: ${okCount} из 4. `;
+    if (!ok1) msg += '№1: 180 − 40 = 140°. ';
+    if (!ok2) msg += '№2: 180 − (50 + 70) = 60°. ';
+    if (!ok3) msg += '№3: D = 2R = 12 см. ';
+    if (!ok4) msg += '№4: да, вертикальные углы равны. ';
+    fb.innerHTML = msg;
+  }
+}
+
+/* ---------- Умный переход ---------- */
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  const path = window.location.pathname;
+  const currentFile = path.substring(path.lastIndexOf('/') + 1);
+  const fallbackMap = {
+    'geometriya_teoriya.html': 'geometriya_praktika.html',
+    'geometriya_praktika.html': 'index.html'
+  };
+
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего задания...</span>';
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к практике →</a>`;
+        return;
+      }
+    }
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к практике →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+    }
+  } catch (e) {
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к практике →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+    }
+  }
+}
+loadNextButton();
+</script>
+</body>
+</html>
