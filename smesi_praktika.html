@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Смеси и концентрации — практика</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #fdf0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem 6rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1020px; width: 100%; }
+
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, #2b3a8c, #1e8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: #4a5f78;
+    font-size: 1.1rem;
+    margin-bottom: 1.6rem;
+    font-weight: 500;
+  }
+
+  nav.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  nav.tabs button {
+    flex: 1 1 140px;
+    padding: 0.85rem 1rem;
+    border: 2px solid #cfe2ff;
+    background: #ffffffdd;
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+    font-family: 'Rubik', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #4a5f78;
+    cursor: pointer;
+    transition: 0.15s;
+  }
+  nav.tabs button:hover { border-color: #4a90e2; color: #4a90e2; }
+  nav.tabs button.active {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 5px 0 #2a4f9e;
+  }
+
+  section.panel { display: none; animation: fade 0.25s ease; }
+  section.panel.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .info-card {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 1.3rem 1.6rem;
+    margin-bottom: 1.3rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 10px 24px -12px rgba(20, 60, 120, 0.2);
+  }
+  .info-card h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    color: #173a5e;
+    margin-bottom: 0.4rem;
+  }
+  .info-card p { font-size: 0.95rem; color: #4a5f78; }
+  .info-card.a { background: #f0fdf4dd; border-color: #bbf7d0; }
+  .info-card.b { background: #fffbebdd; border-color: #fde68a; }
+  .info-card.c { background: #fef2f2dd; border-color: #fecaca; }
+
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.2rem;
+    background: #ffffffcc;
+    backdrop-filter: blur(6px);
+    border-radius: 16px;
+    padding: 0.7rem 1.1rem;
+    border: 1px solid #cfe2ff;
+  }
+  .progress-track {
+    flex: 1;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2fbf71, #34d399);
+    transition: width 0.3s;
+  }
+  .progress-label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #4a5f78;
+    white-space: nowrap;
+  }
+
+  .task {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 22px;
+    padding: 1.3rem 1.6rem;
+    margin-bottom: 1rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 8px 20px -12px rgba(20, 60, 120, 0.2);
+  }
+  .task .task-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 0.8rem;
+  }
+  .task p.q { font-size: 1.02rem; font-weight: 500; color: #1d2b3a; }
+  .task .badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+  }
+  .badge.a { background: #dcfce7; color: #166534; }
+  .badge.b { background: #fef3c7; color: #92400e; }
+  .badge.c { background: #fee2e2; color: #991b1b; }
+
+  .answer-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 0.4rem;
+  }
+  .answer-area input {
+    flex: 1 1 180px;
+    padding: 0.6rem 1rem;
+    border: 2px solid #bcd4f0;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-family: 'Rubik', sans-serif;
+    background: #fff;
+    transition: 0.15s;
+  }
+  .answer-area input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .answer-area input.correct { border-color: #2fbf71; background: #f0fdf4; }
+  .answer-area input.wrong { border-color: #e0644d; background: #fef2f2; }
+
+  button.btn {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Rubik', sans-serif;
+    transition: 0.1s;
+  }
+  button.check {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: #fff;
+    box-shadow: 0 4px 0 #2a4f9e;
+  }
+  button.check:hover { transform: translateY(-1px); box-shadow: 0 5px 0 #2a4f9e; }
+  button.check:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a4f9e; }
+  button.solution {
+    background: #f1f5f9;
+    color: #4a5f78;
+    border: 1px solid #cfe2ff;
+  }
+  button.solution:hover { background: #e2e8f0; color: #1d2b3a; }
+  button.more {
+    background: linear-gradient(135deg, #f2a03d, #d97a12);
+    color: #fff;
+    width: 100%;
+    padding: 0.9rem;
+    margin: 0.6rem 0 1.4rem;
+    font-size: 1rem;
+    border-radius: 16px;
+    box-shadow: 0 5px 0 #a05a0c;
+  }
+  button.more:hover { transform: translateY(-1px); box-shadow: 0 6px 0 #a05a0c; }
+  button.more:active { transform: translateY(2px); box-shadow: 0 3px 0 #a05a0c; }
+  button.more:disabled {
+    background: #b8c4d0;
+    box-shadow: 0 5px 0 #8a98a6;
+    cursor: not-allowed;
+  }
+
+  .feedback {
+    margin-top: 0.7rem;
+    font-size: 0.93rem;
+    font-weight: 600;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { color: #15623b; }
+  .feedback.no { color: #8a2c1c; }
+
+  .solution-block {
+    display: none;
+    margin-top: 0.8rem;
+    padding: 0.9rem 1.1rem;
+    background: #f4f9ff;
+    border-radius: 14px;
+    border: 1px dashed #b3d4f0;
+    font-size: 0.95rem;
+    color: #2c3e50;
+    line-height: 1.7;
+  }
+  .solution-block.show { display: block; }
+  .solution-block .step { margin: 0.2rem 0; }
+
+  .next-step-container {
+    text-align: center;
+    margin: 2rem 0;
+  }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #157040;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #157040; }
+  .btn-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #157040; }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  @media (max-width: 560px) {
+    .task { padding: 1.1rem 1.2rem; }
+    .answer-area input { flex-basis: 100%; }
+    .answer-area button { flex: 1 1 auto; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏋️ Тренажёр «Смеси и концентрации»</h1>
+  <p class="subtitle">Практика · уровни A, B, C · проверка и решения</p>
+
+  <nav class="tabs">
+    <button class="active" data-tab="level-a">🟢 Уровень A</button>
+    <button data-tab="level-b">🟡 Уровень B</button>
+    <button data-tab="level-c">🔴 Уровень C</button>
+  </nav>
+
+  <!-- УРОВЕНЬ A -->
+  <section class="panel active" id="level-a">
+    <div class="info-card a">
+      <h2>🟢 Уровень A — разминка</h2>
+      <p>Базовые задачи на одну формулу. Всего 20 задач — показываем по 5, добавляй новые кнопкой.</p>
+    </div>
+    <div class="progress-bar">
+      <span class="progress-label">Решено: <span id="prog-a">0 / 20</span></span>
+      <div class="progress-track"><div class="progress-fill" id="fill-a"></div></div>
+    </div>
+    <div id="tasks-a"></div>
+    <button class="btn more" data-level="a">➕ Добавить ещё 5 задач</button>
+  </section>
+
+  <!-- УРОВЕНЬ B -->
+  <section class="panel" id="level-b">
+    <div class="info-card b">
+      <h2>🟡 Уровень B — основные задачи</h2>
+      <p>Смешивание, добавление воды и вещества. Всего 20 задач.</p>
+    </div>
+    <div class="progress-bar">
+      <span class="progress-label">Решено: <span id="prog-b">0 / 20</span></span>
+      <div class="progress-track"><div class="progress-fill" id="fill-b"></div></div>
+    </div>
+    <div id="tasks-b"></div>
+    <button class="btn more" data-level="b">➕ Добавить ещё 5 задач</button>
+  </section>
+
+  <!-- УРОВЕНЬ C -->
+  <section class="panel" id="level-c">
+    <div class="info-card c">
+      <h2>🔴 Уровень C — повышенная сложность</h2>
+      <p>Комбинированные задачи. Всего 20 задач.</p>
+    </div>
+    <div class="progress-bar">
+      <span class="progress-label">Решено: <span id="prog-c">0 / 20</span></span>
+      <div class="progress-track"><div class="progress-fill" id="fill-c"></div></div>
+    </div>
+    <div id="tasks-c"></div>
+    <button class="btn more" data-level="c">➕ Добавить ещё 5 задач</button>
+  </section>
+
+  <div class="next-step-container" id="nextLevelContainer"></div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+/* ============================================================
+   БАНК ЗАДАЧ (60 штук: 20 A, 20 B, 20 C)
+   ============================================================ */
+const BANK = {
+  a: [
+    { q: "В 200 г раствора содержится 10 г соли. Какова концентрация раствора (в %)?", ans: 5, tol: 0.01,
+      sol: ["p = (m / M) · 100%", "p = (10 / 200) · 100% = 5%"] },
+    { q: "Сколько граммов сахара в 400 г 15%-го сиропа?", ans: 60, tol: 0.01,
+      sol: ["m = (p / 100) · M", "m = 0,15 · 400 = 60 г"] },
+    { q: "В 250 г воды растворили 50 г соли. Какова концентрация раствора (в %)? Ответ округли до сотых.", ans: 16.67, tol: 0.01,
+      sol: ["Масса смеси = 250 + 50 = 300 г", "p = (50 / 300) · 100% = 16,666… ≈ 16,67%"] },
+    { q: "В 300 г раствора содержится 12% соли. Сколько граммов воды в этом растворе?", ans: 264, tol: 0.01,
+      sol: ["Соли: 0,12 · 300 = 36 г", "Воды: 300 − 36 = 264 г"] },
+    { q: "В 500 г раствора 8 г соли. Какова концентрация (в %)?", ans: 1.6, tol: 0.01,
+      sol: ["p = (8 / 500) · 100% = 1,6%"] },
+    { q: "Сколько граммов соли в 250 г 20%-го раствора?", ans: 50, tol: 0.01,
+      sol: ["m = 0,20 · 250 = 50 г"] },
+    { q: "В 400 г раствора 10% сахара. Сколько граммов воды в растворе?", ans: 360, tol: 0.01,
+      sol: ["Сахара: 0,10 · 400 = 40 г", "Воды: 400 − 40 = 360 г"] },
+    { q: "В 150 г воды растворили 30 г соли. Какова концентрация (в %)? Ответ округли до сотых.", ans: 16.67, tol: 0.01,
+      sol: ["Смесь: 150 + 30 = 180 г", "p = 30 / 180 · 100% = 16,666… ≈ 16,67%"] },
+    { q: "Сколько граммов вещества в 600 г 25%-го раствора?", ans: 150, tol: 0.01,
+      sol: ["m = 0,25 · 600 = 150 г"] },
+    { q: "В 80 г раствора 4 г соли. Какова концентрация (в %)?", ans: 5, tol: 0.01,
+      sol: ["p = (4 / 80) · 100% = 5%"] },
+    { q: "В 200 г раствора 15% соли. Сколько граммов соли?", ans: 30, tol: 0.01,
+      sol: ["m = 0,15 · 200 = 30 г"] },
+    { q: "Сколько граммов воды в 500 г 12%-го раствора?", ans: 440, tol: 0.01,
+      sol: ["Соли: 0,12 · 500 = 60 г", "Воды: 500 − 60 = 440 г"] },
+    { q: "В 120 г воды растворили 30 г сахара. Какова концентрация (в %)?", ans: 20, tol: 0.01,
+      sol: ["Смесь: 120 + 30 = 150 г", "p = 30 / 150 · 100% = 20%"] },
+    { q: "В 250 г раствора 25 г вещества. Какова концентрация (в %)?", ans: 10, tol: 0.01,
+      sol: ["p = (25 / 250) · 100% = 10%"] },
+    { q: "Сколько граммов соли в 350 г 20%-го раствора?", ans: 70, tol: 0.01,
+      sol: ["m = 0,20 · 350 = 70 г"] },
+    { q: "В 400 г раствора 5% соли. Сколько граммов воды?", ans: 380, tol: 0.01,
+      sol: ["Соли: 0,05 · 400 = 20 г", "Воды: 400 − 20 = 380 г"] },
+    { q: "В 300 г воды растворили 60 г соли. Какова концентрация (в %)? Ответ округли до сотых.", ans: 16.67, tol: 0.01,
+      sol: ["Смесь: 300 + 60 = 360 г", "p = 60 / 360 · 100% = 16,666… ≈ 16,67%"] },
+    { q: "В 40 г раствора 2 г соли. Какова концентрация (в %)?", ans: 5, tol: 0.01,
+      sol: ["p = (2 / 40) · 100% = 5%"] },
+    { q: "Сколько граммов вещества в 900 г 10%-го раствора?", ans: 90, tol: 0.01,
+      sol: ["m = 0,10 · 900 = 90 г"] },
+    { q: "В 500 г раствора 15% сахара. Сколько граммов воды?", ans: 425, tol: 0.01,
+      sol: ["Сахара: 0,15 · 500 = 75 г", "Воды: 500 − 75 = 425 г"] }
+  ],
+  b: [
+    { q: "Смешали 100 г 20%-го и 200 г 5%-го раствора соли. Какова концентрация получившегося раствора (в %)?", ans: 10, tol: 0.01,
+      sol: ["Соль 1: 0,20 · 100 = 20 г", "Соль 2: 0,05 · 200 = 10 г", "Всего соли: 30 г; смесь: 300 г", "p = 30 / 300 · 100% = 10%"] },
+    { q: "К 150 г 10%-го раствора добавили 50 г воды. Какой стала концентрация (в %)?", ans: 7.5, tol: 0.01,
+      sol: ["Соль: 0,10 · 150 = 15 г (не меняется)", "Новая смесь: 150 + 50 = 200 г", "p = 15 / 200 · 100% = 7,5%"] },
+    { q: "К 200 г 8%-го раствора добавили 20 г чистого вещества. Найдите новую концентрацию (в %). Ответ округли до сотых.", ans: 16.36, tol: 0.01,
+      sol: ["Было вещества: 0,08 · 200 = 16 г", "Стало: 16 + 20 = 36 г", "Новая смесь: 200 + 20 = 220 г", "p = 36 / 220 · 100% = 16,3636… ≈ 16,36%"] },
+    { q: "Сколько граммов 40%-го раствора нужно взять, чтобы получить 80 г 15%-го раствора?", ans: 30, tol: 0.01,
+      sol: ["Соли в 80 г 15%-го: 0,15 · 80 = 12 г", "40%-го раствора: 12 / 0,4 = 30 г"] },
+    { q: "Смешали 200 г 10%-го и 300 г 20%-го раствора. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,10 · 200 + 0,20 · 300 = 20 + 60 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "К 300 г 25%-го раствора добавили 100 г воды. Какой стала концентрация (в %)?", ans: 18.75, tol: 0.01,
+      sol: ["Соль: 0,25 · 300 = 75 г", "Смесь: 400 г", "p = 75 / 400 · 100% = 18,75%"] },
+    { q: "К 250 г 12%-го раствора добавили 50 г чистого вещества. Найдите новую концентрацию (в %). Ответ округли до сотых.", ans: 26.67, tol: 0.01,
+      sol: ["Было: 0,12 · 250 = 30 г", "Стало: 30 + 50 = 80 г", "Смесь: 300 г", "p = 80 / 300 · 100% = 26,666… ≈ 26,67%"] },
+    { q: "Смешали 150 г 8%-го и 350 г 18%-го раствора. Какова концентрация (в %)?", ans: 15, tol: 0.01,
+      sol: ["Соль: 0,08 · 150 + 0,18 · 350 = 12 + 63 = 75 г", "Смесь: 500 г", "p = 75 / 500 · 100% = 15%"] },
+    { q: "К 400 г 20%-го раствора добавили 100 г воды. Какой стала концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,20 · 400 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "Сколько граммов 10%-го раствора нужно взять, чтобы получить 200 г 4%-го раствора?", ans: 80, tol: 0.01,
+      sol: ["Соли в 200 г 4%-го: 0,04 · 200 = 8 г", "10%-го раствора: 8 / 0,1 = 80 г"] },
+    { q: "Смешали 300 г 5%-го и 200 г 15%-го раствора. Какова концентрация (в %)?", ans: 9, tol: 0.01,
+      sol: ["Соль: 0,05 · 300 + 0,15 · 200 = 15 + 30 = 45 г", "Смесь: 500 г", "p = 45 / 500 · 100% = 9%"] },
+    { q: "К 200 г 10%-го раствора добавили 300 г воды. Какой стала концентрация (в %)?", ans: 4, tol: 0.01,
+      sol: ["Соль: 0,10 · 200 = 20 г", "Смесь: 500 г", "p = 20 / 500 · 100% = 4%"] },
+    { q: "К 400 г 15%-го раствора добавили 100 г чистого вещества. Найдите новую концентрацию (в %).", ans: 32, tol: 0.01,
+      sol: ["Было: 0,15 · 400 = 60 г", "Стало: 60 + 100 = 160 г", "Смесь: 500 г", "p = 160 / 500 · 100% = 32%"] },
+    { q: "Смешали 250 г 12%-го и 250 г 20%-го раствора. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,12 · 250 + 0,20 · 250 = 30 + 50 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "Сколько граммов 25%-го раствора нужно взять, чтобы получить 100 г 10%-го раствора?", ans: 40, tol: 0.01,
+      sol: ["Соли в 100 г 10%-го: 10 г", "25%-го раствора: 10 / 0,25 = 40 г"] },
+    { q: "К 500 г 30%-го раствора добавили 200 г воды. Какой стала концентрация (в %)? Ответ округли до сотых.", ans: 21.43, tol: 0.01,
+      sol: ["Соль: 0,30 · 500 = 150 г", "Смесь: 700 г", "p = 150 / 700 · 100% = 21,428… ≈ 21,43%"] },
+    { q: "Смешали 100 г 10%-го и 400 г 20%-го раствора. Какова концентрация (в %)?", ans: 18, tol: 0.01,
+      sol: ["Соль: 0,10 · 100 + 0,20 · 400 = 10 + 80 = 90 г", "Смесь: 500 г", "p = 90 / 500 · 100% = 18%"] },
+    { q: "К 300 г 8%-го раствора добавили 20 г чистого вещества. Найдите новую концентрацию (в %). Ответ округли до сотых.", ans: 13.75, tol: 0.01,
+      sol: ["Было: 0,08 · 300 = 24 г", "Стало: 24 + 20 = 44 г", "Смесь: 320 г", "p = 44 / 320 · 100% = 13,75%"] },
+    { q: "Сколько граммов воды нужно добавить к 200 г 20%-го раствора, чтобы получить 8%-й раствор?", ans: 300, tol: 0.01,
+      sol: ["Соль: 0,20 · 200 = 40 г", "Новая смесь: 40 / 0,08 = 500 г", "Воды добавить: 500 − 200 = 300 г"] },
+    { q: "Смешали 400 г 6%-го и 100 г 26%-го раствора. Какова концентрация (в %)?", ans: 10, tol: 0.01,
+      sol: ["Соль: 0,06 · 400 + 0,26 · 100 = 24 + 26 = 50 г", "Смесь: 500 г", "p = 50 / 500 · 100% = 10%"] }
+  ],
+  c: [
+    { q: "В двух сосудах: 300 г 10%-го и 200 г 25%-го раствора. Их слили вместе, затем выпарили 100 г воды. Какова концентрация (в %)?", ans: 20, tol: 0.01,
+      sol: ["Соль: 0,10 · 300 + 0,25 · 200 = 30 + 50 = 80 г", "Смесь было: 500 г, после выпаривания: 400 г", "p = 80 / 400 · 100% = 20%"] },
+    { q: "Сколько граммов 5%-го раствора надо добавить к 400 г 20%-го, чтобы получить 12%-й раствор? Ответ округли до десятых.", ans: 457.1, tol: 0.1,
+      sol: ["Пусть x г — масса 5%-го раствора", "Соль: 0,05x + 0,20 · 400 = 80 + 0,05x", "Смесь: 400 + x", "(80 + 0,05x) / (400 + x) = 0,12", "80 + 0,05x = 48 + 0,12x", "32 = 0,07x ⇒ x = 32 / 0,07 ≈ 457,14 ≈ 457,1 г"] },
+    { q: "Смешали 200 г раствора с концентрацией 15% и 300 г раствора неизвестной концентрации. Получили 18%-й раствор. Найдите неизвестную концентрацию (в %).", ans: 20, tol: 0.01,
+      sol: ["Соль 1: 0,15 · 200 = 30 г", "Пусть p% — концентрация второго, соль = 300 · p / 100 = 3p", "(30 + 3p) / 500 = 0,18", "30 + 3p = 90 ⇒ 3p = 60 ⇒ p = 20%"] },
+    { q: "Из 500 г 20%-го раствора выпарили часть воды, и получился 40%-й раствор. Сколько граммов воды выпарили?", ans: 250, tol: 0.01,
+      sol: ["Соль: 0,20 · 500 = 100 г (не меняется)", "Новая масса смеси: 100 / 0,4 = 250 г", "Выпарили: 500 − 250 = 250 г"] },
+    { q: "Смешали 300 г 20%-го и 200 г 10%-го раствора, затем добавили 100 г чистого вещества. Какова концентрация (в %)?", ans: 30, tol: 0.01,
+      sol: ["Соль: 0,20 · 300 + 0,10 · 200 = 60 + 20 = 80 г", "Добавили 100 г ⇒ стало 180 г", "Смесь: 500 + 100 = 600 г", "p = 180 / 600 · 100% = 30%"] },
+    { q: "Сколько граммов 60%-го раствора надо добавить к 300 г 10%-го, чтобы получить 30%-й раствор?", ans: 200, tol: 0.01,
+      sol: ["Пусть x г — масса 60%-го раствора", "0,60x + 0,10 · 300 = 0,30 · (x + 300)", "0,60x + 30 = 0,30x + 90", "0,30x = 60 ⇒ x = 200 г"] },
+    { q: "Из 800 г 15%-го раствора выпарили 200 г воды. Какова концентрация (в %)?", ans: 20, tol: 0.01,
+      sol: ["Соль: 0,15 · 800 = 120 г", "Смесь: 600 г", "p = 120 / 600 · 100% = 20%"] },
+    { q: "Смешали 400 г 25%-го раствора и 100 г воды, затем добавили 50 г чистого вещества. Какова концентрация (в %)? Ответ округли до сотых.", ans: 27.27, tol: 0.01,
+      sol: ["Соль: 0,25 · 400 = 100 г", "Стало: 100 + 50 = 150 г", "Смесь: 400 + 100 + 50 = 550 г", "p = 150 / 550 · 100% = 27,2727… ≈ 27,27%"] },
+    { q: "Сколько граммов воды нужно выпарить из 600 г 10%-го раствора, чтобы получить 30%-й раствор?", ans: 400, tol: 0.01,
+      sol: ["Соль: 0,10 · 600 = 60 г", "Новая смесь: 60 / 0,30 = 200 г", "Выпарить: 600 − 200 = 400 г"] },
+    { q: "Смешали 250 г 16%-го раствора и 150 г раствора неизвестной концентрации. Получили 20%-й раствор. Найдите неизвестную концентрацию (в %). Ответ округли до сотых.", ans: 26.67, tol: 0.01,
+      sol: ["Соль 1: 0,16 · 250 = 40 г", "Пусть p% — концентрация второго, соль = 150 · p / 100 = 1,5p", "(40 + 1,5p) / 400 = 0,20", "40 + 1,5p = 80 ⇒ 1,5p = 40 ⇒ p = 40 / 1,5 = 26,666… ≈ 26,67%"] },
+    { q: "Из 400 г 25%-го раствора выпарили часть воды, получился 40%-й раствор. Сколько граммов воды выпарили?", ans: 150, tol: 0.01,
+      sol: ["Соль: 0,25 · 400 = 100 г", "Новая смесь: 100 / 0,40 = 250 г", "Выпарили: 400 − 250 = 150 г"] },
+    { q: "Смешали 100 г 40%-го и 400 г 10%-го раствора. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,40 · 100 + 0,10 · 400 = 40 + 40 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "Сколько граммов 80%-го раствора надо добавить к 200 г 20%-го, чтобы получить 50%-й раствор?", ans: 200, tol: 0.01,
+      sol: ["Пусть x г — масса 80%-го раствора", "0,80x + 0,20 · 200 = 0,50 · (x + 200)", "0,80x + 40 = 0,50x + 100", "0,30x = 60 ⇒ x = 200 г"] },
+    { q: "Смешали 500 г 8%-го и 300 г 24%-го раствора, затем выпарили 100 г воды. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,08 · 500 + 0,24 · 300 = 40 + 72 = 112 г", "Смесь: 800 − 100 = 700 г", "p = 112 / 700 · 100% = 16%"] },
+    { q: "Сколько граммов воды нужно добавить к 300 г 40%-го раствора, чтобы получить 15%-й раствор?", ans: 500, tol: 0.01,
+      sol: ["Соль: 0,40 · 300 = 120 г", "Новая смесь: 120 / 0,15 = 800 г", "Воды добавить: 800 − 300 = 500 г"] },
+    { q: "Смешали 200 г 25%-го и 300 г 15%-го раствора, затем добавили 50 г чистого вещества. Какова концентрация (в %)? Ответ округли до сотых.", ans: 26.36, tol: 0.01,
+      sol: ["Соль: 0,25 · 200 + 0,15 · 300 = 50 + 45 = 95 г", "Стало: 95 + 50 = 145 г", "Смесь: 500 + 50 = 550 г", "p = 145 / 550 · 100% = 26,3636… ≈ 26,36%"] },
+    { q: "Из 600 г 20%-го раствора выпарили 200 г воды. Какова концентрация (в %)?", ans: 30, tol: 0.01,
+      sol: ["Соль: 0,20 · 600 = 120 г", "Смесь: 400 г", "p = 120 / 400 · 100% = 30%"] },
+    { q: "Сколько граммов 5%-го раствора надо добавить к 300 г 25%-го, чтобы получить 10%-й раствор?", ans: 900, tol: 0.01,
+      sol: ["Пусть x г — масса 5%-го раствора", "0,05x + 0,25 · 300 = 0,10 · (x + 300)", "0,05x + 75 = 0,10x + 30", "45 = 0,05x ⇒ x = 900 г"] },
+    { q: "Смешали 400 г 12%-го и 100 г 32%-го раствора, затем добавили 100 г воды. Какова концентрация (в %)? Ответ округли до сотых.", ans: 13.33, tol: 0.01,
+      sol: ["Соль: 0,12 · 400 + 0,32 · 100 = 48 + 32 = 80 г", "Смесь: 500 + 100 = 600 г", "p = 80 / 600 · 100% = 13,333… ≈ 13,33%"] },
+    { q: "Из 1000 г 10%-го раствора выпарили 400 г воды, затем добавили 100 г чистого вещества. Какова концентрация (в %)? Ответ округли до сотых.", ans: 28.57, tol: 0.01,
+      sol: ["Соль: 0,10 · 1000 = 100 г", "После выпаривания соль та же: 100 г", "Добавили 100 г ⇒ 200 г", "Смесь: 1000 − 400 + 100 = 700 г", "p = 200 / 700 · 100% = 28,571… ≈ 28,57%"] }
+  ]
+};
+
+/* ============================================================
+   СОСТОЯНИЕ
+   ============================================================ */
+const state = {
+  a: { index: 0, shownIndices: [], solved: new Set() },
+  b: { index: 0, shownIndices: [], solved: new Set() },
+  c: { index: 0, shownIndices: [], solved: new Set() }
+};
+
+/* ---------- Вкладки ---------- */
+document.querySelectorAll('nav.tabs button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('section.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+/* ---------- Утилиты ---------- */
+function parseNum(str) {
+  const s = String(str).trim().replace(',', '.');
+  if (s === '') return NaN;
+  const n = parseFloat(s);
+  return isNaN(n) ? NaN : n;
+}
+function updateProgress(level) {
+  const bank = BANK[level];
+  const solvedCount = state[level].solved.size;
+  document.getElementById('prog-' + level).textContent = solvedCount + ' / ' + bank.length;
+  document.getElementById('fill-' + level).style.width = (solvedCount / bank.length * 100) + '%';
+}
+
+/* ---------- Рендер задачи ---------- */
+function renderTask(taskData, level, globalIdx) {
+  const div = document.createElement('div');
+  div.className = 'task';
+  const isSolved = state[level].solved.has(globalIdx);
+
+  div.innerHTML = `
+    <div class="task-head">
+      <p class="q">${taskData.q}</p>
+      <span class="badge ${level}">${level.toUpperCase()}</span>
+    </div>
+    <div class="answer-area">
+      <input type="text" placeholder="Введи ответ (число)" inputmode="decimal" ${isSolved ? 'disabled' : ''}>
+      <button class="btn check">Проверить</button>
+      <button class="btn solution">Решение</button>
+    </div>
+    <div class="feedback"></div>
+    <div class="solution-block">
+      ${taskData.sol.map(s => `<div class="step">${s}</div>`).join('')}
+    </div>
+  `;
+
+  const input = div.querySelector('input');
+  const checkBtn = div.querySelector('.check');
+  const solBtn = div.querySelector('.solution');
+  const feedback = div.querySelector('.feedback');
+  const solution = div.querySelector('.solution-block');
+
+  if (isSolved) {
+    input.classList.add('correct');
+    feedback.textContent = '✅ Уже решено верно';
+    feedback.className = 'feedback show ok';
+    checkBtn.disabled = true;
+  }
+
+  checkBtn.addEventListener('click', () => {
+    if (state[level].solved.has(globalIdx)) return;
+    const val = parseNum(input.value);
+    if (isNaN(val)) {
+      feedback.textContent = '✏️ Введи числовой ответ.';
+      feedback.className = 'feedback show no';
+      return;
+    }
+    input.classList.remove('correct', 'wrong');
+    if (Math.abs(val - taskData.ans) <= taskData.tol) {
+      input.classList.add('correct');
+      feedback.textContent = '✅ Верно! Молодец.';
+      feedback.className = 'feedback show ok';
+      state[level].solved.add(globalIdx);
+      input.disabled = true;
+      checkBtn.disabled = true;
+      updateProgress(level);
+    } else {
+      input.classList.add('wrong');
+      feedback.textContent = '❌ Неверно. Попробуй ещё или открой решение.';
+      feedback.className = 'feedback show no';
+    }
+  });
+
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') checkBtn.click(); });
+  solBtn.addEventListener('click', () => {
+    solution.classList.toggle('show');
+    solBtn.textContent = solution.classList.contains('show') ? 'Скрыть решение' : 'Решение';
+  });
+
+  return div;
+}
+
+function renderLevel(level) {
+  const container = document.getElementById('tasks-' + level);
+  container.innerHTML = '';
+  state[level].shownIndices.forEach(idx => {
+    container.appendChild(renderTask(BANK[level][idx], level, idx));
+  });
+}
+
+function showMoreFive(level) {
+  const bank = BANK[level];
+  const shown = state[level].shownIndices;
+  const shownSet = new Set(shown);
+  let added = 0, i = 0;
+  while (added < 5 && shown.length < bank.length && i < bank.length) {
+    const idx = (state[level].index + i) % bank.length;
+    if (!shownSet.has(idx)) {
+      shown.push(idx);
+      added++;
+    }
+    i++;
+  }
+  state[level].index = (state[level].index + i) % bank.length;
+  renderLevel(level);
+  updateMoreButton(level);
+}
+
+function updateMoreButton(level) {
+  const btn = document.querySelector(`button.more[data-level="${level}"]`);
+  if (state[level].shownIndices.length >= BANK[level].length) {
+    btn.textContent = '✅ Все задачи показаны';
+    btn.disabled = true;
+  }
+}
+
+['a', 'b', 'c'].forEach(level => {
+  state[level].shownIndices = [];
+  state[level].index = 0;
+  showMoreFive(level);
+  updateProgress(level);
+});
+
+document.querySelectorAll('button.more').forEach(btn => {
+  btn.addEventListener('click', () => {
+    showMoreFive(btn.dataset.level);
+  });
+});
+
+/* ---------- Умный переход ---------- */
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  const path = window.location.pathname;
+  const currentFile = path.substring(path.lastIndexOf('/') + 1);
+  const fallbackMap = {
+    'smesi_teoriya.html': 'smesi_praktika.html',
+    'smesi_praktika.html': 'smesi_test.html',
+    'smesi_test.html': 'index.html'
+  };
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего задания...</span>';
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к самостоятельной →</a>`;
+        return;
+      }
+    }
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к самостоятельной →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+    }
+  } catch (e) {
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к самостоятельной →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+    }
+  }
+}
+loadNextButton();
+</script>
+</body>
+</html>
