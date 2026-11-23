@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Самостоятельная работа: Смеси и концентрации</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem 6rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; width: 100%; }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.1rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.4rem; }
+
+  /* ---------- АВТОРИЗАЦИЯ ---------- */
+  .auth-box {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .auth-box h2 { color: #173a5e; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif; text-align: center; }
+  .auth-box p { color: #4a5f78; margin-bottom: 1.5rem; text-align: center; }
+  .auth-row { margin-bottom: 1.2rem; text-align: left; }
+  .auth-row label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #173a5e; }
+  .auth-row input {
+    width: 100%; padding: 0.8rem 1rem; border-radius: 14px;
+    border: 2px solid #bcd4f0; font-size: 1.05rem; font-family: 'Rubik', sans-serif;
+  }
+  .auth-row input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .auth-error { color: #d9544d; font-weight: 600; margin-bottom: 1rem; min-height: 1.2rem; display: none; text-align: center; }
+  .auth-error.show { display: block; }
+  .btn-start {
+    width: 100%; padding: 1rem; border-radius: 16px; font-size: 1.2rem;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    border: none; font-weight: 700; font-family: 'Rubik', sans-serif;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    margin-bottom: 1.5rem;
+  }
+  .btn-start:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-start:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+  .btn-home {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    padding: 0.8rem; border-radius: 16px; font-size: 1rem;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    font-weight: 600; box-shadow: 0 5px 0 #445566; transition: 0.1s;
+  }
+  .btn-home:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+
+  /* ---------- КРИТЕРИИ ---------- */
+  .criteria {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.2rem 1.6rem; margin-bottom: 1.6rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 10px 24px -12px rgba(20, 60, 120, 0.2);
+    display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center;
+  }
+  .criteria .crit-title { font-weight: 700; color: #173a5e; font-size: 1.05rem; width: 100%; margin-bottom: 0.2rem; }
+  .crit-item { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 0.98rem; }
+  .crit-mark { font-weight: 800; font-size: 1.1rem; color: #fff; padding: 0.15rem 0.7rem; border-radius: 30px; }
+  .mark5 { background: #2fbf71; } .mark4 { background: #4a90e2; }
+  .mark3 { background: #f2a03d; } .mark2 { background: #d9544d; }
+
+  /* ---------- ТАЙМЕР ---------- */
+  .timer-bar {
+    position: sticky; top: 10px; z-index: 50;
+    background: #ffffffec; backdrop-filter: blur(8px);
+    border-radius: 20px; padding: 0.8rem 1.6rem; margin-bottom: 1.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; border: 1px solid #cfe2ff;
+    box-shadow: 0 8px 20px -10px rgba(20, 60, 120, 0.3); flex-wrap: wrap;
+  }
+  .timer-label { font-weight: 600; color: #173a5e; }
+  .timer-value {
+    font-family: 'Montserrat', monospace; font-weight: 800;
+    font-size: 1.5rem; color: #1d4e7a; min-width: 90px; text-align: right;
+  }
+  .timer-value.warn { color: #d9544d; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+  /* ---------- ЗАДАНИЯ ---------- */
+  .q-card {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.5rem 1.7rem; margin-bottom: 1.3rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 12px 26px -14px rgba(20, 60, 120, 0.25); transition: 0.2s;
+  }
+  .q-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0.9rem; }
+  .q-num {
+    font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.05rem;
+    color: #fff; background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    min-width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 0 #2a4f9e; flex-shrink: 0;
+  }
+  .q-text { font-weight: 600; font-size: 1.05rem; color: #173a5e; padding-top: 6px; }
+  .q-level { font-size: 0.75rem; font-weight: 800; padding: 2px 8px; border-radius: 20px; margin-left: 6px; letter-spacing: 0.5px; }
+  .lv-a { background: #dcfce7; color: #166534; }
+  .lv-b { background: #fef3c7; color: #92400e; }
+  .lv-c { background: #fee2e2; color: #991b1b; }
+
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 0.6rem; }
+  input[type="text"] {
+    font-family: 'Rubik', sans-serif; font-size: 1.05rem;
+    padding: 0.55rem 1rem; border-radius: 14px; border: 2px solid #bcd4f0;
+    outline: none; background: #fff; min-width: 140px; transition: 0.15s;
+  }
+  input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+
+  /* ---------- РЕЗУЛЬТАТ ---------- */
+  .result-box {
+    margin-top: 2rem; background: #ffffffdd; backdrop-filter: blur(8px);
+    border-radius: 28px; padding: 2rem 2.2rem; border: 2px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3); display: none;
+  }
+  .result-box.show { display: block; animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .result-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.6rem; margin-bottom: 0.6rem; color: #173a5e; }
+  .result-mark {
+    display: inline-block; font-family: 'Montserrat', sans-serif; font-weight: 800;
+    font-size: 3rem; padding: 0.3rem 1.6rem; border-radius: 28px; color: #fff;
+    margin: 0.6rem 0; box-shadow: 0 10px 0 rgba(0,0,0,0.12);
+  }
+  .result-summary { font-size: 1.1rem; margin: 0.6rem 0 1.2rem; color: #2c3e50; }
+  .wrong-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .wrong-item {
+    background: #fff5f3; border-left: 8px solid #e0644d; border-radius: 16px;
+    padding: 0.9rem 1.2rem; font-size: 1rem;
+  }
+  .wrong-item .wq { font-weight: 700; color: #8a2c1c; margin-bottom: 4px; }
+  .wrong-item .wdetail { color: #4a3a37; margin-bottom: 4px; }
+  .wrong-item .wdetail b { color: #8a2c1c; }
+  .wrong-item .wcorrect { color: #15623b; font-weight: 600; margin-bottom: 6px; }
+  .wrong-item .wsolution { color: #2c3e50; font-size: 0.95rem; }
+  .wrong-item .wsolution .step { margin: 2px 0; }
+  .all-ok { background: #e3f9ec; border-left: 8px solid #2fbf71; border-radius: 16px; padding: 1rem 1.3rem; color: #15623b; font-weight: 600; font-size: 1.05rem; }
+
+  .btn-check {
+    font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.2rem;
+    padding: 0.9rem 2.4rem; border: none; border-radius: 20px;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    display: block; width: 100%; margin-top: 1.6rem;
+  }
+  .btn-check:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-check:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-check:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+
+  .btn-restart {
+    font-family: 'Rubik', sans-serif; font-weight: 600; font-size: 1rem;
+    padding: 0.6rem 1.6rem; border: none; border-radius: 16px;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    cursor: pointer; box-shadow: 0 5px 0 #445566; margin-top: 1.2rem;
+    display: inline-block; text-decoration: none;
+  }
+  .btn-restart:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+
+  .hidden { display: none !important; }
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.7rem 5rem; }
+    h1 { font-size: 1.6rem; }
+    .q-card { padding: 1.2rem 1.1rem; }
+    .criteria { padding: 1rem 1.1rem; }
+    .result-box { padding: 1.4rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- ЭКРАН 1: АВТОРИЗАЦИЯ -->
+  <div id="authScreen" class="auth-box">
+    <h2>📝 Вход в тест</h2>
+    <p>Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
+    <div style="background:#f0f6ff; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #3a5f8a; text-align: center;">
+      Пример: <b>Иванов Иван</b> и класс <b>6А</b>
+    </div>
+    <div class="auth-row">
+      <label>ФИО (как в журнале)</label>
+      <input type="text" id="inpFIO" placeholder="Иванов Иван" autocomplete="off">
+    </div>
+    <div class="auth-row">
+      <label>Класс</label>
+      <input type="text" id="inpKlass" placeholder="6А" autocomplete="off">
+    </div>
+    <div class="auth-error" id="authError"></div>
+    <button class="btn-start" id="btnStart" onclick="checkStudent()">Проверить и начать</button>
+    <a href="index.html" class="btn-home">🏠 Вернуться на главную</a>
+  </div>
+
+  <!-- ЭКРАН 2: ТЕСТ -->
+  <div id="quizScreen" class="hidden">
+    <h1>📝 Самостоятельная работа</h1>
+    <p class="subtitle">Тема: Смеси и концентрации · 5 задач · 15 минут</p>
+
+    <div class="criteria">
+      <div class="crit-title">📊 Критерии оценивания (из 5 заданий):</div>
+      <div class="crit-item"><span class="crit-mark mark5">5</span> 5 верных</div>
+      <div class="crit-item"><span class="crit-mark mark4">4</span> 4 верных</div>
+      <div class="crit-item"><span class="crit-mark mark3">3</span> 3 верных</div>
+      <div class="crit-item"><span class="crit-mark mark2">2</span> 0–2 верных</div>
+    </div>
+
+    <div class="timer-bar">
+      <span class="timer-label">⏱️ Осталось времени:</span>
+      <span class="timer-value" id="timer">15:00</span>
+    </div>
+
+    <div id="quiz"></div>
+    <button class="btn-check" id="checkBtn" onclick="finishQuiz()">Проверить результаты</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-title">📋 Результат</div>
+      <div id="resultMark" class="result-mark"></div>
+      <div class="result-summary" id="resultSummary"></div>
+      <div id="wrongContainer"></div>
+      <a href="index.html" class="btn-restart">🏠 Вернуться на главную</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+let studentName = '';
+let studentClass = '';
+let quizStarted = false;
+
+/* ============================================================
+   АВТОРИЗАЦИЯ
+   ============================================================ */
+async function checkStudent() {
+  const fio = document.getElementById('inpFIO').value.trim();
+  const klass = document.getElementById('inpKlass').value.trim().toUpperCase();
+  const err = document.getElementById('authError');
+  err.classList.remove('show');
+
+  if (fio.length < 5) { err.textContent = 'Введите имя и фамилию полностью.'; err.classList.add('show'); return; }
+  if (klass.length < 1) { err.textContent = 'Введите ваш класс (например, 6А).'; err.classList.add('show'); return; }
+
+  const btn = document.getElementById('btnStart');
+  btn.disabled = true; btn.innerText = 'Проверяем...';
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=checkStudent&fio=${encodeURIComponent(fio)}&klass=${encodeURIComponent(klass)}`);
+    const data = await resp.json();
+    if (!data.found) {
+      err.textContent = 'Ошибка: ученик не найден в списке этого класса.';
+      err.classList.add('show');
+      btn.disabled = false; btn.innerText = 'Проверить и начать';
+      return;
+    }
+  } catch (e) {
+    err.textContent = 'Ошибка сети. Попробуйте позже.';
+    err.classList.add('show');
+    btn.disabled = false; btn.innerText = 'Проверить и начать';
+    return;
+  }
+
+  studentName = fio;
+  studentClass = klass;
+  quizStarted = true;
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  startQuiz();
+}
+
+/* ============================================================
+   БАНК ЗАДАЧ
+   ============================================================ */
+const BANK = {
+  a: [
+    { q: "В 200 г раствора содержится 10 г соли. Какова концентрация раствора (в %)?", ans: 5, tol: 0.01,
+      sol: ["p = (m / M) · 100%", "p = (10 / 200) · 100% = 5%"] },
+    { q: "Сколько граммов сахара в 400 г 15%-го сиропа?", ans: 60, tol: 0.01,
+      sol: ["m = (p / 100) · M", "m = 0,15 · 400 = 60 г"] },
+    { q: "В 250 г воды растворили 50 г соли. Какова концентрация раствора (в %)? Ответ округли до сотых.", ans: 16.67, tol: 0.01,
+      sol: ["Масса смеси = 250 + 50 = 300 г", "p = (50 / 300) · 100% = 16,666… ≈ 16,67%"] },
+    { q: "В 300 г раствора содержится 12% соли. Сколько граммов воды в этом растворе?", ans: 264, tol: 0.01,
+      sol: ["Соли: 0,12 · 300 = 36 г", "Воды: 300 − 36 = 264 г"] },
+    { q: "В 500 г раствора 8 г соли. Какова концентрация (в %)?", ans: 1.6, tol: 0.01,
+      sol: ["p = (8 / 500) · 100% = 1,6%"] },
+    { q: "Сколько граммов соли в 250 г 20%-го раствора?", ans: 50, tol: 0.01,
+      sol: ["m = 0,20 · 250 = 50 г"] },
+    { q: "В 400 г раствора 10% сахара. Сколько граммов воды в растворе?", ans: 360, tol: 0.01,
+      sol: ["Сахара: 0,10 · 400 = 40 г", "Воды: 400 − 40 = 360 г"] },
+    { q: "В 150 г воды растворили 30 г соли. Какова концентрация (в %)? Ответ округли до сотых.", ans: 16.67, tol: 0.01,
+      sol: ["Смесь: 150 + 30 = 180 г", "p = 30 / 180 · 100% = 16,666… ≈ 16,67%"] },
+    { q: "Сколько граммов вещества в 600 г 25%-го раствора?", ans: 150, tol: 0.01,
+      sol: ["m = 0,25 · 600 = 150 г"] },
+    { q: "В 80 г раствора 4 г соли. Какова концентрация (в %)?", ans: 5, tol: 0.01,
+      sol: ["p = (4 / 80) · 100% = 5%"] },
+    { q: "В 200 г раствора 15% соли. Сколько граммов соли?", ans: 30, tol: 0.01,
+      sol: ["m = 0,15 · 200 = 30 г"] },
+    { q: "Сколько граммов воды в 500 г 12%-го раствора?", ans: 440, tol: 0.01,
+      sol: ["Соли: 0,12 · 500 = 60 г", "Воды: 500 − 60 = 440 г"] },
+    { q: "В 120 г воды растворили 30 г сахара. Какова концентрация (в %)?", ans: 20, tol: 0.01,
+      sol: ["Смесь: 120 + 30 = 150 г", "p = 30 / 150 · 100% = 20%"] },
+    { q: "В 250 г раствора 25 г вещества. Какова концентрация (в %)?", ans: 10, tol: 0.01,
+      sol: ["p = (25 / 250) · 100% = 10%"] },
+    { q: "Сколько граммов соли в 350 г 20%-го раствора?", ans: 70, tol: 0.01,
+      sol: ["m = 0,20 · 350 = 70 г"] },
+    { q: "В 400 г раствора 5% соли. Сколько граммов воды?", ans: 380, tol: 0.01,
+      sol: ["Соли: 0,05 · 400 = 20 г", "Воды: 400 − 20 = 380 г"] },
+    { q: "В 300 г воды растворили 60 г соли. Какова концентрация (в %)? Ответ округли до сотых.", ans: 16.67, tol: 0.01,
+      sol: ["Смесь: 300 + 60 = 360 г", "p = 60 / 360 · 100% = 16,666… ≈ 16,67%"] },
+    { q: "В 40 г раствора 2 г соли. Какова концентрация (в %)?", ans: 5, tol: 0.01,
+      sol: ["p = (2 / 40) · 100% = 5%"] },
+    { q: "Сколько граммов вещества в 900 г 10%-го раствора?", ans: 90, tol: 0.01,
+      sol: ["m = 0,10 · 900 = 90 г"] },
+    { q: "В 500 г раствора 15% сахара. Сколько граммов воды?", ans: 425, tol: 0.01,
+      sol: ["Сахара: 0,15 · 500 = 75 г", "Воды: 500 − 75 = 425 г"] }
+  ],
+  b: [
+    { q: "Смешали 100 г 20%-го и 200 г 5%-го раствора соли. Какова концентрация получившегося раствора (в %)?", ans: 10, tol: 0.01,
+      sol: ["Соль 1: 0,20 · 100 = 20 г", "Соль 2: 0,05 · 200 = 10 г", "Всего соли: 30 г; смесь: 300 г", "p = 30 / 300 · 100% = 10%"] },
+    { q: "К 150 г 10%-го раствора добавили 50 г воды. Какой стала концентрация (в %)?", ans: 7.5, tol: 0.01,
+      sol: ["Соль: 0,10 · 150 = 15 г (не меняется)", "Новая смесь: 150 + 50 = 200 г", "p = 15 / 200 · 100% = 7,5%"] },
+    { q: "К 200 г 8%-го раствора добавили 20 г чистого вещества. Найдите новую концентрацию (в %). Ответ округли до сотых.", ans: 16.36, tol: 0.01,
+      sol: ["Было вещества: 0,08 · 200 = 16 г", "Стало: 16 + 20 = 36 г", "Новая смесь: 200 + 20 = 220 г", "p = 36 / 220 · 100% = 16,3636… ≈ 16,36%"] },
+    { q: "Сколько граммов 40%-го раствора нужно взять, чтобы получить 80 г 15%-го раствора?", ans: 30, tol: 0.01,
+      sol: ["Соли в 80 г 15%-го: 0,15 · 80 = 12 г", "40%-го раствора: 12 / 0,4 = 30 г"] },
+    { q: "Смешали 200 г 10%-го и 300 г 20%-го раствора. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,10 · 200 + 0,20 · 300 = 20 + 60 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "К 300 г 25%-го раствора добавили 100 г воды. Какой стала концентрация (в %)?", ans: 18.75, tol: 0.01,
+      sol: ["Соль: 0,25 · 300 = 75 г", "Смесь: 400 г", "p = 75 / 400 · 100% = 18,75%"] },
+    { q: "К 250 г 12%-го раствора добавили 50 г чистого вещества. Найдите новую концентрацию (в %). Ответ округли до сотых.", ans: 26.67, tol: 0.01,
+      sol: ["Было: 0,12 · 250 = 30 г", "Стало: 30 + 50 = 80 г", "Смесь: 300 г", "p = 80 / 300 · 100% = 26,666… ≈ 26,67%"] },
+    { q: "Смешали 150 г 8%-го и 350 г 18%-го раствора. Какова концентрация (в %)?", ans: 15, tol: 0.01,
+      sol: ["Соль: 0,08 · 150 + 0,18 · 350 = 12 + 63 = 75 г", "Смесь: 500 г", "p = 75 / 500 · 100% = 15%"] },
+    { q: "К 400 г 20%-го раствора добавили 100 г воды. Какой стала концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,20 · 400 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "Сколько граммов 10%-го раствора нужно взять, чтобы получить 200 г 4%-го раствора?", ans: 80, tol: 0.01,
+      sol: ["Соли в 200 г 4%-го: 0,04 · 200 = 8 г", "10%-го раствора: 8 / 0,1 = 80 г"] },
+    { q: "Смешали 300 г 5%-го и 200 г 15%-го раствора. Какова концентрация (в %)?", ans: 9, tol: 0.01,
+      sol: ["Соль: 0,05 · 300 + 0,15 · 200 = 15 + 30 = 45 г", "Смесь: 500 г", "p = 45 / 500 · 100% = 9%"] },
+    { q: "К 200 г 10%-го раствора добавили 300 г воды. Какой стала концентрация (в %)?", ans: 4, tol: 0.01,
+      sol: ["Соль: 0,10 · 200 = 20 г", "Смесь: 500 г", "p = 20 / 500 · 100% = 4%"] },
+    { q: "К 400 г 15%-го раствора добавили 100 г чистого вещества. Найдите новую концентрацию (в %).", ans: 32, tol: 0.01,
+      sol: ["Было: 0,15 · 400 = 60 г", "Стало: 60 + 100 = 160 г", "Смесь: 500 г", "p = 160 / 500 · 100% = 32%"] },
+    { q: "Смешали 250 г 12%-го и 250 г 20%-го раствора. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,12 · 250 + 0,20 · 250 = 30 + 50 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "Сколько граммов 25%-го раствора нужно взять, чтобы получить 100 г 10%-го раствора?", ans: 40, tol: 0.01,
+      sol: ["Соли в 100 г 10%-го: 10 г", "25%-го раствора: 10 / 0,25 = 40 г"] },
+    { q: "К 500 г 30%-го раствора добавили 200 г воды. Какой стала концентрация (в %)? Ответ округли до сотых.", ans: 21.43, tol: 0.01,
+      sol: ["Соль: 0,30 · 500 = 150 г", "Смесь: 700 г", "p = 150 / 700 · 100% = 21,428… ≈ 21,43%"] },
+    { q: "Смешали 100 г 10%-го и 400 г 20%-го раствора. Какова концентрация (в %)?", ans: 18, tol: 0.01,
+      sol: ["Соль: 0,10 · 100 + 0,20 · 400 = 10 + 80 = 90 г", "Смесь: 500 г", "p = 90 / 500 · 100% = 18%"] },
+    { q: "К 300 г 8%-го раствора добавили 20 г чистого вещества. Найдите новую концентрацию (в %). Ответ округли до сотых.", ans: 13.75, tol: 0.01,
+      sol: ["Было: 0,08 · 300 = 24 г", "Стало: 24 + 20 = 44 г", "Смесь: 320 г", "p = 44 / 320 · 100% = 13,75%"] },
+    { q: "Сколько граммов воды нужно добавить к 200 г 20%-го раствора, чтобы получить 8%-й раствор?", ans: 300, tol: 0.01,
+      sol: ["Соль: 0,20 · 200 = 40 г", "Новая смесь: 40 / 0,08 = 500 г", "Воды добавить: 500 − 200 = 300 г"] },
+    { q: "Смешали 400 г 6%-го и 100 г 26%-го раствора. Какова концентрация (в %)?", ans: 10, tol: 0.01,
+      sol: ["Соль: 0,06 · 400 + 0,26 · 100 = 24 + 26 = 50 г", "Смесь: 500 г", "p = 50 / 500 · 100% = 10%"] }
+  ],
+  c: [
+    { q: "В двух сосудах: 300 г 10%-го и 200 г 25%-го раствора. Их слили вместе, затем выпарили 100 г воды. Какова концентрация (в %)?", ans: 20, tol: 0.01,
+      sol: ["Соль: 0,10 · 300 + 0,25 · 200 = 30 + 50 = 80 г", "Смесь было: 500 г, после выпаривания: 400 г", "p = 80 / 400 · 100% = 20%"] },
+    { q: "Сколько граммов 5%-го раствора надо добавить к 400 г 20%-го, чтобы получить 12%-й раствор? Ответ округли до десятых.", ans: 457.1, tol: 0.1,
+      sol: ["Пусть x г — масса 5%-го раствора", "Соль: 0,05x + 0,20 · 400 = 80 + 0,05x", "Смесь: 400 + x", "(80 + 0,05x) / (400 + x) = 0,12", "80 + 0,05x = 48 + 0,12x", "32 = 0,07x ⇒ x = 32 / 0,07 ≈ 457,14 ≈ 457,1 г"] },
+    { q: "Смешали 200 г раствора с концентрацией 15% и 300 г раствора неизвестной концентрации. Получили 18%-й раствор. Найдите неизвестную концентрацию (в %).", ans: 20, tol: 0.01,
+      sol: ["Соль 1: 0,15 · 200 = 30 г", "Пусть p% — концентрация второго, соль = 300 · p / 100 = 3p", "(30 + 3p) / 500 = 0,18", "30 + 3p = 90 ⇒ 3p = 60 ⇒ p = 20%"] },
+    { q: "Из 500 г 20%-го раствора выпарили часть воды, и получился 40%-й раствор. Сколько граммов воды выпарили?", ans: 250, tol: 0.01,
+      sol: ["Соль: 0,20 · 500 = 100 г (не меняется)", "Новая масса смеси: 100 / 0,4 = 250 г", "Выпарили: 500 − 250 = 250 г"] },
+    { q: "Смешали 300 г 20%-го и 200 г 10%-го раствора, затем добавили 100 г чистого вещества. Какова концентрация (в %)?", ans: 30, tol: 0.01,
+      sol: ["Соль: 0,20 · 300 + 0,10 · 200 = 60 + 20 = 80 г", "Добавили 100 г ⇒ стало 180 г", "Смесь: 500 + 100 = 600 г", "p = 180 / 600 · 100% = 30%"] },
+    { q: "Сколько граммов 60%-го раствора надо добавить к 300 г 10%-го, чтобы получить 30%-й раствор?", ans: 200, tol: 0.01,
+      sol: ["Пусть x г — масса 60%-го раствора", "0,60x + 0,10 · 300 = 0,30 · (x + 300)", "0,60x + 30 = 0,30x + 90", "0,30x = 60 ⇒ x = 200 г"] },
+    { q: "Из 800 г 15%-го раствора выпарили 200 г воды. Какова концентрация (в %)?", ans: 20, tol: 0.01,
+      sol: ["Соль: 0,15 · 800 = 120 г", "Смесь: 600 г", "p = 120 / 600 · 100% = 20%"] },
+    { q: "Смешали 400 г 25%-го раствора и 100 г воды, затем добавили 50 г чистого вещества. Какова концентрация (в %)? Ответ округли до сотых.", ans: 27.27, tol: 0.01,
+      sol: ["Соль: 0,25 · 400 = 100 г", "Стало: 100 + 50 = 150 г", "Смесь: 400 + 100 + 50 = 550 г", "p = 150 / 550 · 100% = 27,2727… ≈ 27,27%"] },
+    { q: "Сколько граммов воды нужно выпарить из 600 г 10%-го раствора, чтобы получить 30%-й раствор?", ans: 400, tol: 0.01,
+      sol: ["Соль: 0,10 · 600 = 60 г", "Новая смесь: 60 / 0,30 = 200 г", "Выпарить: 600 − 200 = 400 г"] },
+    { q: "Смешали 250 г 16%-го раствора и 150 г раствора неизвестной концентрации. Получили 20%-й раствор. Найдите неизвестную концентрацию (в %). Ответ округли до сотых.", ans: 26.67, tol: 0.01,
+      sol: ["Соль 1: 0,16 · 250 = 40 г", "Пусть p% — концентрация второго, соль = 150 · p / 100 = 1,5p", "(40 + 1,5p) / 400 = 0,20", "40 + 1,5p = 80 ⇒ 1,5p = 40 ⇒ p = 40 / 1,5 = 26,666… ≈ 26,67%"] },
+    { q: "Из 400 г 25%-го раствора выпарили часть воды, получился 40%-й раствор. Сколько граммов воды выпарили?", ans: 150, tol: 0.01,
+      sol: ["Соль: 0,25 · 400 = 100 г", "Новая смесь: 100 / 0,40 = 250 г", "Выпарили: 400 − 250 = 150 г"] },
+    { q: "Смешали 100 г 40%-го и 400 г 10%-го раствора. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,40 · 100 + 0,10 · 400 = 40 + 40 = 80 г", "Смесь: 500 г", "p = 80 / 500 · 100% = 16%"] },
+    { q: "Сколько граммов 80%-го раствора надо добавить к 200 г 20%-го, чтобы получить 50%-й раствор?", ans: 200, tol: 0.01,
+      sol: ["Пусть x г — масса 80%-го раствора", "0,80x + 0,20 · 200 = 0,50 · (x + 200)", "0,80x + 40 = 0,50x + 100", "0,30x = 60 ⇒ x = 200 г"] },
+    { q: "Смешали 500 г 8%-го и 300 г 24%-го раствора, затем выпарили 100 г воды. Какова концентрация (в %)?", ans: 16, tol: 0.01,
+      sol: ["Соль: 0,08 · 500 + 0,24 · 300 = 40 + 72 = 112 г", "Смесь: 800 − 100 = 700 г", "p = 112 / 700 · 100% = 16%"] },
+    { q: "Сколько граммов воды нужно добавить к 300 г 40%-го раствора, чтобы получить 15%-й раствор?", ans: 500, tol: 0.01,
+      sol: ["Соль: 0,40 · 300 = 120 г", "Новая смесь: 120 / 0,15 = 800 г", "Воды добавить: 800 − 300 = 500 г"] },
+    { q: "Смешали 200 г 25%-го и 300 г 15%-го раствора, затем добавили 50 г чистого вещества. Какова концентрация (в %)? Ответ округли до сотых.", ans: 26.36, tol: 0.01,
+      sol: ["Соль: 0,25 · 200 + 0,15 · 300 = 50 + 45 = 95 г", "Стало: 95 + 50 = 145 г", "Смесь: 500 + 50 = 550 г", "p = 145 / 550 · 100% = 26,3636… ≈ 26,36%"] },
+    { q: "Из 600 г 20%-го раствора выпарили 200 г воды. Какова концентрация (в %)?", ans: 30, tol: 0.01,
+      sol: ["Соль: 0,20 · 600 = 120 г", "Смесь: 400 г", "p = 120 / 400 · 100% = 30%"] },
+    { q: "Сколько граммов 5%-го раствора надо добавить к 300 г 25%-го, чтобы получить 10%-й раствор?", ans: 900, tol: 0.01,
+      sol: ["Пусть x г — масса 5%-го раствора", "0,05x + 0,25 · 300 = 0,10 · (x + 300)", "0,05x + 75 = 0,10x + 30", "45 = 0,05x ⇒ x = 900 г"] },
+    { q: "Смешали 400 г 12%-го и 100 г 32%-го раствора, затем добавили 100 г воды. Какова концентрация (в %)? Ответ округли до сотых.", ans: 13.33, tol: 0.01,
+      sol: ["Соль: 0,12 · 400 + 0,32 · 100 = 48 + 32 = 80 г", "Смесь: 500 + 100 = 600 г", "p = 80 / 600 · 100% = 13,333… ≈ 13,33%"] },
+    { q: "Из 1000 г 10%-го раствора выпарили 400 г воды, затем добавили 100 г чистого вещества. Какова концентрация (в %)? Ответ округли до сотых.", ans: 28.57, tol: 0.01,
+      sol: ["Соль: 0,10 · 1000 = 100 г", "После выпаривания соль та же: 100 г", "Добавили 100 г ⇒ 200 г", "Смесь: 1000 − 400 + 100 = 700 г", "p = 200 / 700 · 100% = 28,571… ≈ 28,57%"] }
+  ]
+};
+
+/* ============================================================
+   ЛОГИКА ТЕСТА
+   ============================================================ */
+let selectedTasks = [];
+let userAnswers = [];
+let timeLeft = 900;
+let timerInterval = null;
+let quizFinished = false;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickTasks() {
+  const aIdx = Math.floor(Math.random() * BANK.a.length);
+  const cIdx = Math.floor(Math.random() * BANK.c.length);
+  const bIdxs = [];
+  const usedB = new Set();
+  while (bIdxs.length < 3) {
+    const idx = Math.floor(Math.random() * BANK.b.length);
+    if (!usedB.has(idx)) {
+      usedB.add(idx);
+      bIdxs.push(idx);
+    }
+  }
+  const tasks = [
+    { level: 'a', data: BANK.a[aIdx] },
+    { level: 'c', data: BANK.c[cIdx] },
+    ...bIdxs.map(i => ({ level: 'b', data: BANK.b[i] }))
+  ];
+  return shuffle(tasks);
+}
+
+function startQuiz() {
+  selectedTasks = pickTasks();
+  userAnswers = selectedTasks.map(() => '');
+  renderQuiz();
+  startTimer();
+}
+
+function renderQuiz() {
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+  selectedTasks.forEach((t, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.innerHTML = `
+      <div class="q-head">
+        <div class="q-num">${idx + 1}</div>
+        <div class="q-text">${t.data.q} <span class="q-level lv-${t.level}">${t.level.toUpperCase()}</span></div>
+      </div>
+      <div class="row">
+        <input type="text" id="ans-${idx}" placeholder="Введи ответ (число)" inputmode="decimal" autocomplete="off">
+      </div>
+    `;
+    quiz.appendChild(card);
+    const inp = card.querySelector('input');
+    inp.addEventListener('input', () => { userAnswers[idx] = inp.value; });
+  });
+}
+
+function startTimer() {
+  timeLeft = 900;
+  updateTimerDisplay();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (quizFinished) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (timeLeft <= 60) el.classList.add('warn');
+  else el.classList.remove('warn');
+}
+
+function parseNum(str) {
+  const s = String(str).trim().replace(',', '.');
+  if (s === '') return NaN;
+  const n = parseFloat(s);
+  return isNaN(n) ? NaN : n;
+}
+
+async function finishQuiz(auto = false) {
+  if (quizFinished) return;
+  quizFinished = true;
+  clearInterval(timerInterval);
+
+  document.getElementById('checkBtn').disabled = true;
+  document.querySelectorAll('#quiz input').forEach(i => i.disabled = true);
+
+  let correctCount = 0;
+  const wrongDetails = [];
+
+  selectedTasks.forEach((t, idx) => {
+    const val = parseNum(userAnswers[idx]);
+    const ok = !isNaN(val) && Math.abs(val - t.data.ans) <= t.data.tol;
+    if (ok) {
+      correctCount++;
+    } else {
+      wrongDetails.push({
+        num: idx + 1,
+        level: t.level,
+        text: t.data.q,
+        userDisplay: userAnswers[idx].trim() || '— (нет ответа)',
+        correctDisplay: t.data.ans,
+        sol: t.data.sol
+      });
+    }
+  });
+
+  let markText = '2', markClass = 'mark2';
+  if (correctCount === 5) { markText = '5'; markClass = 'mark5'; }
+  else if (correctCount === 4) { markText = '4'; markClass = 'mark4'; }
+  else if (correctCount === 3) { markText = '3'; markClass = 'mark3'; }
+
+  const date = new Date().toLocaleString('ru-RU');
+  try {
+    await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'addResult',
+        fio: studentName,
+        klass: studentClass,
+        topic: 'Смеси и концентрации',
+        grade: markText,
+        datetime: date,
+        correct: correctCount
+      })
+    });
+  } catch (e) {
+    console.log('Ошибка отправки результата:', e);
+  }
+
+  const resultBox = document.getElementById('resultBox');
+  resultBox.classList.add('show');
+  const markEl = document.getElementById('resultMark');
+  markEl.textContent = markText;
+  markEl.className = 'result-mark ' + markClass;
+  const summary = document.getElementById('resultSummary');
+  summary.innerHTML = `Правильно выполнено: <b>${correctCount} из 5</b> заданий. ` +
+    (auto ? '<br><span style="color:#d9544d;font-weight:600;">⏰ Время вышло — тест завершён автоматически.</span>' : '');
+
+  const wc = document.getElementById('wrongContainer');
+  wc.innerHTML = '';
+  if (wrongDetails.length === 0) {
+    const okDiv = document.createElement('div');
+    okDiv.className = 'all-ok';
+    okDiv.textContent = '🎉 Отлично! Все задания выполнены без ошибок.';
+    wc.appendChild(okDiv);
+  } else {
+    const title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;color:#173a5e;margin-bottom:0.8rem;font-size:1.1rem;';
+    title.textContent = `❌ Ошибки в заданиях (${wrongDetails.length}):`;
+    wc.appendChild(title);
+
+    const ul = document.createElement('ul');
+    ul.className = 'wrong-list';
+    wrongDetails.forEach(w => {
+      const li = document.createElement('li');
+      li.className = 'wrong-item';
+      li.innerHTML = `
+        <div class="wq">Задание ${w.num} (уровень ${w.level.toUpperCase()}): ${w.text}</div>
+        <div class="wdetail">Твой ответ: <b>${w.userDisplay}</b></div>
+        <div class="wcorrect">Правильный ответ: ${w.correctDisplay}</div>
+        <div class="wsolution">
+          <b>Как решать:</b>
+          ${w.sol.map(s => `<div class="step">• ${s}</div>`).join('')}
+        </div>
+      `;
+      ul.appendChild(li);
+    });
+    wc.appendChild(ul);
+  }
+
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('beforeunload', (e) => {
+  if (quizStarted && !quizFinished) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
