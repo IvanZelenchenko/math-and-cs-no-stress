@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Геометрия — практика</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #fdf0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem 6rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1020px; width: 100%; }
+
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, #2b3a8c, #1e8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: #4a5f78;
+    font-size: 1.1rem;
+    margin-bottom: 1.6rem;
+    font-weight: 500;
+  }
+
+  /* ---------- Блок задания ---------- */
+  .task-block {
+    background: #ffffffdd;
+    backdrop-filter: blur(10px);
+    border-radius: 28px;
+    padding: 1.8rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 14px 30px -14px rgba(20, 60, 120, 0.25);
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .task-block::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 6px;
+    background: linear-gradient(90deg, #a1c4fd, #c2e9fb);
+  }
+  .task-block:nth-of-type(2)::before { background: linear-gradient(90deg, #fbc2eb, #a6c1ee); }
+  .task-block:nth-of-type(3)::before { background: linear-gradient(90deg, #84fab0, #8fd3f4); }
+
+  .task-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #173a5e;
+    margin-bottom: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px dashed #cdd9e5;
+  }
+  .task-title .tt-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px; height: 38px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1rem;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+    flex-shrink: 0;
+  }
+  .tt1 { background: linear-gradient(135deg, #4a90e2, #2a5f9e); }
+  .tt2 { background: linear-gradient(135deg, #b06ab3, #4568dc); }
+  .tt3 { background: linear-gradient(135deg, #2fbf71, #1e8a4f); }
+
+  /* ---------- Ряды заданий ---------- */
+  .definition-row, .statement-card, .calc-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+    padding: 12px 14px;
+    background: #fafcff;
+    border-radius: 14px;
+    border: 1px solid #dce8f5;
+    transition: 0.25s;
+  }
+  .definition-row:hover, .statement-card:hover, .calc-row:hover {
+    border-color: #b3d4f0;
+    box-shadow: 0 4px 12px -6px rgba(20,60,120,0.2);
+  }
+  .definition-row.correct, .statement-card.correct, .calc-row.correct {
+    background: #e3f9ec !important;
+    border-color: #86efac !important;
+  }
+  .definition-row.incorrect, .statement-card.incorrect, .calc-row.incorrect {
+    background: #ffefec !important;
+    border-color: #fca5a5 !important;
+  }
+
+  .definition-text, .statement-text, .calc-text {
+    flex-grow: 1;
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+  .definition-text b, .statement-text b, .calc-text b { color: #0b4a7a; }
+
+  /* Select */
+  select {
+    padding: 0.55rem 1rem;
+    border-radius: 12px;
+    border: 2px solid #bcd4f0;
+    font-size: 0.98rem;
+    font-family: 'Rubik', sans-serif;
+    width: 240px;
+    cursor: pointer;
+    background: #fff;
+    color: #1d2b3a;
+    transition: 0.15s;
+  }
+  select:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+
+  /* Radio */
+  .options {
+    display: flex;
+    gap: 18px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .options label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 500;
+    font-size: 0.98rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 10px;
+    border: 2px solid #dce8f5;
+    background: #fff;
+    transition: 0.15s;
+  }
+  .options label:hover { border-color: #4a90e2; }
+  .options input[type="radio"] { accent-color: #4a90e2; }
+
+  /* Calc */
+  .calc-row { flex-wrap: wrap; }
+  .calc-visual {
+    width: 110px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    border: 1px solid #dce8f5;
+    border-radius: 12px;
+    flex-shrink: 0;
+  }
+  .calc-answer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #173a5e;
+    flex-shrink: 0;
+  }
+  input[type="number"] {
+    width: 90px;
+    padding: 0.55rem;
+    font-size: 1.05rem;
+    border-radius: 12px;
+    border: 2px solid #bcd4f0;
+    text-align: center;
+    font-family: 'Rubik', sans-serif;
+    transition: 0.15s;
+  }
+  input[type="number"]:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+
+  /* ---------- Контрольные кнопки ---------- */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 1.8rem;
+    padding-top: 1.5rem;
+    border-top: 2px dashed #cfe2ff;
+    flex-wrap: wrap;
+  }
+  button.action-btn {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: white;
+    border: none;
+    padding: 0.9rem 2rem;
+    font-size: 1.05rem;
+    font-family: 'Rubik', sans-serif;
+    border-radius: 16px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.1s;
+    box-shadow: 0 5px 0 #2a4f9e;
+  }
+  button.action-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 0 #2a4f9e; }
+  button.action-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #2a4f9e; }
+  button.reset-btn {
+    background: linear-gradient(135deg, #8899aa, #667788);
+    box-shadow: 0 5px 0 #445566;
+  }
+  button.reset-btn:hover { box-shadow: 0 6px 0 #445566; }
+  button.reset-btn:active { box-shadow: 0 2px 0 #445566; }
+
+  /* ---------- Результат ---------- */
+  .score-box {
+    display: none;
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    padding: 1.2rem 1.5rem;
+    border-radius: 20px;
+    animation: fadeIn 0.35s ease-out;
+  }
+  .score-box.show { display: block; }
+  .score-box.perfect {
+    background: #e3f9ec;
+    color: #15623b;
+    border: 2px solid #86efac;
+  }
+  .score-box.partial {
+    background: #fff6e5;
+    color: #6b4408;
+    border: 2px solid #fcd34d;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  /* ---------- Кнопка перехода ---------- */
+  .next-step-container { text-align: center; margin: 2rem 0; }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #157040;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #157040; }
+  .btn-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #157040; }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  .footer-note {
+    text-align: right;
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: #3b5c7a;
+    font-weight: 500;
+    border-top: 2px solid #cfe4ff;
+    padding-top: 1.2rem;
+  }
+  .footer-note span { opacity: 0.7; }
+
+  @media (max-width: 700px) {
+    body { padding: 1.2rem 0.7rem 5rem; }
+    h1 { font-size: 1.8rem; }
+    .task-block { padding: 1.4rem 1.2rem; }
+    .definition-row, .statement-card { flex-direction: column; align-items: flex-start; }
+    select { width: 100%; }
+    .calc-row { flex-direction: column; align-items: flex-start; }
+    .calc-visual { width: 100%; }
+    .options { flex-wrap: wrap; }
+    .controls { flex-direction: column; }
+    button.action-btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>✏️ Тренажёр «Геометрия»</h1>
+  <p class="subtitle">Сопоставление, задачи и утверждения — проверь себя!</p>
+
+  <!-- Задание 1 -->
+  <div class="task-block">
+    <div class="task-title">
+      <div class="tt-badge tt1">1</div>
+      Сопоставьте определение с термином
+    </div>
+    <div id="definitions-list"></div>
+  </div>
+
+  <!-- Задание 2 -->
+  <div class="task-block">
+    <div class="task-title">
+      <div class="tt-badge tt2">2</div>
+      Решите задачи (введите только число)
+    </div>
+    <div id="calc-list"></div>
+  </div>
+
+  <!-- Задание 3 -->
+  <div class="task-block">
+    <div class="task-title">
+      <div class="tt-badge tt3">3</div>
+      Верно ли утверждение?
+    </div>
+    <div id="statements-list"></div>
+  </div>
+
+  <!-- Контрольные кнопки -->
+  <div class="controls">
+    <button class="action-btn reset-btn" onclick="resetAll()">🔄 Сбросить</button>
+    <button class="action-btn" onclick="checkAnswers()">✅ Проверить ответы</button>
+  </div>
+
+  <div id="score-box" class="score-box"></div>
+
+  <!-- Умный переход -->
+  <div class="next-step-container" id="nextLevelContainer"></div>
+
+  <div class="footer-note">
+    ✨ Геометрия · практика ✨<br>
+    <span>(по материалам темы «Начальные геометрические сведения»)</span>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+/* ============================================================
+   ДАННЫЕ
+============================================================ */
+const terms = [
+  "Пересекающиеся прямые", "Параллельные прямые", "Перпендикулярные прямые",
+  "Окружность", "Радиус", "Хорда", "Диаметр", "Дуга окружности",
+  "Центральный угол", "Вписанный угол"
+];
+
+const definitionsData = [
+  { id: 1, text: "Две прямые пересекаются, если эти прямые имеют ровно одну общую точку.", correctTerm: "Пересекающиеся прямые" },
+  { id: 2, text: "Две прямые называются параллельными, если они не имеют общих точек.", correctTerm: "Параллельные прямые" },
+  { id: 3, text: "Две пересекающиеся прямые называются перпендикулярными, если они образуют четыре прямых угла.", correctTerm: "Перпендикулярные прямые" },
+  { id: 4, text: "Фигура, которая состоит из всех точек плоскости, расположенных на заданном расстоянии от данной точки.", correctTerm: "Окружность" },
+  { id: 5, text: "Отрезок, соединяющий центр окружности с какой-либо ее точкой.", correctTerm: "Радиус" },
+  { id: 6, text: "Отрезок, соединяющий две точки окружности.", correctTerm: "Хорда" },
+  { id: 7, text: "Хорда, проходящая через центр этой окружности.", correctTerm: "Диаметр" },
+  { id: 8, text: "Каждая из частей, на которые делят окружность любые две ее точки.", correctTerm: "Дуга окружности" },
+  { id: 9, text: "Угол с вершиной в центре окружности.", correctTerm: "Центральный угол" },
+  { id: 10, text: "Угол, вершина которого лежит на окружности, а стороны пересекают эту окружность.", correctTerm: "Вписанный угол" }
+];
+
+const calcData = [
+  {
+    id: 1,
+    text: "Один из смежных углов равен 50°. Найдите второй угол.",
+    answer: 130,
+    svg: `<svg width="100" height="80"><line x1="10" y1="60" x2="90" y2="60" stroke="#333" stroke-width="2"/><line x1="30" y1="60" x2="80" y2="20" stroke="#333" stroke-width="2"/><path d="M 40 60 A 15 15 0 0 1 47 47" fill="none" stroke="#e74c3c" stroke-width="2"/><text x="45" y="55" font-size="12" fill="#e74c3c">50°</text><text x="65" y="55" font-size="12" fill="#2980b9">x</text></svg>`
+  },
+  {
+    id: 2,
+    text: "При пересечении двух прямых образовались вертикальные углы. Один из них равен 75°. Найдите противолежащий ему угол.",
+    answer: 75,
+    svg: `<svg width="100" height="80"><line x1="20" y1="10" x2="80" y2="70" stroke="#333" stroke-width="2"/><line x1="20" y1="70" x2="80" y2="10" stroke="#333" stroke-width="2"/><text x="45" y="35" font-size="12" fill="#e74c3c">75°</text><text x="45" y="55" font-size="12" fill="#2980b9">x</text></svg>`
+  },
+  {
+    id: 3,
+    text: "В треугольнике два угла равны 40° и 60°. Найдите третий угол.",
+    answer: 80,
+    svg: `<svg width="120" height="80"><polygon points="10,70 110,70 60,10" fill="none" stroke="#333" stroke-width="2"/><text x="25" y="65" font-size="12" fill="#333">40°</text><text x="85" y="65" font-size="12" fill="#333">60°</text><text x="55" y="30" font-size="12" fill="#2980b9">x</text></svg>`
+  },
+  {
+    id: 4,
+    text: "В равнобедренном треугольнике угол при вершине равен 80°. Найдите угол при основании.",
+    answer: 50,
+    svg: `<svg width="120" height="80"><polygon points="20,70 100,70 60,10" fill="none" stroke="#333" stroke-width="2"/><text x="55" y="30" font-size="12" fill="#333">80°</text><text x="35" y="65" font-size="12" fill="#2980b9">x</text><text x="85" y="65" font-size="12" fill="#2980b9">x</text></svg>`
+  },
+  {
+    id: 5,
+    text: "Один из смежных углов в 2 раза больше другого. Найдите меньший угол.",
+    answer: 60,
+    svg: `<svg width="120" height="80"><line x1="10" y1="60" x2="110" y2="60" stroke="#333" stroke-width="2"/><line x1="50" y1="60" x2="100" y2="15" stroke="#333" stroke-width="2"/><text x="60" y="55" font-size="12" fill="#2980b9">x</text><text x="30" y="55" font-size="12" fill="#e74c3c">2x</text></svg>`
+  }
+];
+
+const statementsData = [
+  { id: 1, text: 'Через любые две различные точки можно провести только одну прямую.', isTrue: true },
+  { id: 2, text: 'Через любую точку плоскости, лежащую на данной прямой, можно провести параллельную ей прямую.', isTrue: false },
+  { id: 3, text: 'Две прямые на плоскости, перпендикулярные одной прямой, параллельны друг другу.', isTrue: true },
+  { id: 4, text: 'Пересекающиеся прямые на плоскости могут иметь две общие точки.', isTrue: false },
+  { id: 5, text: 'Сумма смежных углов равна 180°.', isTrue: true },
+  { id: 6, text: 'Вертикальные углы равны.', isTrue: true },
+  { id: 7, text: 'Угол, вписанный в окружность, всегда острый.', isTrue: false },
+  { id: 8, text: 'Все диаметры окружности имеют одну и ту же длину.', isTrue: true },
+  { id: 9, text: 'Длина стороны треугольника всегда меньше суммы длин двух других его сторон.', isTrue: true },
+  { id: 10, text: 'Любые две прямые на плоскости или параллельны, или перпендикулярны.', isTrue: false }
+];
+
+/* ============================================================
+   РЕНДЕР
+============================================================ */
+function renderDefinitions() {
+  const container = document.getElementById('definitions-list');
+  container.innerHTML = '';
+  const sortedTerms = [...terms].sort();
+  definitionsData.forEach(def => {
+    let optionsHTML = `<option value="">-- Выберите --</option>`;
+    sortedTerms.forEach(term => optionsHTML += `<option value="${term}">${term}</option>`);
+    const row = document.createElement('div');
+    row.className = 'definition-row';
+    row.id = `def-${def.id}`;
+    row.innerHTML = `
+      <div class="definition-text"><b>${def.id}.</b> ${def.text}</div>
+      <select id="select-${def.id}">${optionsHTML}</select>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function renderCalcTasks() {
+  const container = document.getElementById('calc-list');
+  container.innerHTML = '';
+  calcData.forEach(task => {
+    const row = document.createElement('div');
+    row.className = 'calc-row';
+    row.id = `calc-${task.id}`;
+    row.innerHTML = `
+      <div class="calc-visual">${task.svg}</div>
+      <div class="calc-text"><b>${task.id}.</b> ${task.text}</div>
+      <div class="calc-answer">
+        <input type="number" id="input-${task.id}" placeholder="?" step="any">
+        <span>°</span>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function renderStatements() {
+  const container = document.getElementById('statements-list');
+  container.innerHTML = '';
+  statementsData.forEach((stmt, index) => {
+    const card = document.createElement('div');
+    card.className = 'statement-card';
+    card.id = `stmt-${stmt.id}`;
+    card.innerHTML = `
+      <div class="statement-text"><b>${index + 1}.</b> ${stmt.text}</div>
+      <div class="options">
+        <label><input type="radio" name="q${stmt.id}" value="true"> Верно</label>
+        <label><input type="radio" name="q${stmt.id}" value="false"> Неверно</label>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ============================================================
+   ПРОВЕРКА
+============================================================ */
+function checkAnswers() {
+  let totalScore = 0;
+  const totalQuestions = definitionsData.length + calcData.length + statementsData.length;
+
+  definitionsData.forEach(def => {
+    const select = document.getElementById(`select-${def.id}`);
+    const row = document.getElementById(`def-${def.id}`);
+    row.classList.remove('correct', 'incorrect');
+    if (select.value === def.correctTerm) {
+      row.classList.add('correct');
+      totalScore++;
+    } else {
+      row.classList.add('incorrect');
+    }
+  });
+
+  calcData.forEach(task => {
+    const input = document.getElementById(`input-${task.id}`);
+    const row = document.getElementById(`calc-${task.id}`);
+    row.classList.remove('correct', 'incorrect');
+    const userAnswer = parseFloat(input.value);
+    if (!isNaN(userAnswer) && Math.abs(userAnswer - task.answer) < 0.01) {
+      row.classList.add('correct');
+      totalScore++;
+    } else {
+      row.classList.add('incorrect');
+    }
+  });
+
+  statementsData.forEach(stmt => {
+    const selectedRadio = document.querySelector(`input[name="q${stmt.id}"]:checked`);
+    const card = document.getElementById(`stmt-${stmt.id}`);
+    card.classList.remove('correct', 'incorrect');
+    if (selectedRadio && (selectedRadio.value === 'true') === stmt.isTrue) {
+      card.classList.add('correct');
+      totalScore++;
+    } else {
+      card.classList.add('incorrect');
+    }
+  });
+
+  const scoreBox = document.getElementById('score-box');
+  scoreBox.classList.add('show');
+  if (totalScore === totalQuestions) {
+    scoreBox.className = 'score-box show perfect';
+    scoreBox.textContent = `🎉 Превосходно! ${totalScore} из ${totalQuestions}. Вы отлично усвоили теорию!`;
+  } else {
+    scoreBox.className = 'score-box show partial';
+    scoreBox.textContent = `Ваш результат: ${totalScore} из ${totalQuestions}. Обратите внимание на красные блоки.`;
+  }
+  scoreBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function resetAll() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  document.querySelectorAll('input[type="number"]').forEach(i => i.value = '');
+  document.querySelectorAll('select').forEach(s => s.value = '');
+  document.querySelectorAll('.definition-row, .statement-card, .calc-row').forEach(el => {
+    el.classList.remove('correct', 'incorrect');
+  });
+  document.getElementById('score-box').classList.remove('show');
+}
+
+/* ============================================================
+   УМНЫЙ ПЕРЕХОД
+============================================================ */
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  const path = window.location.pathname;
+  const currentFile = path.substring(path.lastIndexOf('/') + 1);
+  const fallbackMap = {
+    'geometriya_teoriya.html': 'geometriya_praktika.html',
+    'geometriya_praktika.html': 'index.html'
+  };
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего задания...</span>';
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к следующей теме →</a>`;
+        return;
+      }
+    }
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к следующей теме →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+    }
+  } catch (e) {
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к следующей теме →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+    }
+  }
+}
+
+/* ---------- Запуск ---------- */
+window.addEventListener('load', () => {
+  renderDefinitions();
+  renderCalcTasks();
+  renderStatements();
+  loadNextButton();
+});
+</script>
+</body>
+</html>
