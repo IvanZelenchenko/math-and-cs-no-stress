@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Смеси и концентрации — теория</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #fdf0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 1020px; width: 100%; }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.4rem;
+    background: linear-gradient(135deg, #2b3a8c, #1e8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+    text-align: center;
+  }
+  .subtitle {
+    text-align: center;
+    color: #4a5f78;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    font-weight: 500;
+  }
+
+  .card {
+    background: #ffffffdd;
+    backdrop-filter: blur(10px);
+    border-radius: 28px;
+    padding: 1.8rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 14px 30px -14px rgba(20, 60, 120, 0.25);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    transition: 0.25s;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.35);
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+  }
+  .card.c1::before { background: linear-gradient(90deg, #a1c4fd, #c2e9fb); }
+  .card.c2::before { background: linear-gradient(90deg, #fbc2eb, #a6c1ee); }
+  .card.c3::before { background: linear-gradient(90deg, #84fab0, #8fd3f4); }
+  .card.c4::before { background: linear-gradient(90deg, #fccb90, #d57eeb); }
+  .card.c5::before { background: linear-gradient(90deg, #e0c3fc, #8ec5fc); }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 1rem;
+  }
+  .icon-badge {
+    font-size: 1.5rem;
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.12);
+  }
+  .b1 { background: linear-gradient(135deg, #4a90e2, #2a5f9e); }
+  .b2 { background: linear-gradient(135deg, #b06ab3, #4568dc); }
+  .b3 { background: linear-gradient(135deg, #2fbf71, #1e8a4f); }
+  .b4 { background: linear-gradient(135deg, #f2a03d, #d97a12); }
+  .b5 { background: linear-gradient(135deg, #9b51e0, #6b2c9e); }
+
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: #173a5e;
+    line-height: 1.2;
+  }
+  .card-title small {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #6b7f95;
+    margin-top: 2px;
+  }
+
+  .card p { margin-bottom: 0.7rem; font-size: 1.02rem; }
+  .card p:last-child { margin-bottom: 0; }
+
+  .formula {
+    background: #eff6ff;
+    border-left: 5px solid #4a90e2;
+    padding: 0.9rem 1.2rem;
+    border-radius: 12px;
+    margin: 0.8rem 0;
+    font-size: 1.05rem;
+    overflow-x: auto;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #0b4a7a;
+  }
+  .formula strong { color: #1e40af; }
+
+  .card table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.8rem 0;
+    font-size: 0.98rem;
+  }
+  .card th, .card td {
+    border: 1px solid #d6e8ff;
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+  }
+  .card th { background: #f4f9ff; font-weight: 700; color: #173a5e; }
+  .card td code {
+    background: #eef6ff;
+    padding: 0.1rem 0.5rem;
+    border-radius: 6px;
+    color: #004b87;
+    font-family: 'Montserrat', monospace;
+    font-weight: 700;
+  }
+
+  .note {
+    background: #fff6e5;
+    border-left: 5px solid #f2a03d;
+    padding: 0.9rem 1.2rem;
+    border-radius: 12px;
+    margin: 0.8rem 0;
+    font-size: 0.98rem;
+    color: #6b4408;
+  }
+  .note strong { color: #8a4a08; }
+
+  .method h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #173a5e;
+    margin: 0.9rem 0 0.3rem;
+  }
+  .method h3:first-child { margin-top: 0; }
+  .method p { font-size: 0.98rem; margin-bottom: 0.2rem; }
+
+  .solution-example {
+    background: #f4f9ff;
+    border-radius: 14px;
+    padding: 1rem 1.3rem;
+    margin-top: 0.6rem;
+    border: 1px dashed #b3d4f0;
+  }
+  .solution-example .step {
+    font-size: 0.98rem;
+    margin: 0.35rem 0;
+    color: #2c3e50;
+  }
+  .solution-example .step strong { color: #15623b; }
+
+  .cheat-sheet {
+    background: linear-gradient(135deg, #ffffff, #f0f7ff);
+    border-radius: 28px;
+    padding: 2rem 2.2rem;
+    border: 2px solid #cfe2ff;
+    box-shadow: 0 18px 36px -16px rgba(20, 60, 120, 0.3);
+    margin: 1.5rem 0;
+  }
+  .cheat-sheet h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #173a5e;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .cheat-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid #d6e8ff;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.98rem;
+  }
+  .cheat-item .cheat-text { font-weight: 500; color: #2c3e50; }
+  .cheat-item .cheat-text b { color: #0b4a7a; }
+  .cheat-num {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #fff;
+    min-width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cnum1 { background: linear-gradient(135deg, #4a90e2, #2a5f9e); }
+  .cnum2 { background: linear-gradient(135deg, #b06ab3, #4568dc); }
+  .cnum3 { background: linear-gradient(135deg, #2fbf71, #1e8a4f); }
+  .cnum4 { background: linear-gradient(135deg, #f2a03d, #d97a12); }
+  .cnum5 { background: linear-gradient(135deg, #9b51e0, #6b2c9e); }
+
+  .warning {
+    background: #fff6e5;
+    border-left: 8px solid #f2a03d;
+    border-radius: 16px;
+    padding: 1rem 1.4rem;
+    margin: 1.5rem 0;
+    color: #6b4408;
+    font-size: 1rem;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .warning .warn-icon { font-size: 1.4rem; }
+
+  .mini-check {
+    background: #ffffffdd;
+    border-radius: 24px;
+    padding: 1.8rem 2rem;
+    margin-top: 1.5rem;
+    border: 2px dashed #b3d4f0;
+  }
+  .mini-check .mc-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: #173a5e;
+    margin-bottom: 1rem;
+  }
+  .mini-check .q-row {
+    margin-bottom: 0.9rem;
+    font-size: 1rem;
+  }
+  .mini-check .q-label {
+    font-weight: 600;
+    color: #173a5e;
+    margin-bottom: 0.3rem;
+    display: block;
+  }
+  .mini-check input[type="text"] {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.02rem;
+    padding: 0.5rem 1rem;
+    border-radius: 14px;
+    border: 2px solid #bcd4f0;
+    outline: none;
+    background: #fff;
+    min-width: 160px;
+    transition: 0.15s;
+  }
+  .mini-check input[type="text"]:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 3px #4a90e233;
+  }
+  button.check-btn {
+    font-family: 'Rubik', sans-serif;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.7rem 1.6rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2a4f9e;
+    transition: 0.1s;
+    margin-top: 0.6rem;
+  }
+  button.check-btn:hover { transform: translateY(-1px); box-shadow: 0 5px 0 #2a4f9e; }
+  button.check-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #2a4f9e; }
+
+  .mc-fb {
+    margin-top: 1rem;
+    border-radius: 14px;
+    padding: 0.9rem 1.2rem;
+    font-size: 0.98rem;
+    display: none;
+  }
+  .mc-fb.show { display: block; animation: fadeIn 0.25s ease-out; }
+  .mc-fb.ok { background: #e3f9ec; border-left: 8px solid #2fbf71; color: #15623b; }
+  .mc-fb.err { background: #ffefec; border-left: 8px solid #e0644d; color: #8a2c1c; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+  .next-step-container {
+    text-align: center;
+    margin: 2rem 0;
+  }
+  .btn-next {
+    display: inline-block;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58);
+    color: white;
+    padding: 1rem 2.5rem;
+    border-radius: 40px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 6px 0 #157040;
+    border: 1px solid #6effb0;
+    transition: 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #157040; }
+  .btn-next:active { transform: translateY(4px); box-shadow: 0 2px 0 #157040; }
+  .btn-next.home {
+    background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    box-shadow: 0 6px 0 #2a4f9e;
+    border-color: #8cbeff;
+  }
+
+  .footer-note {
+    text-align: right;
+    margin-top: 2.5rem;
+    font-size: 1rem;
+    color: #3b5c7a;
+    font-weight: 500;
+    border-top: 2px solid #cfe4ff;
+    padding-top: 1.2rem;
+  }
+  .footer-note span { opacity: 0.7; }
+
+  @media (max-width: 600px) {
+    body { padding: 1.2rem 0.7rem; }
+    h1 { font-size: 1.8rem; }
+    .card { padding: 1.4rem 1.3rem; }
+    .cheat-sheet { padding: 1.4rem 1.2rem; }
+    .mini-check { padding: 1.3rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧪 Смеси и концентрации</h1>
+  <p class="subtitle">Концентрация, растворы, смешивание — теория и формулы</p>
+
+  <!-- 1. Основные понятия -->
+  <div class="card c1">
+    <div class="card-head">
+      <div class="icon-badge b1">📌</div>
+      <div class="card-title">Основные понятия <small>Что такое концентрация</small></div>
+    </div>
+    <p><strong>Концентрация вещества</strong> — доля вещества в смеси (растворе, сплаве):</p>
+    <div class="formula">концентрация = масса вещества / масса смеси</div>
+    <p>В процентах — умножаем долю на 100%:</p>
+    <div class="formula">p% = (m<sub>вещества</sub> / m<sub>смеси</sub>) · 100%</div>
+  </div>
+
+  <!-- 2. Три формулы -->
+  <div class="card c2">
+    <div class="card-head">
+      <div class="icon-badge b2">🧮</div>
+      <div class="card-title">Три ключевые формулы <small>Что и как искать</small></div>
+    </div>
+    <table>
+      <tr><th>Что ищем</th><th>Формула</th></tr>
+      <tr><td>Масса вещества</td><td><code>m = (p / 100) · M</code></td></tr>
+      <tr><td>Масса смеси</td><td><code>M = (m · 100) / p</code></td></tr>
+      <tr><td>Концентрация</td><td><code>p = (m / M) · 100</code></td></tr>
+    </table>
+    <p style="font-size:.92rem;color:#6b7f95;margin-top:.4rem">Где <em>M</em> — масса смеси (раствора), <em>m</em> — масса вещества, <em>p</em> — концентрация в %.</p>
+  </div>
+
+  <!-- 3. Закон сохранения -->
+  <div class="card c3">
+    <div class="card-head">
+      <div class="icon-badge b3">⚖️</div>
+      <div class="card-title">Закон сохранения вещества <small>Главное правило смешивания</small></div>
+    </div>
+    <p>При смешивании двух растворов <strong>массы вещества складываются</strong> и <strong>массы смесей складываются</strong>:</p>
+    <div class="formula">
+      m<sub>1</sub> + m<sub>2</sub> = m<sub>нового</sub><br>
+      M<sub>1</sub> + M<sub>2</sub> = M<sub>нового</sub>
+    </div>
+    <div class="note">
+      💡 <strong>Правило таблицы:</strong> для каждой задачи рисуй таблицу
+      «Раствор 1 | Раствор 2 | Итог» и заполняй строки:
+      масса смеси → концентрация → масса вещества.
+    </div>
+  </div>
+
+  <!-- 4. Типовые приёмы -->
+  <div class="card c4">
+    <div class="card-head">
+      <div class="icon-badge b4">🔑</div>
+      <div class="card-title">Типовые приёмы <small>4 главные ситуации</small></div>
+    </div>
+    <div class="method">
+      <h3>1. Добавили чистое вещество (соль, сахар)</h3>
+      <p>Масса вещества растёт, масса смеси тоже растёт.</p>
+      <h3>2. Добавили воду (концентрация 0%)</h3>
+      <p>Масса вещества <em>не меняется</em>, масса смеси растёт.</p>
+      <h3>3. Выпарили воду</h3>
+      <p>Масса вещества <em>не меняется</em>, масса смеси уменьшается.</p>
+      <h3>4. Смешали два раствора</h3>
+      <p>Складываем массы вещества и массы смесей, затем считаем новую концентрацию.</p>
+    </div>
+  </div>
+
+  <!-- 5. Пример решения -->
+  <div class="card c5">
+    <div class="card-head">
+      <div class="icon-badge b5">📝</div>
+      <div class="card-title">Пример решения <small>Пошагово</small></div>
+    </div>
+    <p><strong>Задача:</strong> смешали 100 г 20%-го раствора и 200 г 5%-го. Найдите концентрацию.</p>
+    <div class="solution-example">
+      <div class="step">1) Соль в 1-м: 0,20 · 100 = <strong>20 г</strong></div>
+      <div class="step">2) Соль во 2-м: 0,05 · 200 = <strong>10 г</strong></div>
+      <div class="step">3) Всего соли: 20 + 10 = <strong>30 г</strong></div>
+      <div class="step">4) Масса смеси: 100 + 200 = <strong>300 г</strong></div>
+      <div class="step">5) Концентрация: 30 / 300 · 100% = <strong>10%</strong></div>
+    </div>
+  </div>
+
+  <!-- Шпаргалка -->
+  <div class="cheat-sheet">
+    <h2>🧠 Шпаргалка «всё в одном месте»</h2>
+    <div class="cheat-grid">
+      <div class="cheat-item">
+        <div class="cheat-num cnum1">1</div>
+        <div class="cheat-text">Концентрация = <b>вещество / смесь</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum2">2</div>
+        <div class="cheat-text">Масса вещества = <b>(p/100) · M</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum3">3</div>
+        <div class="cheat-text">Масса смеси = <b>(m · 100) / p</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum4">4</div>
+        <div class="cheat-text">Концентрация = <b>(m/M) · 100%</b></div>
+      </div>
+      <div class="cheat-item">
+        <div class="cheat-num cnum5">5</div>
+        <div class="cheat-text">Смешали: <b>m₁+m₂ = m<sub>нов</sub>, M₁+M₂ = M<sub>нов</sub></b></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Предупреждение -->
+  <div class="warning">
+    <div class="warn-icon">⚠️</div>
+    <div>
+      <b>Внимание!</b> При решении задач <i>всегда</i> работай с <b>массами</b>, а не с концентрациями.
+      Нельзя просто сложить «10% + 20% = 30%» — это грубая ошибка.
+      Сначала переведи проценты в массы вещества, а потом складывай.
+    </div>
+  </div>
+
+  <!-- Мини-тест -->
+  <div class="mini-check">
+    <div class="mc-title">✅ Проверь себя: 4 коротких вопроса</div>
+
+    <div class="q-row">
+      <label class="q-label">1. В 250 г раствора содержится 10 г соли. Какова концентрация (в %)?</label>
+      <input type="text" id="q1" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">2. Сколько граммов сахара в 300 г 20%-го сиропа?</label>
+      <input type="text" id="q2" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">3. При добавлении воды масса растворённого вещества… (растёт / не меняется / уменьшается)</label>
+      <input type="text" id="q3" placeholder="ответ" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">4. Смешали 200 г 10%-го и 300 г 20%-го раствора. Какова концентрация (в %)?</label>
+      <input type="text" id="q4" placeholder="число" autocomplete="off">
+    </div>
+
+    <button class="check-btn" onclick="checkMini()">Проверить</button>
+    <div class="mc-fb" id="mini-fb"></div>
+  </div>
+
+  <!-- Кнопка перехода -->
+  <div class="next-step-container" id="nextLevelContainer"></div>
+
+  <div class="footer-note">
+    ✨ Смеси и концентрации ✨<br>
+    <span>(по материалам темы «Делители и кратные» → практика)</span>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+/* ---------- Мини-тест ---------- */
+function normalizeNum(s) {
+  return String(s).trim().replace(',', '.').replace(/[%\s]/g, '');
+}
+function checkMini() {
+  const q1 = normalizeNum(document.getElementById('q1').value);
+  const q2 = normalizeNum(document.getElementById('q2').value);
+  const q3 = document.getElementById('q3').value.trim().toLowerCase().replace(/\s+/g, ' ');
+  const q4 = normalizeNum(document.getElementById('q4').value);
+
+  const ok1 = Math.abs(parseFloat(q1) - 4) < 0.01;
+  const ok2 = Math.abs(parseFloat(q2) - 60) < 0.01;
+  const ok3 = ['не меняется', 'не изменяется', 'не меняеться'].includes(q3);
+  const ok4 = Math.abs(parseFloat(q4) - 16) < 0.01;
+
+  const okCount = [ok1, ok2, ok3, ok4].filter(Boolean).length;
+  const fb = document.getElementById('mini-fb');
+  fb.classList.add('show');
+
+  if (okCount === 4) {
+    fb.className = 'mc-fb show ok';
+    fb.innerHTML = '🎉 Отлично! Все 4 ответа верные. Можно переходить к практике!';
+  } else {
+    fb.className = 'mc-fb show err';
+    let msg = `Правильно: ${okCount} из 4. `;
+    if (!ok1) msg += '№1: 10/250 · 100 = 4%. ';
+    if (!ok2) msg += '№2: 0,20 · 300 = 60 г. ';
+    if (!ok3) msg += '№3: при добавлении воды масса вещества НЕ меняется. ';
+    if (!ok4) msg += '№4: (0,10·200 + 0,20·300)/500 = 80/500 = 16%. ';
+    fb.innerHTML = msg;
+  }
+}
+
+/* ---------- Умный переход ---------- */
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+
+  const path = window.location.pathname;
+  const currentFile = path.substring(path.lastIndexOf('/') + 1);
+
+  const fallbackMap = {
+    'smesi_teoriya.html': 'smesi_praktika.html',
+    'smesi_praktika.html': 'smesi_test.html',
+    'smesi_test.html': 'index.html'
+  };
+
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего задания...</span>';
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const currentTopic = data.topics.find(t => t.file === currentFile);
+      if (currentTopic && currentTopic.next) {
+        container.innerHTML = `<a href="${currentTopic.next}" class="btn-next">Перейти к практике →</a>`;
+        return;
+      }
+    }
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к практике →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">Тема изучена, перейти на главную 🏠</a>`;
+    }
+  } catch (e) {
+    const fallback = fallbackMap[currentFile];
+    if (fallback && fallback !== 'index.html') {
+      container.innerHTML = `<a href="${fallback}" class="btn-next">Перейти к практике →</a>`;
+    } else {
+      container.innerHTML = `<a href="index.html" class="btn-next home">Вернуться на главную 🏠</a>`;
+    }
+  }
+}
+
+loadNextButton();
+</script>
+</body>
+</html>
