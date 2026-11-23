@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Самостоятельная работа: Геометрия</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem 6rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; width: 100%; }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.1rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.4rem; }
+
+  /* ---------- АВТОРИЗАЦИЯ ---------- */
+  .auth-box {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .auth-box h2 { color: #173a5e; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif; text-align: center; }
+  .auth-box p { color: #4a5f78; margin-bottom: 1.5rem; text-align: center; }
+  .auth-row { margin-bottom: 1.2rem; text-align: left; }
+  .auth-row label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #173a5e; }
+  .auth-row input {
+    width: 100%; padding: 0.8rem 1rem; border-radius: 14px;
+    border: 2px solid #bcd4f0; font-size: 1.05rem; font-family: 'Rubik', sans-serif;
+  }
+  .auth-row input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .auth-error { color: #d9544d; font-weight: 600; margin-bottom: 1rem; min-height: 1.2rem; display: none; text-align: center; }
+  .auth-error.show { display: block; }
+  .btn-start {
+    width: 100%; padding: 1rem; border-radius: 16px; font-size: 1.2rem;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    border: none; font-weight: 700; font-family: 'Rubik', sans-serif;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    margin-bottom: 1.5rem;
+  }
+  .btn-start:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-start:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+  .btn-home {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    padding: 0.8rem; border-radius: 16px; font-size: 1rem;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    font-weight: 600; box-shadow: 0 5px 0 #445566; transition: 0.1s;
+  }
+  .btn-home:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+
+  /* ---------- КРИТЕРИИ ---------- */
+  .criteria {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.2rem 1.6rem; margin-bottom: 1.6rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 10px 24px -12px rgba(20, 60, 120, 0.2);
+    display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center;
+  }
+  .criteria .crit-title { font-weight: 700; color: #173a5e; font-size: 1.05rem; width: 100%; margin-bottom: 0.2rem; }
+  .crit-item { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 0.98rem; }
+  .crit-mark { font-weight: 800; font-size: 1.1rem; color: #fff; padding: 0.15rem 0.7rem; border-radius: 30px; }
+  .mark5 { background: #2fbf71; } .mark4 { background: #4a90e2; }
+  .mark3 { background: #f2a03d; } .mark2 { background: #d9544d; }
+
+  /* ---------- ТАЙМЕР ---------- */
+  .timer-bar {
+    position: sticky; top: 10px; z-index: 50;
+    background: #ffffffec; backdrop-filter: blur(8px);
+    border-radius: 20px; padding: 0.8rem 1.6rem; margin-bottom: 1.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; border: 1px solid #cfe2ff;
+    box-shadow: 0 8px 20px -10px rgba(20, 60, 120, 0.3); flex-wrap: wrap;
+  }
+  .timer-label { font-weight: 600; color: #173a5e; }
+  .timer-value {
+    font-family: 'Montserrat', monospace; font-weight: 800;
+    font-size: 1.5rem; color: #1d4e7a; min-width: 90px; text-align: right;
+  }
+  .timer-value.warn { color: #d9544d; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+  /* ---------- ВОПРОСЫ ---------- */
+  .q-card {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.5rem 1.7rem; margin-bottom: 1.3rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 12px 26px -14px rgba(20, 60, 120, 0.25); transition: 0.2s;
+  }
+  .q-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0.9rem; }
+  .q-num {
+    font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.05rem;
+    color: #fff; background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    min-width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 0 #2a4f9e; flex-shrink: 0;
+  }
+  .q-text { font-weight: 600; font-size: 1.05rem; color: #173a5e; padding-top: 6px; }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.65rem 1rem;
+    border: 2px solid #dce8f5;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.15s;
+    background: #fff;
+    font-size: 0.98rem;
+  }
+  .option-label:hover { border-color: #4a90e2; background: #f0f7ff; }
+  .option-label input[type="radio"] { accent-color: #4a90e2; }
+
+  .input-answer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #173a5e;
+  }
+  .input-answer input {
+    width: 120px;
+    padding: 0.6rem 1rem;
+    font-size: 1.05rem;
+    border-radius: 12px;
+    border: 2px solid #bcd4f0;
+    text-align: center;
+    font-family: 'Rubik', sans-serif;
+    transition: 0.15s;
+  }
+  .input-answer input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+
+  /* ---------- РЕЗУЛЬТАТ ---------- */
+  .result-box {
+    margin-top: 2rem; background: #ffffffdd; backdrop-filter: blur(8px);
+    border-radius: 28px; padding: 2rem 2.2rem; border: 2px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3); display: none;
+  }
+  .result-box.show { display: block; animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .result-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.6rem; margin-bottom: 0.6rem; color: #173a5e; }
+  .result-mark {
+    display: inline-block; font-family: 'Montserrat', sans-serif; font-weight: 800;
+    font-size: 3rem; padding: 0.3rem 1.6rem; border-radius: 28px; color: #fff;
+    margin: 0.6rem 0; box-shadow: 0 10px 0 rgba(0,0,0,0.12);
+  }
+  .result-summary { font-size: 1.1rem; margin: 0.6rem 0 1.2rem; color: #2c3e50; }
+  .wrong-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .wrong-item {
+    background: #fff5f3; border-left: 8px solid #e0644d; border-radius: 16px;
+    padding: 0.9rem 1.2rem; font-size: 1rem;
+  }
+  .wrong-item .wq { font-weight: 700; color: #8a2c1c; margin-bottom: 4px; }
+  .wrong-item .wdetail { color: #4a3a37; margin-bottom: 4px; }
+  .wrong-item .wdetail b { color: #8a2c1c; }
+  .wrong-item .wcorrect { color: #15623b; font-weight: 600; margin-bottom: 6px; }
+  .wrong-item .wsolution { color: #2c3e50; font-size: 0.95rem; background: #fff9e5; padding: 0.6rem 0.9rem; border-radius: 10px; margin-top: 6px; }
+  .all-ok { background: #e3f9ec; border-left: 8px solid #2fbf71; border-radius: 16px; padding: 1rem 1.3rem; color: #15623b; font-weight: 600; font-size: 1.05rem; }
+
+  .btn-check {
+    font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.2rem;
+    padding: 0.9rem 2.4rem; border: none; border-radius: 20px;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    display: block; width: 100%; margin-top: 1.6rem;
+  }
+  .btn-check:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-check:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-check:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+
+  .btn-restart {
+    font-family: 'Rubik', sans-serif; font-weight: 600; font-size: 1rem;
+    padding: 0.6rem 1.6rem; border: none; border-radius: 16px;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    cursor: pointer; box-shadow: 0 5px 0 #445566; margin-top: 1.2rem;
+    display: inline-block; text-decoration: none;
+  }
+  .btn-restart:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+
+  .hidden { display: none !important; }
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.7rem 5rem; }
+    h1 { font-size: 1.6rem; }
+    .q-card { padding: 1.2rem 1.1rem; }
+    .criteria { padding: 1rem 1.1rem; }
+    .result-box { padding: 1.4rem 1.2rem; }
+    .options-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- ЭКРАН 1: АВТОРИЗАЦИЯ -->
+  <div id="authScreen" class="auth-box">
+    <h2>📝 Вход в тест</h2>
+    <p>Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
+    <div style="background:#f0f6ff; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #3a5f8a; text-align: center;">
+      Пример: <b>Иванов Иван</b> и класс <b>7А</b>
+    </div>
+    <div class="auth-row">
+      <label>ФИО (как в журнале)</label>
+      <input type="text" id="inpFIO" placeholder="Иванов Иван" autocomplete="off">
+    </div>
+    <div class="auth-row">
+      <label>Класс</label>
+      <input type="text" id="inpKlass" placeholder="7А" autocomplete="off">
+    </div>
+    <div class="auth-error" id="authError"></div>
+    <button class="btn-start" id="btnStart" onclick="checkStudent()">Проверить и начать</button>
+    <a href="index.html" class="btn-home">🏠 Вернуться на главную</a>
+  </div>
+
+  <!-- ЭКРАН 2: ТЕСТ -->
+  <div id="quizScreen" class="hidden">
+    <h1>📝 Самостоятельная работа</h1>
+    <p class="subtitle">Тема: Начальные геометрические сведения · 10 вопросов · 15 минут</p>
+
+    <div class="criteria">
+      <div class="crit-title">📊 Критерии оценивания (из 10 заданий):</div>
+      <div class="crit-item"><span class="crit-mark mark5">5</span> 9–10 верных</div>
+      <div class="crit-item"><span class="crit-mark mark4">4</span> 7–8 верных</div>
+      <div class="crit-item"><span class="crit-mark mark3">3</span> 5–6 верных</div>
+      <div class="crit-item"><span class="crit-mark mark2">2</span> 0–4 верных</div>
+    </div>
+
+    <div class="timer-bar">
+      <span class="timer-label">⏱️ Осталось времени:</span>
+      <span class="timer-value" id="timer">15:00</span>
+    </div>
+
+    <div id="quiz"></div>
+    <button class="btn-check" id="checkBtn" onclick="finishQuiz()">Проверить результаты</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-title">📋 Результат</div>
+      <div id="resultMark" class="result-mark"></div>
+      <div class="result-summary" id="resultSummary"></div>
+      <div id="wrongContainer"></div>
+      <a href="index.html" class="btn-restart">🏠 Вернуться на главную</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+let studentName = '';
+let studentClass = '';
+let quizStarted = false;
+
+/* ============================================================
+   АВТОРИЗАЦИЯ
+============================================================ */
+async function checkStudent() {
+  const fio = document.getElementById('inpFIO').value.trim();
+  const klass = document.getElementById('inpKlass').value.trim().toUpperCase();
+  const err = document.getElementById('authError');
+  err.classList.remove('show');
+
+  if (fio.length < 5) { err.textContent = 'Введите имя и фамилию полностью.'; err.classList.add('show'); return; }
+  if (klass.length < 1) { err.textContent = 'Введите ваш класс (например, 7А).'; err.classList.add('show'); return; }
+
+  const btn = document.getElementById('btnStart');
+  btn.disabled = true; btn.innerText = 'Проверяем...';
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=checkStudent&fio=${encodeURIComponent(fio)}&klass=${encodeURIComponent(klass)}`);
+    const data = await resp.json();
+    if (!data.found) {
+      err.textContent = 'Ошибка: ученик не найден в списке этого класса.';
+      err.classList.add('show');
+      btn.disabled = false; btn.innerText = 'Проверить и начать';
+      return;
+    }
+  } catch (e) {
+    err.textContent = 'Ошибка сети. Попробуйте позже.';
+    err.classList.add('show');
+    btn.disabled = false; btn.innerText = 'Проверить и начать';
+    return;
+  }
+
+  studentName = fio;
+  studentClass = klass;
+  quizStarted = true;
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  startQuiz();
+}
+
+/* ============================================================
+   БАНК ВОПРОСОВ (52 задачи)
+============================================================ */
+const questionBank = [
+  // --- БЛОК 1: СМЕЖНЫЕ УГЛЫ (1-10) ---
+  { id: 1, text: "Один из смежных углов равен 30°. Найдите второй угол.", type: "input", correct: 150, unit: "°", explanation: "Сумма смежных углов 180°. 180° − 30° = 150°." },
+  { id: 2, text: "Один из смежных углов равен 45°. Найдите второй угол.", type: "input", correct: 135, unit: "°", explanation: "Сумма смежных углов 180°. 180° − 45° = 135°." },
+  { id: 3, text: "Один из смежных углов равен 60°. Найдите второй угол.", type: "input", correct: 120, unit: "°", explanation: "Сумма смежных углов 180°. 180° − 60° = 120°." },
+  { id: 4, text: "Один из смежных углов равен 75°. Найдите второй угол.", type: "input", correct: 105, unit: "°", explanation: "Сумма смежных углов 180°. 180° − 75° = 105°." },
+  { id: 5, text: "Один из смежных углов равен 90°. Найдите второй угол.", type: "input", correct: 90, unit: "°", explanation: "Сумма смежных углов 180°. 180° − 90° = 90°." },
+  { id: 6, text: "Один из смежных углов равен 110°. Найдите второй угол.", type: "input", correct: 70, unit: "°", explanation: "Сумма смежных углов 180°. 180° − 110° = 70°." },
+  { id: 7, text: "Один из смежных углов равен 125°. Найдите второй угол.", type: "input", correct: 55, unit: "°", explanation: "Сумма смежных углов 180°. 180° − 125° = 55°." },
+  { id: 8, text: "Один из смежных углов в 2 раза больше другого. Найдите меньший угол.", type: "input", correct: 60, unit: "°", explanation: "Пусть меньший угол x, тогда больший 2x. x + 2x = 180. 3x = 180. x = 60°." },
+  { id: 9, text: "Один из смежных углов на 40° больше другого. Найдите меньший угол.", type: "input", correct: 70, unit: "°", explanation: "Пусть меньший x, тогда больший x+40. x + x + 40 = 180. 2x = 140. x = 70°." },
+  { id: 10, text: "Разность двух смежных углов равна 20°. Найдите больший угол.", type: "input", correct: 100, unit: "°", explanation: "Пусть больший угол y, меньший x. y + x = 180, y − x = 20. Сложим: 2y = 200. y = 100°." },
+
+  // --- БЛОК 2: ВЕРТИКАЛЬНЫЕ УГЛЫ И ПРЯМЫЕ (11-20) ---
+  { id: 11, text: "При пересечении двух прямых один угол равен 40°. Найдите вертикальный ему угол.", type: "input", correct: 40, unit: "°", explanation: "Вертикальные углы равны." },
+  { id: 12, text: "При пересечении двух прямых один угол равен 55°. Найдите смежный с ним угол.", type: "input", correct: 125, unit: "°", explanation: "Смежные углы в сумме дают 180°. 180 − 55 = 125°." },
+  { id: 13, text: "Сумма двух вертикальных углов равна 100°. Найдите каждый из них.", type: "input", correct: 50, unit: "°", explanation: "Вертикальные углы равны. 100 / 2 = 50°." },
+  { id: 14, text: "При пересечении двух прямых один из углов равен 80°. Найдите больший из смежных с ним углов.", type: "input", correct: 100, unit: "°", explanation: "Смежный угол = 180 − 80 = 100°." },
+  { id: 15, text: "Сумма трех углов, образованных при пересечении двух прямых, равна 200°. Найдите четвертый угол.", type: "input", correct: 160, unit: "°", explanation: "Сумма всех четырех углов 360°. Четвертый угол = 360 − 200 = 160°." },
+  { id: 16, text: "Сколько общих точек имеют две параллельные прямые?", type: "radio", options: ["Ни одной", "Одну", "Две", "Бесконечно много"], correct: "Ни одной", explanation: "Параллельные прямые по определению не пересекаются." },
+  { id: 17, text: "Сколько прямых, параллельных данной, можно провести через точку, не лежащую на этой прямой?", type: "radio", options: ["Ни одной", "Только одну", "Две", "Множество"], correct: "Только одну", explanation: "Это аксиома параллельных прямых." },
+  { id: 18, text: "Две прямые на плоскости, перпендикулярные третьей прямой…", type: "radio", options: ["Пересекаются", "Параллельны", "Совпадают", "Перпендикулярны"], correct: "Параллельны", explanation: "Свойство перпендикулярных прямых." },
+  { id: 19, text: "Если две прямые параллельны третьей, то они…", type: "radio", options: ["Перпендикулярны", "Параллельны", "Пересекаются", "Образуют тупой угол"], correct: "Параллельны", explanation: "Свойство параллельных прямых (транзитивность)." },
+  { id: 20, text: "Пересекающиеся прямые образуют четыре прямых угла. Как они называются?", type: "radio", options: ["Параллельные", "Смежные", "Перпендикулярные", "Вертикальные"], correct: "Перпендикулярные", explanation: "Определение перпендикулярных прямых." },
+
+  // --- БЛОК 3: ТРЕУГОЛЬНИКИ (21-30) ---
+  { id: 21, text: "В треугольнике два угла равны 40° и 50°. Найдите третий угол.", type: "input", correct: 90, unit: "°", explanation: "Сумма углов 180°. 180 − (40+50) = 90°." },
+  { id: 22, text: "В треугольнике два угла равны 30° и 60°. Найдите третий угол.", type: "input", correct: 90, unit: "°", explanation: "180 − (30+60) = 90°." },
+  { id: 23, text: "В равнобедренном треугольнике угол при основании равен 50°. Найдите угол при вершине.", type: "input", correct: 80, unit: "°", explanation: "Углы при основании равны. 180 − (50+50) = 80°." },
+  { id: 24, text: "В равнобедренном треугольнике угол при вершине равен 40°. Найдите угол при основании.", type: "input", correct: 70, unit: "°", explanation: "Углы при основании равны. (180 − 40) / 2 = 70°." },
+  { id: 25, text: "В равнобедренном треугольнике угол при вершине равен 120°. Найдите угол при основании.", type: "input", correct: 30, unit: "°", explanation: "(180 − 120) / 2 = 30°." },
+  { id: 26, text: "Может ли в треугольнике быть два прямых угла?", type: "radio", options: ["Да", "Нет"], correct: "Нет", explanation: "Сумма углов 180°. Два прямых угла дадут 180° + третий > 180°." },
+  { id: 27, text: "Стороны треугольника 5 см и 7 см. Может ли третья сторона быть равной 12 см?", type: "radio", options: ["Да", "Нет"], correct: "Нет", explanation: "Неравенство треугольника: 5+7=12. Сторона должна быть строго меньше суммы двух других." },
+  { id: 28, text: "Стороны треугольника 4 см и 8 см. Может ли третья сторона быть равной 5 см?", type: "radio", options: ["Да", "Нет"], correct: "Да", explanation: "4+5=9 > 8, 4+8=12 > 5, 5+8=13 > 4. Неравенство выполняется." },
+  { id: 29, text: "В прямоугольном треугольнике один острый угол 30°. Найдите второй острый угол.", type: "input", correct: 60, unit: "°", explanation: "Сумма острых углов прямоугольного треугольника 90°. 90 − 30 = 60°." },
+  { id: 30, text: "В треугольнике два угла равны 100° и 50°. Найдите третий угол.", type: "input", correct: 30, unit: "°", explanation: "180 − (100+50) = 30°." },
+
+  // --- БЛОК 4: ОКРУЖНОСТЬ (31-40) ---
+  { id: 31, text: "Диаметр окружности равен 20 см. Найдите радиус.", type: "input", correct: 10, unit: "см", explanation: "Радиус равен половине диаметра. 20 / 2 = 10." },
+  { id: 32, text: "Радиус окружности равен 7 см. Найдите диаметр.", type: "input", correct: 14, unit: "см", explanation: "Диаметр в 2 раза больше радиуса. 7 * 2 = 14." },
+  { id: 33, text: "Отрезок, соединяющий центр окружности с любой её точкой, называется…", type: "radio", options: ["Хорда", "Диаметр", "Радиус", "Дуга"], correct: "Радиус", explanation: "Определение радиуса." },
+  { id: 34, text: "Хорда, проходящая через центр окружности, называется…", type: "radio", options: ["Радиус", "Диаметр", "Секущая", "Дуга"], correct: "Диаметр", explanation: "Определение диаметра." },
+  { id: 35, text: "Угол с вершиной в центре окружности называется…", type: "radio", options: ["Вписанный", "Центральный", "Развернутый", "Смежный"], correct: "Центральный", explanation: "Определение центрального угла." },
+  { id: 36, text: "Угол, вершина которого лежит на окружности, а стороны пересекают её, называется…", type: "radio", options: ["Центральный", "Вписанный", "Острый", "Тупой"], correct: "Вписанный", explanation: "Определение вписанного угла." },
+  { id: 37, text: "Может ли вписанный угол быть тупым?", type: "radio", options: ["Да", "Нет"], correct: "Да", explanation: "Вписанный угол может быть любым, он зависит от дуги, на которую опирается." },
+  { id: 38, text: "Все радиусы одной окружности…", type: "radio", options: ["Разные", "Равны", "Зависят от диаметра", "Не пересекаются"], correct: "Равны", explanation: "По определению окружности все её точки равноудалены от центра." },
+  { id: 39, text: "Может ли хорда быть больше диаметра?", type: "radio", options: ["Да", "Нет"], correct: "Нет", explanation: "Диаметр — самая длинная хорда в окружности." },
+  { id: 40, text: "Радиус окружности равен 3 см. Чему равен диаметр?", type: "input", correct: 6, unit: "см", explanation: "3 * 2 = 6 см." },
+
+  // --- БЛОК 5: УТВЕРЖДЕНИЯ (41-52) ---
+  { id: 41, text: "Через любые две различные точки можно провести только одну прямую.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "Это основная аксиома геометрии." },
+  { id: 42, text: "Пересекающиеся прямые могут иметь две общие точки.", type: "radio", options: ["Верно", "Неверно"], correct: "Неверно", explanation: "Если прямые имеют две общие точки, они совпадают." },
+  { id: 43, text: "Сумма смежных углов равна 180°.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "Свойство смежных углов." },
+  { id: 44, text: "Вертикальные углы равны.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "Свойство вертикальных углов." },
+  { id: 45, text: "Любой острый угол меньше любого тупого угла.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "Острый < 90°, тупой > 90°." },
+  { id: 46, text: "Любые две прямые на плоскости или параллельны, или перпендикулярны.", type: "radio", options: ["Верно", "Неверно"], correct: "Неверно", explanation: "Они могут просто пересекаться под любым другим углом (например, 45°)." },
+  { id: 47, text: "Через любую точку плоскости можно провести прямую, перпендикулярную данной, и притом только одну.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "Свойство перпендикулярных прямых." },
+  { id: 48, text: "Если сторона треугольника равна сумме двух других сторон, то треугольник существует.", type: "radio", options: ["Верно", "Неверно"], correct: "Неверно", explanation: "Сторона должна быть строго меньше суммы двух других." },
+  { id: 49, text: "Угол, вписанный в окружность, всегда острый.", type: "radio", options: ["Верно", "Неверно"], correct: "Неверно", explanation: "Он может быть и прямым, и тупым." },
+  { id: 50, text: "Длина диаметра окружности в два раза больше длины радиуса.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "D = 2R." },
+  { id: 51, text: "Две прямые, параллельные третьей, параллельны друг другу.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "Свойство параллельных прямых." },
+  { id: 52, text: "Если при пересечении двух прямых образовались четыре равных угла, то прямые перпендикулярны.", type: "radio", options: ["Верно", "Неверно"], correct: "Верно", explanation: "360 / 4 = 90°. Каждый угол по 90°." }
+];
+
+/* ============================================================
+   ЛОГИКА ТЕСТА
+============================================================ */
+const QUESTIONS_PER_TEST = 10;
+let currentQuestions = [];
+let userAnswers = [];
+let timeLeft = 900;
+let timerInterval = null;
+let quizFinished = false;
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  currentQuestions = shuffle(questionBank).slice(0, QUESTIONS_PER_TEST);
+  userAnswers = currentQuestions.map(() => null);
+  renderQuiz();
+  startTimer();
+}
+
+function renderQuiz() {
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+  currentQuestions.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard-' + idx;
+
+    const head = document.createElement('div');
+    head.className = 'q-head';
+    const num = document.createElement('div');
+    num.className = 'q-num';
+    num.textContent = idx + 1;
+    const text = document.createElement('div');
+    text.className = 'q-text';
+    text.textContent = q.text;
+    head.appendChild(num);
+    head.appendChild(text);
+    card.appendChild(head);
+
+    if (q.type === 'radio') {
+      const grid = document.createElement('div');
+      grid.className = 'options-grid';
+      const shuffledOpts = shuffle([...q.options]);
+      shuffledOpts.forEach(opt => {
+        const label = document.createElement('label');
+        label.className = 'option-label';
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = 'q' + q.id;
+        radio.value = opt;
+        radio.addEventListener('change', () => { userAnswers[idx] = opt; });
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(opt));
+        grid.appendChild(label);
+      });
+      card.appendChild(grid);
+    } else if (q.type === 'input') {
+      const wrap = document.createElement('div');
+      wrap.className = 'input-answer';
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.id = 'input-q' + q.id;
+      inp.placeholder = 'Ответ';
+      inp.addEventListener('input', () => { userAnswers[idx] = inp.value; });
+      const unit = document.createElement('span');
+      unit.textContent = q.unit;
+      wrap.appendChild(inp);
+      wrap.appendChild(unit);
+      card.appendChild(wrap);
+    }
+    quiz.appendChild(card);
+  });
+}
+
+function startTimer() {
+  timeLeft = 900;
+  updateTimerDisplay();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (quizFinished) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if (timeLeft <= 60) el.classList.add('warn');
+  else el.classList.remove('warn');
+}
+
+function checkAnswer(q, userAnswer) {
+  if (q.type === 'radio') {
+    return userAnswer === q.correct;
+  }
+  if (q.type === 'input') {
+    if (userAnswer === null || userAnswer === '' || userAnswer === undefined) return false;
+    const val = parseFloat(String(userAnswer).replace(',', '.'));
+    return !isNaN(val) && Math.abs(val - q.correct) < 0.01;
+  }
+  return false;
+}
+
+async function finishQuiz(auto = false) {
+  if (quizFinished) return;
+  quizFinished = true;
+  clearInterval(timerInterval);
+
+  document.getElementById('checkBtn').disabled = true;
+  document.querySelectorAll('#quiz input').forEach(i => i.disabled = true);
+
+  let correctCount = 0;
+  const wrongDetails = [];
+
+  currentQuestions.forEach((q, idx) => {
+    const userVal = userAnswers[idx];
+    const ok = checkAnswer(q, userVal);
+    if (ok) {
+      correctCount++;
+    } else {
+      let userDisplay;
+      if (userVal === null || userVal === '' || userVal === undefined) {
+        userDisplay = '— (нет ответа)';
+      } else if (q.type === 'input') {
+        userDisplay = String(userVal) + ' ' + q.unit;
+      } else {
+        userDisplay = String(userVal);
+      }
+      let correctDisplay = q.type === 'input' ? q.correct + ' ' + q.unit : q.correct;
+      wrongDetails.push({
+        num: idx + 1,
+        text: q.text,
+        userDisplay: userDisplay,
+        correctDisplay: correctDisplay,
+        explanation: q.explanation
+      });
+    }
+  });
+
+  let markText = '2', markClass = 'mark2';
+  if (correctCount >= 9) { markText = '5'; markClass = 'mark5'; }
+  else if (correctCount >= 7) { markText = '4'; markClass = 'mark4'; }
+  else if (correctCount >= 5) { markText = '3'; markClass = 'mark3'; }
+
+  const date = new Date().toLocaleString('ru-RU');
+  try {
+    await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'addResult',
+        fio: studentName,
+        klass: studentClass,
+        topic: 'Геометрия: начальные сведения',
+        grade: markText,
+        datetime: date,
+        correct: correctCount
+      })
+    });
+  } catch (e) {
+    console.log('Ошибка отправки результата:', e);
+  }
+
+  const resultBox = document.getElementById('resultBox');
+  resultBox.classList.add('show');
+  const markEl = document.getElementById('resultMark');
+  markEl.textContent = markText;
+  markEl.className = 'result-mark ' + markClass;
+  const summary = document.getElementById('resultSummary');
+  summary.innerHTML = `Правильно выполнено: <b>${correctCount} из ${QUESTIONS_PER_TEST}</b> заданий. ` +
+    (auto ? '<br><span style="color:#d9544d;font-weight:600;">⏰ Время вышло — тест завершён автоматически.</span>' : '');
+
+  const wc = document.getElementById('wrongContainer');
+  wc.innerHTML = '';
+  if (wrongDetails.length === 0) {
+    const okDiv = document.createElement('div');
+    okDiv.className = 'all-ok';
+    okDiv.textContent = '🎉 Отлично! Все задания выполнены без ошибок.';
+    wc.appendChild(okDiv);
+  } else {
+    const title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;color:#173a5e;margin-bottom:0.8rem;font-size:1.1rem;';
+    title.textContent = `❌ Ошибки в заданиях (${wrongDetails.length}):`;
+    wc.appendChild(title);
+
+    const ul = document.createElement('ul');
+    ul.className = 'wrong-list';
+    wrongDetails.forEach(w => {
+      const li = document.createElement('li');
+      li.className = 'wrong-item';
+      li.innerHTML = `
+        <div class="wq">Задание ${w.num}: ${w.text}</div>
+        <div class="wdetail">Твой ответ: <b>${w.userDisplay}</b></div>
+        <div class="wcorrect">Правильный ответ: ${w.correctDisplay}</div>
+        <div class="wsolution"><b>💡 Решение:</b> ${w.explanation}</div>
+      `;
+      ul.appendChild(li);
+    });
+    wc.appendChild(ul);
+  }
+
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('beforeunload', (e) => {
+  if (quizStarted && !quizFinished) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
