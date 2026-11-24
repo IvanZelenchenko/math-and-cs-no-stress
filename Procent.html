@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Проценты — интерактивный курс</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#f4f6fb;color:#16202f;line-height:1.55}
+header{background:linear-gradient(135deg,#2f6fed,#5b8cff);color:#fff;padding:22px 16px;text-align:center}
+header h1{margin:0;font-size:22px}
+header p{margin:4px 0 0;opacity:.9;font-size:14px}
+nav{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid #dde3ee;padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+nav button{border:1px solid #d6dded;background:#fff;border-radius:8px;padding:6px 10px;font-size:13px;cursor:pointer;color:#16202f}
+nav button:hover{background:#eef3ff}
+nav button.active{background:#2f6fed;border-color:#2f6fed;color:#fff}
+main{max-width:900px;margin:0 auto;padding:18px 16px 60px}
+.page{display:none}
+.page.active{display:block}
+h2{font-size:22px;margin:18px 0 10px}
+h3{font-size:17px;margin:16px 0 8px}
+.card{background:#fff;border:1px solid #e2e8f3;border-radius:12px;padding:14px 16px;margin:12px 0}
+.formula{background:#eef3ff;border-left:4px solid #2f6fed;padding:10px 12px;border-radius:6px;font-size:16px;margin:10px 0}
+table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+th,td{border:1px solid #e2e8f3;padding:6px 8px;text-align:center}
+th{background:#f0f4fd}
+.task{background:#fff;border:1px solid #e2e8f3;border-radius:10px;padding:10px 12px;margin:8px 0}
+.task .q{margin-bottom:8px}
+.task .num{color:#2f6fed;font-weight:600}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=text]{flex:1;min-width:120px;padding:7px 10px;border:1px solid #cdd6e6;border-radius:8px;font-size:15px}
+input[type=text]:focus{outline:2px solid #b9ccff;border-color:#2f6fed}
+.btn{border:none;background:#2f6fed;color:#fff;padding:7px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+.btn:hover{background:#1f5cd8}
+.btn:disabled{background:#b9c4d8;cursor:default}
+.btn.gray{background:#e7ecf6;color:#16202f}
+.mark{font-weight:600}
+.mark.ok{color:#1a9e5c}
+.mark.bad{color:#d64545}
+.sol{display:none;margin-top:8px;padding-top:8px;border-top:1px dashed #dde3ee;font-size:14px;color:#3d4a60}
+.sol.show{display:block}
+.level{border-top:1px solid #e2e8f3;padding-top:6px;margin-top:16px}
+.level h3{display:inline-block;background:#2f6fed;color:#fff;padding:3px 12px;border-radius:20px;font-size:14px}
+.more{display:flex;align-items:center;gap:10px;margin:10px 0;flex-wrap:wrap}
+.cnt{font-size:13px;color:#6b7a93}
+.result{background:#fff;border:2px solid #2f6fed;border-radius:12px;padding:14px 16px;margin:12px 0}
+.result h3{margin-top:0}
+.mark-big{font-size:30px;font-weight:700;color:#2f6fed}
+.crit{font-size:14px;color:#3d4a60;background:#f7f9fe;border-radius:8px;padding:10px;margin:10px 0}
+.review{font-size:14px}
+.review .it{padding:8px 0;border-bottom:1px dashed #e2e8f3}
+.review .it.ok{color:#1a9e5c}
+.review .it.bad{color:#d64545}
+.muted{color:#6b7a93}
+</style>
+</head>
+<body>
+<header>
+  <h1>Проценты — интерактивный курс</h1>
+  <p>Теория → практика (A, B, C) → самостоятельные работы с разбором</p>
+</header>
+<nav id="nav"></nav>
+<main>
+
+<!-- ================= ТЕОРИЯ 1 ================= -->
+<section id="t1" class="page">
+<h2>1. Что такое процент?</h2>
+<div class="card">
+<p><b>Процент</b> — это одна сотая часть числа. Слово «процент» означает «на сотню» и обозначается знаком <b>%</b>.</p>
+<div class="formula">1% = 1/100 = 0,01</div>
+<p>Значит:</p>
+<ul>
+<li>всё целое — это <b>100%</b>;</li>
+<li>половина — <b>50%</b>;</li>
+<li>четверть — <b>25%</b>;</li>
+<li>десятая часть — <b>10%</b>.</li>
+</ul>
+</div>
+<div class="card">
+<h3>Полезные соответствия</h3>
+<table>
+<tr><th>Дробь</th><th>Десятичная</th><th>Проценты</th></tr>
+<tr><td>1/2</td><td>0,5</td><td>50%</td></tr>
+<tr><td>1/4</td><td>0,25</td><td>25%</td></tr>
+<tr><td>3/4</td><td>0,75</td><td>75%</td></tr>
+<tr><td>1/5</td><td>0,2</td><td>20%</td></tr>
+<tr><td>1/10</td><td>0,1</td><td>10%</td></tr>
+<tr><td>1/20</td><td>0,05</td><td>5%</td></tr>
+<tr><td>1/25</td><td>0,04</td><td>4%</td></tr>
+<tr><td>1/50</td><td>0,02</td><td>2%</td></tr>
+<tr><td>1/100</td><td>0,01</td><td>1%</td></tr>
+</table>
+</div>
+<div class="card">
+<h3>Пример</h3>
+<p>В корзине 200 яблок. 1% от 200 — это 2 яблока. Тогда 5% — это 10 яблок, а 100% — все 200 яблок.</p>
+<p><b>Вывод:</b> чтобы найти 1% числа, надо разделить его на 100.</p>
+</div>
+</section>
+
+<section id="p1" class="page">
+<h2>Практика 1. Что такое процент?</h2>
+<p class="muted">Три уровня сложности. В каждом — банк из 50 заданий, которые открываются по 5.</p>
+<div id="p1-root"></div>
+</section>
+
+<!-- ================= ТЕОРИЯ 2 ================= -->
+<section id="t2" class="page">
+<h2>2. Как перевести дробь и число в проценты и обратно</h2>
+<div class="card">
+<h3>Число → проценты</h3>
+<p>Умножить число на 100 и добавить знак %.</p>
+<div class="formula">0,25 · 100 = 25% &nbsp;|&nbsp; 3/4 = 0,75 · 100 = 75%</div>
+<h3>Проценты → число</h3>
+<p>Разделить число процентов на 100 и убрать знак %.</p>
+<div class="formula">40% = 40 : 100 = 0,4 &nbsp;|&nbsp; 7,5% = 0,075</div>
+</div>
+<div class="card">
+<h3>Алгоритм</h3>
+<ol>
+<li>Записываем проценты дробью: p% = p/100.</li>
+<li>Чтобы перевести дробь в проценты — умножаем на 100.</li>
+<li>Чтобы перевести проценты в дробь — делим на 100.</li>
+</ol>
+<p class="muted">Проверка: 0,125 ↔ 12,5%; 250% ↔ 2,5.</p>
+</div>
+</section>
+
+<section id="p2" class="page">
+<h2>Практика 2. Перевод дробей и процентов</h2>
+<p class="muted">Три уровня, по 50 заданий в каждом.</p>
+<div id="p2-root"></div>
+</section>
+
+<!-- ================= ТЕОРИЯ 3 ================= -->
+<section id="t3" class="page">
+<h2>3. Три основных типа задач на проценты</h2>
+<div class="card">
+<h3>Тип 1. Найти p% от числа N</h3>
+<div class="formula">a = N · p / 100</div>
+<p>Пример: 20% от 150 → 150 · 20 / 100 = 30.</p>
+</div>
+<div class="card">
+<h3>Тип 2. Сколько процентов число a составляет от числа b</h3>
+<div class="formula">p = a / b · 100</div>
+<p>Пример: 30 от 150 → 30 / 150 · 100 = 20%.</p>
+</div>
+<div class="card">
+<h3>Тип 3. Найти число N, если p% от него равны a</h3>
+<div class="formula">N = a : (p/100) = a · 100 / p</div>
+<p>Пример: 20% числа равны 30 → 30 · 100 / 20 = 150.</p>
+</div>
+<div class="card">
+<p><b>Как отличить типы?</b> Смотрим, что неизвестно: часть (тип 1), процент (тип 2) или целое (тип 3).</p>
+</div>
+</section>
+
+<section id="p3" class="page">
+<h2>Практика 3. Три типа задач</h2>
+<p class="muted">Три уровня, по 50 заданий в каждом.</p>
+<div id="p3-root"></div>
+</section>
+
+<!-- ================= ТЕОРИЯ 4 ================= -->
+<section id="t4" class="page">
+<h2>4. Увеличение и уменьшение на проценты</h2>
+<div class="card">
+<h3>Увеличили на p%</h3>
+<div class="formula">N → N · (1 + p/100)</div>
+<p>Пример: 200 увеличили на 15% → 200 · 1,15 = 230.</p>
+</div>
+<div class="card">
+<h3>Уменьшили на p%</h3>
+<div class="formula">N → N · (1 − p/100)</div>
+<p>Пример: 400 уменьшили на 25% → 400 · 0,75 = 300.</p>
+</div>
+<div class="card">
+<h3>На сколько процентов изменилось число?</h3>
+<div class="formula">p = (новое − старое) / старое · 100</div>
+<p>Пример: было 200, стало 250 → (250 − 200)/200 · 100 = 25%.</p>
+<p class="muted">Важно: «увеличилось на 20%» — это не «стало 20%», а «стало 120% от исходного».</p>
+</div>
+</section>
+
+<section id="p4" class="page">
+<h2>Практика 4. Изменение числа на проценты</h2>
+<p class="muted">Три уровня, по 50 заданий в каждом.</p>
+<div id="p4-root"></div>
+</section>
+
+<!-- ================= С/Р 1 ================= -->
+<section id="sr1" class="page">
+<h2>Самостоятельная работа №1 (пункты 1–4)</h2>
+<p class="muted">Вариант формируется случайно при каждом запуске — у соседа он почти наверняка другой.</p>
+<div id="sr1-root"></div>
+</section>
+
+<!-- ================= ТЕОРИЯ 5 ================= -->
+<section id="t5" class="page">
+<h2>5. Простейшие задачи по процентам</h2>
+<div class="card">
+<h3>Как решать текстовую задачу</h3>
+<ol>
+<li>Прочитай условие и определи, что принято за 100%.</li>
+<li>Определи тип задачи (см. пункт 3).</li>
+<li>Запиши решение в одно действие или в два (сначала скидка, потом новая цена).</li>
+<li>Проверь, что ответ правдоподобен.</li>
+</ol>
+</div>
+<div class="card">
+<h3>Пример 1. Скидка</h3>
+<p>Товар стоил 800 ₽, скидка 15%. Сколько рублей скидка и сколько стал стоить товар?</p>
+<p>Скидка: 800 · 15/100 = 120 ₽. Новая цена: 800 − 120 = 680 ₽.</p>
+</div>
+<div class="card">
+<h3>Пример 2. Проценты от целого</h3>
+<p>В классе 30 учеников, 40% — девочки. Девочек: 30 · 40/100 = 12.</p>
+</div>
+<div class="card">
+<h3>Пример 3. Найти исходное</h3>
+<p>После подорожания на 25% товар стоит 1000 ₽. Сколько он стоил?</p>
+<p>100% + 25% = 125% — это 1000 ₽. Тогда 1% = 8 ₽, а 100% = 800 ₽.</p>
+</div>
+</section>
+
+<section id="p5" class="page">
+<h2>Практика 5. Простейшие задачи</h2>
+<p class="muted">Три уровня, по 50 заданий в каждом.</p>
+<div id="p5-root"></div>
+</section>
+
+<!-- ================= ТЕОРИЯ 6 ================= -->
+<section id="t6" class="page">
+<h2>6. Проценты на пени и вклады</h2>
+<div class="card">
+<h3>Простые проценты</h3>
+<p>Если вклад растёт на один и тот же процент от первоначальной суммы каждый год, это <b>простые проценты</b>.</p>
+<div class="formula">S = P · (1 + r/100 · n)</div>
+<p>P — начальная сумма, r — ставка в процентах за год, n — число лет.</p>
+<p>Пример: 10 000 ₽ под 12% годовых на 2 года → 10 000 · (1 + 0,12 · 2) = 12 400 ₽.</p>
+</div>
+<div class="card">
+<h3>Пени</h3>
+<p>Пеня начисляется за каждый день просрочки:</p>
+<div class="formula">Пеня = Долг · ставка/100 · число дней</div>
+<p>Пример: долг 5000 ₽, пеня 0,1% в день, 20 дней → 5000 · 0,001 · 20 = 100 ₽.</p>
+</div>
+<div class="card">
+<p class="muted">Внимание: в реальных банках часто используют сложные проценты, но в этом курсе мы разбираем простейший (линейный) рост.</p>
+</div>
+</section>
+
+<section id="p6" class="page">
+<h2>Практика 6. Вклады и пени</h2>
+<p class="muted">Три уровня, по 50 заданий в каждом.</p>
+<div id="p6-root"></div>
+</section>
+
+<!-- ================= С/Р 2 ================= -->
+<section id="sr2" class="page">
+<h2>Самостоятельная работа №2 (пункты 5–6)</h2>
+<p class="muted">Вариант формируется случайно при каждом запуске.</p>
+<div id="sr2-root"></div>
+</section>
+
+</main>
+
+<script>
+/* ============ ВСПОМОГАТЕЛЬНОЕ ============ */
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const pick=(r,arr)=>arr[Math.floor(r()*arr.length)];
+const ri=(r,a,b)=>a+Math.floor(r()*(b-a+1));
+const num=x=>Number(x.toFixed(6));
+
+const R={
+  int:(a,b)=>a+Math.floor(Math.random()*(b-a+1)),
+  pick:arr=>arr[Math.floor(Math.random()*arr.length)],
+  num:x=>Number(x.toFixed(6))
+};
+
+function parseAnswer(s){
+  if(s==null) return null;
+  s=String(s).trim().replace(/\s+/g,'').replace(',','.').replace(/%|₽|руб\.?|рублей/gi,'');
+  if(s==='') return null;
+  const v=parseFloat(s);
+  return isNaN(v)?null:v;
+}
+function checkAnswer(v,a){
+  if(v===null||a===null||a===undefined) return false;
+  const tol=Math.abs(a)>=1?0.011:Math.max(Math.abs(a)*0.02,1e-7);
+  return Math.abs(v-a)<=tol;
+}
+function fmt(x){ return typeof x==='string'?x:String(Number(x.toFixed(6))); }
+
+/* ============ ГЕНЕРАТОРЫ ПРАКТИК ============ */
+const G={};
+
+G[1]=function(level,r){
+  if(level==='A'){
+    const t=ri(r,0,2);
+    if(t===0){const n=pick(r,[2,4,5,10,20,25,50]);
+      return {q:`Сколько процентов составляет <b>1/${n}</b> целого? (ответ — число процентов)`,a:100/n,sol:`1/${n} = ${num(100/n)}/100, значит это ${num(100/n)}%.`};}
+    if(t===1){const p=pick(r,[5,10,15,20,25,30,40,50,60,75,80,90]);
+      return {q:`Запиши <b>${p}%</b> в виде десятичной дроби.`,a:num(p/100),sol:`${p}% = ${p} : 100 = ${num(p/100)}.`};}
+    const N=pick(r,[100,200,300,400,500,600,700,800,900,1000,1200,1500,2000]);
+    return {q:`Найди <b>1%</b> от числа ${N}.`,a:num(N/100),sol:`1% — сотая часть числа: ${N} : 100 = ${num(N/100)}.`};
+  }
+  if(level==='B'){
+    const t=ri(r,0,2);
+    if(t===0){const b=pick(r,[20,25,50,4,5,8,10]);const a=ri(r,1,b-1);
+      return {q:`Сколько процентов составляет <b>${a}/${b}</b>? (ответ — число процентов)`,a:num(a*100/b),sol:`${a}/${b} = ${num(a/b)}; ${num(a/b)} · 100 = ${num(a*100/b)}%.`};}
+    if(t===1){const d=pick(r,[0.12,0.15,0.24,0.35,0.48,0.06,0.07,0.09,0.125,0.375]);
+      return {q:`Запиши число <b>${d}</b> в процентах. (ответ — число процентов)`,a:num(d*100),sol:`${d} · 100 = ${num(d*100)}%.`};}
+    const p=pick(r,[12,15,18,24,36,45,55,65,72,85]);
+    return {q:`Запиши <b>${p}%</b> в виде десятичной дроби.`,a:num(p/100),sol:`${p}% = ${p} : 100 = ${num(p/100)}.`};
+  }
+  const t=ri(r,0,3);
+  if(t===0){const b=pick(r,[3,6,7,9,11,12,13]);const a=ri(r,1,b-1);const val=Math.round(a*100/b);
+    return {q:`Сколько процентов составляет <b>${a}/${b}</b>? Ответ округли до целых.`,a:val,sol:`${a}/${b} ≈ ${num(a/b)}; ${num(a*100/b)}% ≈ ${val}%.`};}
+  if(t===1){const d=pick(r,[0.4,0.15,2.5,0.075,1.25,3.6,0.008,12.5]);
+    return {q:`Запиши число <b>${d}</b> в процентах. (ответ — число процентов)`,a:num(d*100),sol:`${d} · 100 = ${num(d*100)}%.`};}
+  if(t===2){const p=pick(r,[0.5,1.5,2.4,7.5,12.5,0.25,3.75]);
+    return {q:`Запиши <b>${p}%</b> в виде десятичной дроби.`,a:num(p/100),sol:`${p}% = ${p} : 100 = ${num(p/100)}.`};}
+  const N=ri(r,1000,99000);
+  return {q:`Найди <b>1%</b> от числа ${N}.`,a:num(N/100),sol:`${N} : 100 = ${num(N/100)}.`};
+};
+
+G[2]=function(level,r){
+  if(level==='A'){
+    const t=ri(r,0,2);
+    if(t===0){const d=pick(r,[0.3,0.5,0.7,0.9,0.6,0.8,0.15,0.45]);
+      return {q:`Переведи десятичную дробь <b>${d}</b> в проценты. (ответ — число процентов)`,a:num(d*100),sol:`${d} · 100 = ${num(d*100)}%.`};}
+    if(t===1){const p=pick(r,[10,20,30,40,50,60,70,80,90,25,75]);
+      return {q:`Переведи <b>${p}%</b> в десятичную дробь.`,a:num(p/100),sol:`${p} : 100 = ${num(p/100)}.`};}
+    const b=pick(r,[2,4,5,10,20,25,50]);const a=ri(r,1,b-1);
+    return {q:`Переведи дробь <b>${a}/${b}</b> в проценты. (ответ — число процентов)`,a:num(a*100/b),sol:`${a}/${b} = ${num(a/b)}; ${num(a/b)} · 100 = ${num(a*100/b)}%.`};
+  }
+  if(level==='B'){
+    const t=ri(r,0,2);
+    if(t===0){const d=pick(r,[0.125,0.375,0.625,0.875,0.05,0.02,0.04,0.16]);
+      return {q:`Переведи число <b>${d}</b> в проценты. (ответ — число процентов)`,a:num(d*100),sol:`${d} · 100 = ${num(d*100)}%.`};}
+    if(t===1){const p=pick(r,[6,8,12,14,16,22,28,32,44,56]);
+      return {q:`Переведи <b>${p}%</b> в десятичную дробь.`,a:num(p/100),sol:`${p} : 100 = ${num(p/100)}.`};}
+    const b=pick(r,[8,16,40,80]);const a=ri(r,1,b-1);
+    return {q:`Переведи дробь <b>${a}/${b}</b> в проценты. (ответ — число процентов)`,a:num(a*100/b),sol:`${a}/${b} = ${num(a/b)}; · 100 → ${num(a*100/b)}%.`};
+  }
+  const t=ri(r,0,3);
+  if(t===0){const b=pick(r,[3,6,7,9,11,13]);const a=ri(r,1,b-1);const val=Math.round(a*100/b);
+    return {q:`Переведи дробь <b>${a}/${b}</b> в проценты. Ответ округли до целых.`,a:val,sol:`${a}/${b} ≈ ${num(a/b)}; ${num(a*100/b)}% ≈ ${val}%.`};}
+  if(t===1){const d=pick(r,[0.045,0.005,1.4,0.875,3.25,0.0025]);
+    return {q:`Переведи число <b>${d}</b> в проценты. (ответ — число процентов)`,a:num(d*100),sol:`${d} · 100 = ${num(d*100)}%.`};}
+  if(t===2){const p=pick(r,[0.5,1.5,2.4,7.5,12.5,0.25,3.75,0.05]);
+    return {q:`Переведи <b>${p}%</b> в десятичную дробь.`,a:num(p/100),sol:`${p} : 100 = ${num(p/100)}.`};}
+  const d=pick(r,[0.04,0.75,1.2,0.008,2.05]);
+  return {q:`Переведи число <b>${d}</b> в проценты. (ответ — число процентов)`,a:num(d*100),sol:`${d} · 100 = ${num(d*100)}%.`};
+};
+
+G[3]=function(level,r){
+  let Ns,Ps;
+  if(level==='A'){Ns=[40,60,80,120,150,200,300,400];Ps=[10,20,25,50];}
+  else if(level==='B'){Ns=[120,180,240,360,480,600];Ps=[15,30,35,45];}
+  else{Ns=[400,500,600,800,1000];Ps=[12,18,24,36];}
+  const N=pick(r,Ns),p=pick(r,Ps),t=ri(r,0,2);
+  const a=num(N*p/100);
+  if(t===0) return {q:`Найди <b>${p}%</b> от числа ${N}.`,a,sol:`${N} · ${p}/100 = ${a}.`};
+  if(t===1) return {q:`Сколько процентов составляет число <b>${a}</b> от числа <b>${N}</b>? (ответ — число процентов)`,a:p,sol:`${a} : ${N} · 100 = ${p}%.`};
+  return {q:`<b>${p}%</b> некоторого числа равны <b>${a}</b>. Найди это число.`,a:N,sol:`${a} : ${p}/100 = ${a} · 100/${p} = ${N}.`};
+};
+
+G[4]=function(level,r){
+  let Ns,Ps;
+  if(level==='A'){Ns=[200,400,500,800,1000];Ps=[10,20,25,50];}
+  else if(level==='B'){Ns=[240,360,480,720,1200];Ps=[15,30,35,45];}
+  else{Ns=[1250,2400,3600,4800];Ps=[12,18,24,36];}
+  const N=pick(r,Ns),p=pick(r,Ps),t=ri(r,0,2);
+  if(t===0){const res=num(N*(1+p/100));
+    return {q:`Число <b>${N}</b> увеличили на <b>${p}%</b>. Какое число получилось?`,a:res,sol:`${N} · (1 + ${p}/100) = ${N} · ${num(1+p/100)} = ${res}.`};}
+  if(t===1){const res=num(N*(1-p/100));
+    return {q:`Число <b>${N}</b> уменьшили на <b>${p}%</b>. Какое число получилось?`,a:res,sol:`${N} · (1 − ${p}/100) = ${N} · ${num(1-p/100)} = ${res}.`};}
+  const up=r()>0.5;
+  const res=num(up?N*(1+p/100):N*(1-p/100));
+  return {q:`Число изменилось с <b>${N}</b> на <b>${res}</b>. На сколько процентов оно ${up?'увеличилось':'уменьшилось'}? (ответ — число процентов)`,a:p,sol:`|${res} − ${N}| : ${N} · 100 = ${p}%.`};
+};
+
+G[5]=function(level,r){
+  let Cs,Ps,Ns;
+  if(level==='A'){Cs=[200,400,500,800,1000];Ps=[10,20,25,50];Ns=[20,40,60,80,100];}
+  else if(level==='B'){Cs=[600,900,1200,1500,2400];Ps=[15,30,35,45];Ns=[80,120,160,200,240];}
+  else{Cs=[800,1200,1600,2400,3600];Ps=[12,18,24,36];Ns=[150,250,400,500];}
+  const t=ri(r,0,4);
+  if(t===0){const C=pick(r,Cs),p=pick(r,Ps),disc=num(C*p/100);
+    return {q:`Товар стоит <b>${C} ₽</b>. Скидка — <b>${p}%</b>. Сколько рублей составляет скидка?`,a:disc,unit:' ₽',sol:`${C} · ${p}/100 = ${disc} ₽.`};}
+  if(t===1){const C=pick(r,Cs),p=pick(r,Ps),disc=num(C*p/100),res=num(C-disc);
+    return {q:`Товар стоит <b>${C} ₽</b>. Скидка — <b>${p}%</b>. Сколько стал стоить товар?`,a:res,unit:' ₽',sol:`Скидка: ${C} · ${p}/100 = ${disc} ₽. Новая цена: ${C} − ${disc} = ${res} ₽.`};}
+  if(t===2){const N=pick(r,Ns),p=pick(r,Ps),a=num(N*p/100);
+    return {q:`В классе <b>${N}</b> учеников, из них <b>${p}%</b> — девочки. Сколько девочек в классе?`,a,sol:`${N} · ${p}/100 = ${a}.`};}
+  if(t===3){const N=pick(r,Ns),p=pick(r,Ps),a=num(N*p/100);
+    return {q:`Из <b>${N}</b> деталей <b>${p}%</b> бракованные. Сколько бракованных деталей?`,a,sol:`${N} · ${p}/100 = ${a}.`};}
+  const C=pick(r,Cs),p=pick(r,Ps),res=num(C*(1+p/100));
+  return {q:`Цена товара была <b>${C} ₽</b>, потом выросла на <b>${p}%</b>. Сколько стал стоить товар?`,a:res,unit:' ₽',sol:`${C} · (1 + ${p}/100) = ${C} · ${num(1+p/100)} = ${res} ₽.`};
+};
+
+G[6]=function(level,r){
+  if(level==='A'){
+    const t=ri(r,0,2);
+    if(t===0){const P=pick(r,[1000,2000,5000,10000]),rr=pick(r,[5,10,20]);const res=num(P*(1+rr/100));
+      return {q:`Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых (простые проценты). Сколько денег будет на счёте через 1 год?`,a:res,unit:' ₽',sol:`${P} + ${P}·${rr}/100 = ${P} + ${num(P*rr/100)} = ${res} ₽.`};}
+    if(t===1){const D=pick(r,[1000,2000,5000,10000]),s=pick(r,[0.5,1,2]),n=pick(r,[5,10,20,30]);const pen=num(D*s/100*n);
+      return {q:`Долг <b>${D} ₽</b>. Пеня — <b>${s}%</b> в день. Какую пеню начислят за <b>${n}</b> дней?`,a:pen,unit:' ₽',sol:`${D} · ${s}/100 · ${n} = ${pen} ₽.`};}
+    const P=pick(r,[2000,4000,5000,8000]),rr=pick(r,[5,10,25]);const inc=num(P*rr/100);
+    return {q:`Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых. Сколько рублей процентов начислят за 1 год?`,a:inc,unit:' ₽',sol:`${P} · ${rr}/100 = ${inc} ₽.`};
+  }
+  if(level==='B'){
+    const t=ri(r,0,2);
+    if(t===0){const P=pick(r,[10000,15000,20000,25000]),rr=pick(r,[8,10,12]),n=pick(r,[2,3]);const res=num(P*(1+rr/100*n));
+      return {q:`Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых. Простые проценты. Сколько будет на счёте через <b>${n}</b> года?`,a:res,unit:' ₽',sol:`${P} · (1 + ${rr}/100 · ${n}) = ${P} · ${num(1+rr/100*n)} = ${res} ₽.`};}
+    if(t===1){const D=pick(r,[5000,8000,12000,25000]),s=pick(r,[0.1,0.2,0.5]),n=pick(r,[10,15,30,60]);const pen=num(D*s/100*n);
+      return {q:`Долг <b>${D} ₽</b>. Пеня — <b>${s}%</b> в день. Сколько составит пеня за <b>${n}</b> дней?`,a:pen,unit:' ₽',sol:`${D} · ${s}/100 · ${n} = ${pen} ₽.`};}
+    const S=pick(r,[12000,15000,24000,36000]),rr=pick(r,[10,12,20]),n=pick(r,[2,3]);
+    const P=num(S/(1+rr/100*n));
+    return {q:`Вклад под <b>${rr}%</b> годовых (простые проценты) через <b>${n}</b> года стал равен <b>${S} ₽</b>. Какая сумма была вложена?`,a:P,unit:' ₽',sol:`P · (1 + ${rr}/100·${n}) = ${S} ⇒ P = ${S} : ${num(1+rr/100*n)} = ${P} ₽.`};
+  }
+  const t=ri(r,0,2);
+  if(t===0){const P=pick(r,[15000,20000,25000,40000]),rr=pick(r,[6,8,9]),n=pick(r,[3,4]);const res=num(P*(1+rr/100*n));
+    return {q:`Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых. Простые проценты. Сколько будет через <b>${n}</b> года?`,a:res,unit:' ₽',sol:`${P} · (1 + ${rr}/100 · ${n}) = ${res} ₽.`};}
+  if(t===1){const D=pick(r,[12000,25000,40000]),s=pick(r,[0.05,0.1,0.2]),n=pick(r,[30,45,90]);const pen=num(D*s/100*n);
+    return {q:`Долг <b>${D} ₽</b>, пеня <b>${s}%</b> в день, просрочка <b>${n}</b> дней. Найди сумму пени.`,a:pen,unit:' ₽',sol:`${D} · ${s}/100 · ${n} = ${pen} ₽.`};}
+  const P=pick(r,[10000,20000,50000]),rr=pick(r,[6,8,12]),n=pick(r,[2,3]);
+  const inc=num(P*rr/100*n);
+  return {q:`Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых на <b>${n}</b> года (простые проценты). Сколько рублей составят начисленные проценты за весь срок?`,a:inc,unit:' ₽',sol:`За год: ${P}·${rr}/100 = ${num(P*rr/100)} ₽. За ${n} года: ${num(P*rr/100)}·${n} = ${inc} ₽.`};
+};
+
+/* ============ РЕНДЕР ЗАДАНИЯ ============ */
+function taskEl(task,n){
+  const div=document.createElement('div');
+  div.className='task';
+  div.innerHTML=`<div class="q"><span class="num">${n}.</span> ${task.q}</div>
+    <div class="row"><input type="text" inputmode="decimal" placeholder="Твой ответ"><button class="btn">Проверить</button><span class="mark"></span></div>
+    <div class="sol"></div>`;
+  const input=div.querySelector('input');
+  const mark=div.querySelector('.mark');
+  const sol=div.querySelector('.sol');
+  const btn=div.querySelector('button');
+  function doCheck(){
+    const v=parseAnswer(input.value);
+    const ok=checkAnswer(v,task.a);
+    mark.textContent=ok?'✔ Верно':'✘ Неверно';
+    mark.className='mark '+(ok?'ok':'bad');
+    sol.innerHTML=`<b>Правильный ответ:</b> ${fmt(task.a)}${task.unit||''}<br>${task.sol}`;
+    sol.classList.add('show');
+  }
+  btn.addEventListener('click',doCheck);
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')doCheck();});
+  return div;
+}
+
+/* ============ ПРАКТИКА ============ */
+function buildPractice(rootId,pid){
+  const root=document.getElementById(rootId);
+  ['A','B','C'].forEach(level=>{
+    const box=document.createElement('div');
+    box.className='level';
+    box.innerHTML=`<h3>Уровень ${level}</h3>
+      <div class="tasks"></div>
+      <div class="more"><button class="btn">Ещё 5 заданий</button><span class="cnt"></span></div>`;
+    root.appendChild(box);
+    const tasksBox=box.querySelector('.tasks');
+    const btn=box.querySelector('.more .btn');
+    const cnt=box.querySelector('.cnt');
+    let shown=0; const total=50;
+    function addBatch(){
+      const end=Math.min(shown+5,total);
+      for(let i=shown;i<end;i++){
+        const seed=pid*100000+level.charCodeAt(0)*1000+i*7+13;
+        const r=mulberry32(seed);
+        const task=G[pid](level,r);
+        tasksBox.appendChild(taskEl(task,i+1));
+      }
+      shown=end;
+      cnt.textContent=`показано ${shown} из ${total}`;
+      if(shown>=total){btn.disabled=true;btn.textContent='Показаны все 50 заданий';}
+    }
+    btn.addEventListener('click',addBatch);
+    addBatch();
+  });
+}
+
+/* ============ САМОСТОЯТЕЛЬНЫЕ РАБОТЫ ============ */
+function buildSR(rootId,gen){
+  const root=document.getElementById(rootId);
+  function render(){
+    root.innerHTML='';
+    const tasks=gen();
+    const list=document.createElement('div');
+    tasks.forEach((t,i)=>{
+      const div=document.createElement('div');
+      div.className='task';
+      div.innerHTML=`<div class="q"><span class="num">${i+1}.</span> ${t.q}</div>
+        <div class="row"><input type="text" inputmode="decimal" placeholder="Ответ"></div>`;
+      div.dataset.a=t.a;
+      div.dataset.sol=t.sol;
+      div.dataset.unit=t.unit||'';
+      list.appendChild(div);
+    });
+    const checkBtn=document.createElement('button');
+    checkBtn.className='btn'; checkBtn.textContent='Проверить работу'; checkBtn.style.marginTop='12px';
+    const againBtn=document.createElement('button');
+    againBtn.className='btn gray'; againBtn.textContent='Новый вариант'; againBtn.style.marginLeft='8px';
+    const out=document.createElement('div');
+    root.appendChild(list);
+    root.appendChild(checkBtn);
+    root.appendChild(againBtn);
+    root.appendChild(out);
+
+    checkBtn.addEventListener('click',()=>{
+      const items=list.querySelectorAll('.task');
+      let correct=0, review='';
+      items.forEach((it,idx)=>{
+        const v=parseAnswer(it.querySelector('input').value);
+        const a=Number(it.dataset.a);
+        const ok=checkAnswer(v,a);
+        if(ok) correct++;
+        review+=`<div class="it ${ok?'ok':'bad'}"><b>${idx+1}.</b> ${ok?'✔ верно':'✘ неверно'} — правильный ответ: <b>${fmt(a)}${it.dataset.unit}</b><br><span class="muted">${it.dataset.sol}</span></div>`;
+      });
+      const total=items.length;
+      const pct=Math.round(correct/total*100);
+      let mark=2;
+      if(pct>=90)mark=5; else if(pct>=70)mark=4; else if(pct>=50)mark=3;
+      out.innerHTML=`<div class="result">
+        <h3>Результат</h3>
+        <p>Верно: <b>${correct}</b> из <b>${total}</b> (${pct}%).</p>
+        <p>Оценка: <span class="mark-big">${mark}</span></p>
+        <div class="crit">
+          <b>Критерии оценивания:</b><br>
+          «5» — 90–100% верных заданий (9–10 из 10);<br>
+          «4» — 70–89% (7–8 из 10);<br>
+          «3» — 50–69% (5–6 из 10);<br>
+          «2» — менее 50% (0–4 из 10).
+        </div>
+        <h3>Разбор ошибок</h3>
+        <div class="review">${review}</div>
+      </div>`;
+      out.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    againBtn.addEventListener('click',()=>render());
+  }
+  render();
+}
+
+function makeSR1(){
+  const T=[];
+  {
+    const p=R.pick([10,15,20,25,30,40,50,60]);
+    const N=R.pick([80,120,160,200,240,300,400]);
+    const a=R.num(N*p/100);
+    T.push({q:`Найди ${p}% от числа ${N}.`,a,sol:`${N} · ${p}/100 = ${a}.`});
+  }
+  {
+    const p=R.pick([10,20,25,40,50]);
+    const N=R.pick([100,120,200,240,400,500]);
+    const a=R.num(N*p/100);
+    T.push({q:`Сколько процентов составляет число ${a} от числа ${N}?`,a:p,sol:`${a} : ${N} · 100 = ${p}%.`});
+  }
+  {
+    const p=R.pick([10,20,25,40,50]);
+    const N=R.pick([100,120,200,240,400,500]);
+    const a=R.num(N*p/100);
+    T.push({q:`${p}% некоторого числа равны ${a}. Найди это число.`,a:N,sol:`${a} : ${p}/100 = ${a} · 100/${p} = ${N}.`});
+  }
+  {
+    const N=R.pick([200,400,500,800,1000]);
+    const p=R.pick([10,20,25,50]);
+    const res=R.num(N*(1+p/100));
+    T.push({q:`Число ${N} увеличили на ${p}%. Какое число получилось?`,a:res,sol:`${N} · (1 + ${p}/100) = ${res}.`});
+  }
+  {
+    const N=R.pick([200,400,500,800,1000]);
+    const p=R.pick([10,20,25,50]);
+    const res=R.num(N*(1-p/100));
+    T.push({q:`Число ${N} уменьшили на ${p}%. Какое число получилось?`,a:res,sol:`${N} · (1 − ${p}/100) = ${res}.`});
+  }
+  {
+    const N=R.pick([200,400,500,800]);
+    const p=R.pick([10,20,25,50]);
+    const res=R.num(N*(1+p/100));
+    T.push({q:`Число изменилось с ${N} на ${res}. На сколько процентов оно увеличилось?`,a:p,sol:`(${res} − ${N}) : ${N} · 100 = ${p}%.`});
+  }
+  {
+    const b=R.pick([2,4,5,10,20,25,50]);
+    const a=R.int(1,b-1);
+    T.push({q:`Переведи дробь ${a}/${b} в проценты. (ответ — число процентов)`,a:R.num(a*100/b),sol:`${a}/${b} · 100 = ${R.num(a*100/b)}%.`});
+  }
+  {
+    const p=R.pick([5,12,15,24,36,45,65,75]);
+    T.push({q:`Запиши ${p}% в виде десятичной дроби.`,a:R.num(p/100),sol:`${p} : 100 = ${R.num(p/100)}.`});
+  }
+  {
+    const C=R.pick([400,600,800,1200,1500,2000]);
+    const p=R.pick([10,15,20,25,30]);
+    const res=R.num(C*(1-p/100));
+    T.push({q:`Товар стоит ${C} ₽. Скидка ${p}%. Сколько стал стоить товар? (ответ в рублях)`,a:res,unit:' ₽',sol:`Скидка: ${C}·${p}/100 = ${R.num(C*p/100)} ₽; новая цена: ${C} − ${R.num(C*p/100)} = ${res} ₽.`});
+  }
+  {
+    const C=R.pick([500,800,1000,1600]);
+    const p=R.pick([10,20,25,50]);
+    const res=R.num(C*(1+p/100));
+    T.push({q:`Цена товара была ${C} ₽, потом выросла на ${p}%. Сколько стал стоить товар? (ответ в рублях)`,a:res,unit:' ₽',sol:`${C} · (1 + ${p}/100) = ${res} ₽.`});
+  }
+  return T;
+}
+
+function makeSR2(){
+  const T=[];
+  {
+    const C=R.pick([600,900,1200,1500,2000,2400]);
+    const p=R.pick([10,15,20,25,30]);
+    const res=R.num(C*(1-p/100));
+    T.push({q:`Товар стоит ${C} ₽. Скидка ${p}%. Сколько стал стоить товар? (ответ в рублях)`,a:res,unit:' ₽',sol:`${C} − ${C}·${p}/100 = ${res} ₽.`});
+  }
+  {
+    const C=R.pick([400,500,800,1000,1200]);
+    const p=R.pick([10,20,25,40,50]);
+    const d=R.num(C*p/100);
+    T.push({q:`Товар стоил ${C} ₽, а стал стоить ${R.num(C-d)} ₽. Сколько процентов составила скидка? (ответ — число процентов)`,a:p,sol:`Скидка: ${C} − ${R.num(C-d)} = ${d} ₽; ${d} : ${C} · 100 = ${p}%.`});
+  }
+  {
+    const P=R.pick([1000,2000,5000,10000,15000]);
+    const rr=R.pick([5,8,10,12,20]);
+    const res=R.num(P*(1+rr/100));
+    T.push({q:`Вклад ${P} ₽ под ${rr}% годовых (простые проценты). Сколько будет на счёте через год? (ответ в рублях)`,a:res,unit:' ₽',sol:`${P} + ${P}·${rr}/100 = ${res} ₽.`});
+  }
+  {
+    const P=R.pick([5000,10000,15000,20000]);
+    const rr=R.pick([6,8,10,12]);
+    const n=R.int(2,3);
+    const res=R.num(P*(1+rr/100*n));
+    T.push({q:`Вклад ${P} ₽ под ${rr}% годовых. Простые проценты. Сколько будет на счёте через ${n} года? (ответ в рублях)`,a:res,unit:' ₽',sol:`${P}·(1 + ${rr}/100·${n}) = ${res} ₽.`});
+  }
+  {
+    const D=R.pick([1000,2000,5000,8000]);
+    const s=R.pick([0.5,1,2]);
+    const n=R.pick([5,10,20,30]);
+    const pen=R.num(D*s/100*n);
+    T.push({q:`Долг ${D} ₽, пеня ${s}% в день. Какую пеню начислят за ${n} дней? (ответ в рублях)`,a:pen,unit:' ₽',sol:`${D} · ${s}/100 · ${n} = ${pen} ₽.`});
+  }
+  {
+    const C=R.pick([400,600,800,1000,1200]);
+    const p=R.pick([10,20,25,50]);
+    const S=R.num(C*(1+p/100));
+    T.push({q:`После подорожания на ${p}% товар стал стоить ${S} ₽. Сколько он стоил до подорожания? (ответ в рублях)`,a:C,unit:' ₽',sol:`${S} : (1 + ${p}/100) = ${S} : ${R.num(1+p/100)} = ${C} ₽.`});
+  }
+  {
+    const N=R.pick([200,400,500,800,1000]);
+    const p=R.pick([2,4,5,10,15]);
+    const a=R.num(N*p/100);
+    T.push({q:`Из ${N} деталей ${p}% бракованные. Сколько бракованных деталей?`,a,sol:`${N}·${p}/100 = ${a}.`});
+  }
+  {
+    const P=R.pick([4000,5000,8000,10000]);
+    const rr=R.pick([5,10,15,20]);
+    const inc=R.num(P*rr/100);
+    T.push({q:`Вклад ${P} ₽ под ${rr}% годовых. Сколько рублей процентов начислят за год? (ответ в рублях)`,a:inc,unit:' ₽',sol:`${P}·${rr}/100 = ${inc} ₽.`});
+  }
+  {
+    const D=R.pick([3000,6000,12000]);
+    const s=R.pick([0.1,0.2,0.5]);
+    const n=R.pick([15,45,60]);
+    const pen=R.num(D*s/100*n);
+    T.push({q:`Долг ${D} ₽, просрочка ${n} дней, пеня ${s}% в день. Найди сумму пени. (ответ в рублях)`,a:pen,unit:' ₽',sol:`${D} · ${s}/100 · ${n} = ${pen} ₽.`});
+  }
+  {
+    const C=R.pick([800,1200,1600,2000]);
+    const p=R.pick([10,20,25]);
+    const S=R.num(C*(1+p/100));
+    T.push({q:`Цена товара выросла на ${p}% и стала ${S} ₽. На сколько рублей выросла цена? (ответ в рублях)`,a:R.num(S-C),unit:' ₽',sol:`Старая цена: ${S} : ${R.num(1+p/100)} = ${C} ₽. Прирост: ${S} − ${C} = ${R.num(S-C)} ₽.`});
+  }
+  return T;
+}
+
+/* ============ НАВИГАЦИЯ ============ */
+const PAGES=[
+  ['t1','1. Процент'],['p1','Практика 1'],
+  ['t2','2. Перевод'],['p2','Практика 2'],
+  ['t3','3. Три задачи'],['p3','Практика 3'],
+  ['t4','4. Изменение'],['p4','Практика 4'],
+  ['sr1','С/р №1'],
+  ['t5','5. Задачи'],['p5','Практика 5'],
+  ['t6','6. Вклады'],['p6','Практика 6'],
+  ['sr2','С/р №2']
+];
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const nav=document.getElementById('nav');
+  PAGES.forEach(([id,title])=>{
+    const b=document.createElement('button');
+    b.textContent=title;
+    b.dataset.id=id;
+    b.addEventListener('click',()=>{location.hash=id;});
+    nav.appendChild(b);
+  });
+  function show(id){
+    if(!document.getElementById(id)) id='t1';
+    document.querySelectorAll('.page').forEach(s=>s.classList.toggle('active',s.id===id));
+    document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+    window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',()=>show(location.hash.slice(1)));
+  show(location.hash.slice(1)||'t1');
+
+  [1,2,3,4,5,6].forEach(pid=>buildPractice('p'+pid+'-root',pid));
+  buildSR('sr1-root',makeSR1);
+  buildSR('sr2-root',makeSR2);
+});
+</script>
+</body>
+</html>
