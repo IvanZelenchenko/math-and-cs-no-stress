@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3. Три типа задач на проценты</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Тот же CSS */
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(140deg,#eef4ff 0%,#fdf0ff 50%,#e8fbff 100%);font-family:'Rubik',sans-serif;color:#1d2b3a;padding:2rem 1.2rem 5rem;display:flex;justify-content:center;line-height:1.6}
+.wrap{max-width:1020px;width:100%}
+h1{font-family:'Montserrat',sans-serif;font-weight:800;font-size:2.2rem;background:linear-gradient(135deg,#2b3a8c,#1e8f9e);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:.3rem;text-align:center}
+.subtitle{text-align:center;color:#4a5f78;font-size:1.05rem;margin-bottom:1.5rem;font-weight:500}
+nav.top-nav{position:sticky;top:10px;z-index:50;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:1.5rem;background:#ffffffcc;backdrop-filter:blur(8px);border-radius:20px;padding:.6rem .8rem;border:1px solid #cfe2ff;box-shadow:0 8px 20px -10px rgba(20,60,120,.25)}
+nav.top-nav a{text-decoration:none;padding:.4rem .9rem;border-radius:12px;font-size:.9rem;font-weight:600;color:#4a5f78;background:#fff;border:1px solid #d6e8ff;transition:.15s}
+nav.top-nav a:hover{background:#eef5ff;color:#4a90e2}
+nav.top-nav a.active{background:linear-gradient(135deg,#4a90e2,#3a6fd8);color:#fff;border-color:transparent;box-shadow:0 3px 0 #2a4f9e}
+.card{background:#ffffffdd;backdrop-filter:blur(10px);border-radius:24px;padding:1.6rem 1.8rem;border:1px solid #cfe2ff;box-shadow:0 14px 30px -14px rgba(20,60,120,.25);position:relative;overflow:hidden;margin-bottom:1.3rem}
+.card::before{content:"";position:absolute;top:0;left:0;width:100%;height:6px;background:linear-gradient(90deg,#a1c4fd,#c2e9fb)}
+.card:nth-of-type(2)::before{background:linear-gradient(90deg,#fbc2eb,#a6c1ee)}
+.card:nth-of-type(3)::before{background:linear-gradient(90deg,#84fab0,#8fd3f4)}
+.card:nth-of-type(4)::before{background:linear-gradient(90deg,#fccb90,#d57eeb)}
+.card h3{font-family:'Montserrat',sans-serif;font-weight:700;font-size:1.15rem;color:#173a5e;margin-bottom:.8rem}
+.card p{margin-bottom:.6rem;font-size:1.02rem}
+.card p:last-child{margin-bottom:0}
+.formula{background:#eff6ff;border-left:5px solid #4a90e2;padding:.9rem 1.2rem;border-radius:12px;margin:.7rem 0;font-size:1.05rem;font-family:'Montserrat',sans-serif;font-weight:600;color:#0b4a7a;text-align:center}
+.level{margin-bottom:1.5rem}
+.level-header{display:inline-block;padding:.4rem 1rem;border-radius:20px;color:#fff;font-family:'Montserrat',sans-serif;font-weight:800;font-size:.95rem;margin-bottom:.8rem;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.lv-a{background:linear-gradient(135deg,#2fbf71,#1e8a4f)}
+.lv-b{background:linear-gradient(135deg,#f2a03d,#d97a12)}
+.lv-c{background:linear-gradient(135deg,#e0644d,#b02a2a)}
+.task{background:#ffffffdd;backdrop-filter:blur(8px);border-radius:18px;padding:1rem 1.3rem;margin-bottom:.8rem;border:1px solid #cfe2ff;box-shadow:0 6px 16px -10px rgba(20,60,120,.2)}
+.task .q{font-size:1rem;color:#173a5e;margin-bottom:.7rem;font-weight:500}
+.task .num{font-family:'Montserrat',sans-serif;font-weight:800;color:#4a90e2;margin-right:4px}
+.task .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.task input[type=text]{flex:1;min-width:140px;padding:.6rem 1rem;border:2px solid #bcd4f0;border-radius:12px;font-family:'Rubik',sans-serif;font-size:1rem;background:#fff;transition:.15s}
+.task input[type=text]:focus{outline:none;border-color:#4a90e2;box-shadow:0 0 0 3px #4a90e233}
+.task .check-btn{padding:.6rem 1.2rem;border:none;border-radius:12px;background:linear-gradient(135deg,#4a90e2,#3a6fd8);color:#fff;font-family:'Rubik',sans-serif;font-weight:600;font-size:.92rem;cursor:pointer;box-shadow:0 4px 0 #2a4f9e;transition:.1s}
+.task .check-btn:hover{transform:translateY(-1px);box-shadow:0 5px 0 #2a4f9e}
+.task .check-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #2a4f9e}
+.mark{font-weight:700;font-size:.95rem}
+.mark.ok{color:#15623b}
+.mark.bad{color:#8a2c1c}
+.sol{display:none;margin-top:.7rem;padding:.7rem 1rem;background:#f4f9ff;border-radius:12px;border:1px dashed #b3d4f0;font-size:.95rem;color:#2c3e50}
+.sol.show{display:block}
+.more{display:flex;align-items:center;gap:10px;margin:.8rem 0 1.5rem;flex-wrap:wrap}
+.more-btn{padding:.7rem 1.4rem;border:none;border-radius:14px;background:linear-gradient(135deg,#f2a03d,#d97a12);color:#fff;font-family:'Rubik',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 4px 0 #a05a0c;transition:.1s}
+.more-btn:hover{transform:translateY(-1px);box-shadow:0 5px 0 #a05a0c}
+.more-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #a05a0c}
+.more-btn:disabled{background:#b8c4d0;box-shadow:0 4px 0 #8a98a6;cursor:not-allowed}
+.cnt{font-size:.88rem;color:#5a6f88;font-weight:600}
+.mini-check{background:#ffffffdd;border-radius:24px;padding:1.6rem 1.8rem;margin-top:1.3rem;border:2px dashed #b3d4f0}
+.mini-check .mc-title{font-family:'Montserrat',sans-serif;font-weight:700;font-size:1.15rem;color:#173a5e;margin-bottom:1rem}
+.mini-check .q-row{margin-bottom:.9rem}
+.mini-check .q-label{font-weight:600;color:#173a5e;margin-bottom:.3rem;display:block;font-size:1rem}
+.mini-check input[type=text]{font-family:'Rubik',sans-serif;font-size:1rem;padding:.55rem 1rem;border-radius:14px;border:2px solid #bcd4f0;outline:none;background:#fff;min-width:160px;transition:.15s}
+.mini-check input[type=text]:focus{border-color:#4a90e2;box-shadow:0 0 0 3px #4a90e233}
+.check-all-btn{font-family:'Rubik',sans-serif;font-weight:600;font-size:1rem;padding:.7rem 1.6rem;border:none;border-radius:14px;background:linear-gradient(135deg,#4a90e2,#3a6fd8);color:white;cursor:pointer;box-shadow:0 4px 0 #2a4f9e;transition:.1s;margin-top:.6rem}
+.check-all-btn:hover{transform:translateY(-1px);box-shadow:0 5px 0 #2a4f9e}
+.check-all-btn:active{transform:translateY(2px);box-shadow:0 2px 0 #2a4f9e}
+.mc-fb{margin-top:1rem;border-radius:14px;padding:.9rem 1.2rem;font-size:.98rem;display:none}
+.mc-fb.show{display:block}
+.mc-fb.ok{background:#e3f9ec;border-left:8px solid #2fbf71;color:#15623b}
+.mc-fb.err{background:#ffefec;border-left:8px solid #e0644d;color:#8a2c1c}
+.next-step-container{text-align:center;margin:2rem 0}
+.btn-next{display:inline-block;background:linear-gradient(135deg,#2fbf71,#1f9e58);color:white;padding:1rem 2.5rem;border-radius:40px;font-size:1.15rem;font-weight:700;text-decoration:none;box-shadow:0 6px 0 #157040;border:1px solid #6effb0;transition:.15s;font-family:'Montserrat',sans-serif}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 0 #157040}
+.btn-next:active{transform:translateY(4px);box-shadow:0 2px 0 #157040}
+.btn-next.home{background:linear-gradient(135deg,#4a90e2,#3a6fd8);box-shadow:0 6px 0 #2a4f9e;border-color:#8cbeff}
+.footer-note{text-align:right;margin-top:2.5rem;font-size:1rem;color:#3b5c7a;font-weight:500;border-top:2px solid #cfe4ff;padding-top:1.2rem}
+.footer-note span{opacity:.7}
+@media(max-width:600px){body{padding:1.2rem .7rem 4rem}h1{font-size:1.7rem}.card{padding:1.3rem 1.2rem}nav.top-nav a{padding:.35rem .7rem;font-size:.85rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>3️⃣ Три типа задач на проценты</h1>
+  <p class="subtitle">Проценты — интерактивный курс · урок 3 из 6</p>
+
+  <nav class="top-nav">
+    <a href="index.html">Меню</a>
+    <a href="01-chto-takoe-procent.html">1</a>
+    <a href="02-perevod.html">2</a>
+    <a href="03-tri-tipa.html">3</a>
+    <a href="04-izmenenie.html">4</a>
+    <a href="05-zadachi.html">5</a>
+    <a href="06-vklady.html">6</a>
+    <a href="samostoyatelnye.html">С/р</a>
+  </nav>
+
+  <div class="card">
+    <h3>1️⃣ Тип 1. Найти p% от числа N</h3>
+    <div class="formula">a = N · p / 100</div>
+    <p>Пример: 20% от 150 → 150 · 20 / 100 = 30.</p>
+  </div>
+
+  <div class="card">
+    <h3>2️⃣ Тип 2. Сколько процентов число a составляет от числа b</h3>
+    <div class="formula">p = a / b · 100</div>
+    <p>Пример: 30 от 150 → 30 / 150 · 100 = 20%.</p>
+  </div>
+
+  <div class="card">
+    <h3>3️⃣ Тип 3. Найти число N, если p% от него равны a</h3>
+    <div class="formula">N = a : (p/100) = a · 100 / p</div>
+    <p>Пример: 20% числа равны 30 → 30 · 100 / 20 = 150.</p>
+  </div>
+
+  <div class="card">
+    <h3>💡 Как отличить типы?</h3>
+    <p>Смотрим, что неизвестно:</p>
+    <ul style="list-style:none;padding-left:0;margin-top:.6rem">
+      <li style="padding:.3rem 0;"><b>часть</b> → тип 1 (найти p% от N)</li>
+      <li style="padding:.3rem 0;"><b>процент</b> → тип 2 (сколько % от целого)</li>
+      <li style="padding:.3rem 0;"><b>целое</b> → тип 3 (найти N по проценту)</li>
+    </ul>
+  </div>
+
+  <div class="mini-check">
+    <div class="mc-title">✅ Проверь себя</div>
+    <div class="q-row">
+      <label class="q-label">1. Найди 20% от 150.</label>
+      <input type="text" id="q1" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">2. Сколько процентов составляет 30 от 150?</label>
+      <input type="text" id="q2" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">3. 20% числа равны 30. Найди число.</label>
+      <input type="text" id="q3" placeholder="число" autocomplete="off">
+    </div>
+    <div class="q-row">
+      <label class="q-label">4. Найди 5% от 400.</label>
+      <input type="text" id="q4" placeholder="число" autocomplete="off">
+    </div>
+    <button class="check-all-btn" onclick="checkMini()">Проверить</button>
+    <div class="mc-fb" id="mini-fb"></div>
+  </div>
+
+  <h2 style="font-family:'Montserrat',sans-serif;color:#173a5e;margin:1.8rem 0 1rem;font-size:1.4rem;">🏋️ Практика</h2>
+  <p style="color:#5a6f88;margin-bottom:1rem;font-size:.95rem;">Три уровня сложности. В каждом уровне 50 уникальных заданий, которые открываются по 5.</p>
+  <div id="practice-root"></div>
+
+  <div class="next-step-container" id="nextLevelContainer"></div>
+
+  <div class="footer-note">
+    ✨ Проценты · урок 3 «Три типа задач» ✨<br>
+    <span>(интерактивный курс по математике)</span>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+
+function checkMini() {
+  const p = id => parseFloat(String(document.getElementById(id).value).replace(',', '.'));
+  const ok1 = Math.abs(p('q1') - 30) < 0.01;
+  const ok2 = Math.abs(p('q2') - 20) < 0.01;
+  const ok3 = Math.abs(p('q3') - 150) < 0.01;
+  const ok4 = Math.abs(p('q4') - 20) < 0.01;
+  const okCount = [ok1, ok2, ok3, ok4].filter(Boolean).length;
+  const fb = document.getElementById('mini-fb');
+  fb.classList.add('show');
+  if (okCount === 4) {
+    fb.className = 'mc-fb show ok';
+    fb.innerHTML = '🎉 Отлично! Все 4 ответа верные.';
+  } else {
+    fb.className = 'mc-fb show err';
+    let msg = `Правильно: ${okCount} из 4. `;
+    if (!ok1) msg += '№1: 150 · 20/100 = 30. ';
+    if (!ok2) msg += '№2: 30 / 150 · 100 = 20%. ';
+    if (!ok3) msg += '№3: 30 · 100 / 20 = 150. ';
+    if (!ok4) msg += '№4: 400 · 5/100 = 20. ';
+    fb.innerHTML = msg;
+  }
+}
+
+const ri = (r,a,b) => a + Math.floor(r()*(b-a+1));
+const pk = (r,a) => a[Math.floor(r()*a.length)];
+const num = x => Number(x.toFixed(6));
+function seed(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function pA(s){if(s==null)return null;s=String(s).trim().replace(/\s+/g,'').replace(',','.').replace(/%|₽|руб\.?|рублей/gi,'');if(!s)return null;const v=parseFloat(s);return isNaN(v)?null:v}
+function ck(v,a){if(v===null||a==null)return false;const t=Math.abs(a)>=1?0.011:Math.max(Math.abs(a)*0.02,1e-7);return Math.abs(v-a)<=t}
+function fm(x){return String(Number(x.toFixed(6)))}
+
+function genT3(L,r){
+  let Ns,Ps;
+  if(L==='A'){Ns=[40,60,80,120,150,200,300,400,500,600];Ps=[10,20,25,50]}
+  else if(L==='B'){Ns=[120,180,240,360,480,600,720];Ps=[15,30,35,45]}
+  else{Ns=[400,500,600,800,1000,1200];Ps=[12,18,24,36]}
+  const N=pk(r,Ns),p=pk(r,Ps),t=ri(r,0,2),a=num(N*p/100);
+  if(t===0)return{q:`Найди <b>${p}%</b> от числа ${N}.`,a,sol:`${N} · ${p}/100 = ${a}.`};
+  if(t===1)return{q:`Сколько процентов составляет число <b>${a}</b> от числа <b>${N}</b>? (ответ — число процентов)`,a:p,sol:`${a} : ${N} · 100 = ${p}%.`};
+  return{q:`<b>${p}%</b> некоторого числа равны <b>${a}</b>. Найди это число.`,a:N,sol:`${a} : ${p}/100 = ${a} · 100/${p} = ${N}.`};
+}
+
+function buildBank(L,target=50){
+  const base={A:1,B:2,C:3}[L]*10000+17;
+  const bank=[],seen=new Set();
+  for(let i=0;i<target*400 && bank.length<target;i++){
+    const task=genT3(L,seed(base+i));
+    if(!task.q||seen.has(task.q))continue;
+    seen.add(task.q);bank.push(task);
+  }
+  return bank;
+}
+
+function taskEl(t,k){
+  const d=document.createElement('div');d.className='task';
+  d.innerHTML=`<div class="q"><span class="num">${k}.</span> ${t.q}</div><div class="row"><input type="text" inputmode="decimal" placeholder="Твой ответ"><button class="check-btn">Проверить</button><span class="mark"></span></div><div class="sol"></div>`;
+  const inp=d.querySelector('input'),m=d.querySelector('.mark'),s=d.querySelector('.sol'),b=d.querySelector('.check-btn');
+  function c(){const v=pA(inp.value),ok=ck(v,t.a);m.textContent=ok?'✔ Верно':'✘ Неверно';m.className='mark '+(ok?'ok':'bad');s.innerHTML=`<b>Ответ:</b> ${fm(t.a)}<br>${t.sol}`;s.classList.add('show')}
+  b.addEventListener('click',c);inp.addEventListener('keydown',e=>{if(e.key==='Enter')c()});
+  return d;
+}
+
+function initPractice(){
+  const root=document.getElementById('practice-root');
+  const levelNames={A:'🟢 Уровень A — разминка',B:'🟡 Уровень B — средний',C:'🔴 Уровень C — повышенный'};
+  ['A','B','C'].forEach(L=>{
+    const bank=buildBank(L,50);
+    const box=document.createElement('div');box.className='level';
+    box.innerHTML=`<div class="level-header lv-${L.toLowerCase()}">${levelNames[L]}</div><div class="tasks"></div><div class="more"><button class="more-btn">➕ Ещё 5 заданий</button><span class="cnt"></span></div>`;
+    root.appendChild(box);
+    const tb=box.querySelector('.tasks'),btn=box.querySelector('.more-btn'),cnt=box.querySelector('.cnt');
+    let shown=0;const total=bank.length;
+    function add(){const end=Math.min(shown+5,total);for(let i=shown;i<end;i++)tb.appendChild(taskEl(bank[i],i+1));shown=end;cnt.textContent=`показано ${shown} из ${total}`;if(shown>=total){btn.disabled=true;btn.textContent='✅ Показаны все задания'}}
+    btn.addEventListener('click',add);add();
+  });
+}
+
+async function loadNextButton() {
+  const container = document.getElementById('nextLevelContainer');
+  if (!container) return;
+  const cur = location.pathname.split('/').pop() || 'index.html';
+  const fallbackMap = {
+    '01-chto-takoe-procent.html': '02-perevod.html',
+    '02-perevod.html': '03-tri-tipa.html',
+    '03-tri-tipa.html': '04-izmenenie.html'
+  };
+  container.innerHTML = '<span style="color:#5a6f88;">Поиск следующего урока...</span>';
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=getTopics`);
+    const data = await resp.json();
+    if (data.ok) {
+      const t = data.topics.find(x => x.file === cur);
+      if (t && t.next) { container.innerHTML = `<a href="${t.next}" class="btn-next">Следующий урок →</a>`; return; }
+    }
+    const fb = fallbackMap[cur];
+    container.innerHTML = fb ? `<a href="${fb}" class="btn-next">Следующий урок →</a>` : `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+  } catch (e) {
+    const fb = fallbackMap[cur];
+    container.innerHTML = fb ? `<a href="${fb}" class="btn-next">Следующий урок →</a>` : `<a href="index.html" class="btn-next home">На главную 🏠</a>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const cur = location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('nav.top-nav a').forEach(a => { if (a.getAttribute('href') === cur) a.classList.add('active'); });
+  initPractice();
+  loadNextButton();
+});
+</script>
+</body>
+</html>
