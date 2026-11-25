@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Самостоятельная работа: Проценты</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: linear-gradient(140deg, #eef4ff 0%, #f9f0ff 50%, #e8fbff 100%);
+    font-family: 'Rubik', sans-serif;
+    color: #1d2b3a;
+    padding: 2rem 1.2rem 6rem;
+    display: flex;
+    justify-content: center;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; width: 100%; }
+  h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 2.1rem;
+    background: linear-gradient(135deg, #2b3a8c, #2a8f9e);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin-bottom: 0.3rem;
+  }
+  .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.4rem; }
+
+  /* ---------- АВТОРИЗАЦИЯ ---------- */
+  .auth-box {
+    background: #ffffffdd;
+    backdrop-filter: blur(8px);
+    border-radius: 28px;
+    padding: 2.5rem 2rem;
+    border: 1px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .auth-box h2 { color: #173a5e; margin-bottom: 1rem; font-family: 'Montserrat', sans-serif; text-align: center; }
+  .auth-box p { color: #4a5f78; margin-bottom: 1.5rem; text-align: center; }
+  .auth-row { margin-bottom: 1.2rem; text-align: left; }
+  .auth-row label { display: block; font-weight: 600; margin-bottom: 0.3rem; color: #173a5e; }
+  .auth-row input {
+    width: 100%; padding: 0.8rem 1rem; border-radius: 14px;
+    border: 2px solid #bcd4f0; font-size: 1.05rem; font-family: 'Rubik', sans-serif;
+  }
+  .auth-row input:focus { outline: none; border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .auth-error { color: #d9544d; font-weight: 600; margin-bottom: 1rem; min-height: 1.2rem; display: none; text-align: center; }
+  .auth-error.show { display: block; }
+  .btn-start {
+    width: 100%; padding: 1rem; border-radius: 16px; font-size: 1.2rem;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    border: none; font-weight: 700; font-family: 'Rubik', sans-serif;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    margin-bottom: 1.5rem;
+  }
+  .btn-start:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-start:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-start:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+  .btn-home {
+    display: block; width: 100%; text-align: center; text-decoration: none;
+    padding: 0.8rem; border-radius: 16px; font-size: 1rem;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    font-weight: 600; box-shadow: 0 5px 0 #445566; transition: 0.1s;
+  }
+  .btn-home:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+
+  /* ---------- КРИТЕРИИ ---------- */
+  .criteria {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.2rem 1.6rem; margin-bottom: 1.6rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 10px 24px -12px rgba(20, 60, 120, 0.2);
+    display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: center;
+  }
+  .criteria .crit-title { font-weight: 700; color: #173a5e; font-size: 1.05rem; width: 100%; margin-bottom: 0.2rem; }
+  .crit-item { display: flex; align-items: center; gap: 8px; font-weight: 500; font-size: 0.98rem; }
+  .crit-mark { font-weight: 800; font-size: 1.1rem; color: #fff; padding: 0.15rem 0.7rem; border-radius: 30px; }
+  .mark5 { background: #2fbf71; } .mark4 { background: #4a90e2; }
+  .mark3 { background: #f2a03d; } .mark2 { background: #d9544d; }
+
+  /* ---------- ТАЙМЕР ---------- */
+  .timer-bar {
+    position: sticky; top: 10px; z-index: 50;
+    background: #ffffffec; backdrop-filter: blur(8px);
+    border-radius: 20px; padding: 0.8rem 1.6rem; margin-bottom: 1.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px; border: 1px solid #cfe2ff;
+    box-shadow: 0 8px 20px -10px rgba(20, 60, 120, 0.3); flex-wrap: wrap;
+  }
+  .timer-label { font-weight: 600; color: #173a5e; }
+  .timer-value {
+    font-family: 'Montserrat', monospace; font-weight: 800;
+    font-size: 1.5rem; color: #1d4e7a; min-width: 90px; text-align: right;
+  }
+  .timer-value.warn { color: #d9544d; animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
+
+  /* ---------- ВОПРОСЫ ---------- */
+  .q-card {
+    background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
+    padding: 1.5rem 1.7rem; margin-bottom: 1.3rem; border: 1px solid #cfe2ff;
+    box-shadow: 0 12px 26px -14px rgba(20, 60, 120, 0.25); transition: 0.2s;
+  }
+  .q-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 0.9rem; }
+  .q-num {
+    font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.05rem;
+    color: #fff; background: linear-gradient(135deg, #4a90e2, #3a6fd8);
+    min-width: 38px; height: 38px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 0 #2a4f9e; flex-shrink: 0;
+  }
+  .q-text { font-weight: 600; font-size: 1.05rem; color: #173a5e; padding-top: 6px; }
+
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 0.4rem; }
+  input[type="text"] {
+    font-family: 'Rubik', sans-serif; font-size: 1.05rem;
+    padding: 0.55rem 1rem; border-radius: 14px; border: 2px solid #bcd4f0;
+    outline: none; background: #fff; min-width: 140px; transition: 0.15s;
+  }
+  input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
+  .unit-label { font-weight: 700; color: #173a5e; font-size: 1.05rem; }
+
+  /* ---------- РЕЗУЛЬТАТ ---------- */
+  .result-box {
+    margin-top: 2rem; background: #ffffffdd; backdrop-filter: blur(8px);
+    border-radius: 28px; padding: 2rem 2.2rem; border: 2px solid #cfe2ff;
+    box-shadow: 0 20px 40px -16px rgba(20, 60, 120, 0.3); display: none;
+  }
+  .result-box.show { display: block; animation: fadeIn 0.4s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .result-title { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 1.6rem; margin-bottom: 0.6rem; color: #173a5e; }
+  .result-mark {
+    display: inline-block; font-family: 'Montserrat', sans-serif; font-weight: 800;
+    font-size: 3rem; padding: 0.3rem 1.6rem; border-radius: 28px; color: #fff;
+    margin: 0.6rem 0; box-shadow: 0 10px 0 rgba(0,0,0,0.12);
+  }
+  .result-summary { font-size: 1.1rem; margin: 0.6rem 0 1.2rem; color: #2c3e50; }
+  .wrong-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .wrong-item {
+    background: #fff5f3; border-left: 8px solid #e0644d; border-radius: 16px;
+    padding: 0.9rem 1.2rem; font-size: 1rem;
+  }
+  .wrong-item .wq { font-weight: 700; color: #8a2c1c; margin-bottom: 4px; }
+  .wrong-item .wdetail { color: #4a3a37; margin-bottom: 4px; }
+  .wrong-item .wdetail b { color: #8a2c1c; }
+  .wrong-item .wcorrect { color: #15623b; font-weight: 600; margin-bottom: 6px; }
+  .wrong-item .wsolution { color: #2c3e50; font-size: 0.95rem; background: #fff9e5; padding: 0.6rem 0.9rem; border-radius: 10px; margin-top: 6px; }
+  .all-ok { background: #e3f9ec; border-left: 8px solid #2fbf71; border-radius: 16px; padding: 1rem 1.3rem; color: #15623b; font-weight: 600; font-size: 1.05rem; }
+
+  .btn-check {
+    font-family: 'Rubik', sans-serif; font-weight: 700; font-size: 1.2rem;
+    padding: 0.9rem 2.4rem; border: none; border-radius: 20px;
+    background: linear-gradient(135deg, #2fbf71, #1f9e58); color: white;
+    cursor: pointer; box-shadow: 0 6px 0 #157040; transition: 0.1s;
+    display: block; width: 100%; margin-top: 1.6rem;
+  }
+  .btn-check:hover { transform: translateY(-1px); box-shadow: 0 7px 0 #157040; }
+  .btn-check:active { transform: translateY(3px); box-shadow: 0 3px 0 #157040; }
+  .btn-check:disabled { background: #b8c4d0; box-shadow: 0 6px 0 #8a98a6; cursor: not-allowed; }
+
+  .btn-restart {
+    font-family: 'Rubik', sans-serif; font-weight: 600; font-size: 1rem;
+    padding: 0.6rem 1.6rem; border: none; border-radius: 16px;
+    background: linear-gradient(135deg, #8899aa, #667788); color: white;
+    cursor: pointer; box-shadow: 0 5px 0 #445566; margin-top: 1.2rem;
+    display: inline-block; text-decoration: none;
+  }
+  .btn-restart:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
+
+  .hidden { display: none !important; }
+  @media (max-width: 600px) {
+    body { padding: 1rem 0.7rem 5rem; }
+    h1 { font-size: 1.6rem; }
+    .q-card { padding: 1.2rem 1.1rem; }
+    .criteria { padding: 1rem 1.1rem; }
+    .result-box { padding: 1.4rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <!-- ЭКРАН 1: АВТОРИЗАЦИЯ -->
+  <div id="authScreen" class="auth-box">
+    <h2>📝 Вход в тест</h2>
+    <p>Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
+    <div style="background:#f0f6ff; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #3a5f8a; text-align: center;">
+      Пример: <b>Иванов Иван</b> и класс <b>6Б</b>
+    </div>
+    <div class="auth-row">
+      <label>ФИО (как в журнале)</label>
+      <input type="text" id="inpFIO" placeholder="Иванов Иван" autocomplete="off">
+    </div>
+    <div class="auth-row">
+      <label>Класс</label>
+      <input type="text" id="inpKlass" placeholder="6Б" autocomplete="off">
+    </div>
+    <div class="auth-error" id="authError"></div>
+    <button class="btn-start" id="btnStart" onclick="checkStudent()">Проверить и начать</button>
+    <a href="index.html" class="btn-home">🏠 Вернуться на главную</a>
+  </div>
+
+  <!-- ЭКРАН 2: ТЕСТ -->
+  <div id="quizScreen" class="hidden">
+    <h1>📝 Самостоятельная работа</h1>
+    <p class="subtitle">Тема: Проценты · 10 задач · 20 минут</p>
+
+    <div class="criteria">
+      <div class="crit-title">📊 Критерии оценивания (из 10 заданий):</div>
+      <div class="crit-item"><span class="crit-mark mark5">5</span> 9–10 верных</div>
+      <div class="crit-item"><span class="crit-mark mark4">4</span> 7–8 верных</div>
+      <div class="crit-item"><span class="crit-mark mark3">3</span> 5–6 верных</div>
+      <div class="crit-item"><span class="crit-mark mark2">2</span> 0–4 верных</div>
+    </div>
+
+    <div class="timer-bar">
+      <span class="timer-label">⏱️ Осталось времени:</span>
+      <span class="timer-value" id="timer">20:00</span>
+    </div>
+
+    <div id="quiz"></div>
+    <button class="btn-check" id="checkBtn" onclick="finishQuiz()">Проверить результаты</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="result-title">📋 Результат</div>
+      <div id="resultMark" class="result-mark"></div>
+      <div class="result-summary" id="resultSummary"></div>
+      <div id="wrongContainer"></div>
+      <a href="index.html" class="btn-restart">🏠 Вернуться на главную</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxR6Q33g8B7s6O5FZzqB23AcfXQIw9gmo2S2tiDd7wpyyG2tp9-OtiyU6w0MhXz6NQJww/exec';
+let studentName = '';
+let studentClass = '';
+let quizStarted = false;
+
+/* ============================================================
+   АВТОРИЗАЦИЯ
+============================================================ */
+async function checkStudent() {
+  const fio = document.getElementById('inpFIO').value.trim();
+  const klass = document.getElementById('inpKlass').value.trim().toUpperCase();
+  const err = document.getElementById('authError');
+  err.classList.remove('show');
+
+  if (fio.length < 5) { err.textContent = 'Введите имя и фамилию полностью.'; err.classList.add('show'); return; }
+  if (klass.length < 1) { err.textContent = 'Введите ваш класс (например, 6Б).'; err.classList.add('show'); return; }
+
+  const btn = document.getElementById('btnStart');
+  btn.disabled = true; btn.innerText = 'Проверяем...';
+
+  try {
+    const resp = await fetch(`${BACKEND_URL}?action=checkStudent&fio=${encodeURIComponent(fio)}&klass=${encodeURIComponent(klass)}`);
+    const data = await resp.json();
+    if (!data.found) {
+      err.textContent = 'Ошибка: ученик не найден в списке этого класса.';
+      err.classList.add('show');
+      btn.disabled = false; btn.innerText = 'Проверить и начать';
+      return;
+    }
+  } catch (e) {
+    err.textContent = 'Ошибка сети. Попробуйте позже.';
+    err.classList.add('show');
+    btn.disabled = false; btn.innerText = 'Проверить и начать';
+    return;
+  }
+
+  studentName = fio;
+  studentClass = klass;
+  quizStarted = true;
+  document.getElementById('authScreen').classList.add('hidden');
+  document.getElementById('quizScreen').classList.remove('hidden');
+  startQuiz();
+}
+
+/* ============================================================
+   ФАБРИКИ ЗАДАЧ
+============================================================ */
+const R = {
+  int: (a, b) => a + Math.floor(Math.random() * (b - a + 1)),
+  pick: a => a[Math.floor(Math.random() * a.length)],
+  num: x => Number(x.toFixed(6))
+};
+
+function pA(s) {
+  if (s == null) return null;
+  s = String(s).trim().replace(/\s+/g, '').replace(/,/g, '.').replace(/%|₽|руб\.?|рублей/gi, '');
+  if (!s) return null;
+  const v = parseFloat(s);
+  return isNaN(v) ? null : v;
+}
+function ck(v, a) {
+  if (v === null || a == null) return false;
+  const t = Math.abs(a) >= 1 ? 0.011 : Math.max(Math.abs(a) * 0.02, 1e-7);
+  return Math.abs(v - a) <= t;
+}
+function fm(x) { return String(Number(x.toFixed(6))); }
+
+const T = {
+  pctToDec: () => {
+    const p = R.pick([5, 12, 15, 24, 36, 45, 65, 75, 8, 18, 32, 44, 56, 88]);
+    return { q: `Запиши <b>${p}%</b> в виде десятичной дроби.`, a: R.num(p / 100), sol: `${p} : 100 = ${R.num(p / 100)}.` };
+  },
+  decToPct: () => {
+    const d = R.pick([0.15, 0.24, 0.35, 0.4, 0.75, 0.6, 0.08, 0.44, 0.56, 0.68, 0.92, 0.125, 0.375]);
+    return { q: `Запиши число <b>${d}</b> в процентах. (ответ — число процентов)`, a: R.num(d * 100), sol: `${d} · 100 = ${R.num(d * 100)}%.` };
+  },
+  fracToPct: () => {
+    const b = R.pick([2, 4, 5, 10, 20, 25, 50]);
+    const a = R.int(1, b - 1);
+    return { q: `Переведи дробь <b>${a}/${b}</b> в проценты. (ответ — число процентов)`, a: R.num(a * 100 / b), sol: `${a}/${b} · 100 = ${R.num(a * 100 / b)}%.` };
+  },
+  pctOf: () => {
+    const N = R.pick([80, 100, 120, 200, 300, 400, 500]);
+    const p = R.pick([10, 15, 20, 25, 30, 40, 50]);
+    const a = R.num(N * p / 100);
+    return { q: `Найди <b>${p}%</b> от числа ${N}.`, a, sol: `${N} · ${p}/100 = ${a}.` };
+  },
+  howMuchPct: () => {
+    const N = R.pick([100, 150, 200, 400, 500]);
+    const p = R.pick([10, 20, 25, 40, 50]);
+    const a = R.num(N * p / 100);
+    return { q: `Сколько процентов составляет число <b>${a}</b> от числа <b>${N}</b>? (ответ — число процентов)`, a: p, sol: `${a} : ${N} · 100 = ${p}%.` };
+  },
+  findWhole: () => {
+    const N = R.pick([100, 150, 200, 400, 500]);
+    const p = R.pick([10, 20, 25, 40, 50]);
+    const a = R.num(N * p / 100);
+    return { q: `<b>${p}%</b> некоторого числа равны <b>${a}</b>. Найди это число.`, a: N, sol: `${a} : ${p}/100 = ${a} · 100/${p} = ${N}.` };
+  },
+  increase: () => {
+    const N = R.pick([200, 400, 500, 800, 1000]);
+    const p = R.pick([10, 20, 25, 50]);
+    const res = R.num(N * (1 + p / 100));
+    return { q: `Число <b>${N}</b> увеличили на <b>${p}%</b>. Какое число получилось?`, a: res, sol: `${N} · (1 + ${p}/100) = ${res}.` };
+  },
+  decrease: () => {
+    const N = R.pick([200, 400, 500, 800]);
+    const p = R.pick([10, 20, 25]);
+    const res = R.num(N * (1 - p / 100));
+    return { q: `Число <b>${N}</b> уменьшили на <b>${p}%</b>. Какое число получилось?`, a: res, sol: `${N} · (1 − ${p}/100) = ${res}.` };
+  },
+  changePct: () => {
+    const N = R.pick([200, 400, 500, 800]);
+    const p = R.pick([10, 20, 25]);
+    const res = R.num(N * (1 + p / 100));
+    return { q: `Число изменилось с <b>${N}</b> на <b>${res}</b>. На сколько процентов оно увеличилось? (ответ — число процентов)`, a: p, sol: `(${res} − ${N}) : ${N} · 100 = ${p}%.` };
+  },
+  discount: () => {
+    const C = R.pick([400, 600, 800, 1200, 1500, 2000]);
+    const p = R.pick([10, 15, 20, 25, 30]);
+    const res = R.num(C * (1 - p / 100));
+    return { q: `Товар стоит <b>${C} ₽</b>. Скидка <b>${p}%</b>. Сколько стал стоить товар?`, a: res, unit: ' ₽', sol: `${C} − ${C}·${p}/100 = ${res} ₽.` };
+  },
+  discountFind: () => {
+    const C = R.pick([400, 500, 800, 1000, 1200]);
+    const p = R.pick([10, 20, 25, 40, 50]);
+    const d = R.num(C * p / 100);
+    return { q: `Товар стоил <b>${C} ₽</b>, а стал стоить <b>${R.num(C - d)} ₽</b>. Сколько процентов составила скидка? (ответ — число процентов)`, a: p, sol: `Скидка: ${C} − ${R.num(C - d)} = ${d} ₽; ${d} : ${C} · 100 = ${p}%.` };
+  },
+  findOld: () => {
+    const C = R.pick([400, 600, 800, 1000, 1200]);
+    const p = R.pick([10, 20, 25, 50]);
+    const S = R.num(C * (1 + p / 100));
+    return { q: `После подорожания на <b>${p}%</b> товар стал стоить <b>${S} ₽</b>. Сколько он стоил до подорожания?`, a: C, unit: ' ₽', sol: `${S} : (1 + ${p}/100) = ${C} ₽.` };
+  },
+  deposit1y: () => {
+    const P = R.pick([1000, 2000, 5000, 10000, 15000]);
+    const rr = R.pick([5, 8, 10, 12, 20]);
+    const res = R.num(P * (1 + rr / 100));
+    return { q: `Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых (простые проценты). Сколько будет на счёте через 1 год?`, a: res, unit: ' ₽', sol: `${P} + ${P}·${rr}/100 = ${res} ₽.` };
+  },
+  depositNy: () => {
+    const P = R.pick([5000, 10000, 15000, 20000]);
+    const rr = R.pick([6, 8, 10, 12]);
+    const k = R.int(2, 3);
+    const res = R.num(P * (1 + rr / 100 * k));
+    return { q: `Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых (простые проценты). Сколько будет на счёте через <b>${k}</b> года?`, a: res, unit: ' ₽', sol: `${P}·(1 + ${rr}/100·${k}) = ${res} ₽.` };
+  },
+  penalty: () => {
+    const D = R.pick([1000, 2000, 5000, 8000]);
+    const s = R.pick([0.5, 1, 2]);
+    const d = R.pick([5, 10, 20, 30]);
+    const pen = R.num(D * s / 100 * d);
+    return { q: `Долг <b>${D} ₽</b>, пеня <b>${s}%</b> в день. Какую пеню начислят за <b>${d}</b> дней?`, a: pen, unit: ' ₽', sol: `${D} · ${s}/100 · ${d} = ${pen} ₽.` };
+  }
+};
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* Сбалансированный тест: 3 базовых + 3 «три типа» + 2 «изменение» + 2 «текстовые» */
+function generateTest() {
+  const basics = shuffle([T.pctToDec, T.decToPct, T.fracToPct]);
+  const mid = shuffle([T.pctOf, T.howMuchPct, T.findWhole]);
+  const change = shuffle([T.increase, T.decrease, T.changePct]).slice(0, 2);
+  const word = shuffle([T.discount, T.discountFind, T.findOld, T.deposit1y, T.depositNy, T.penalty]).slice(0, 2);
+
+  const tasks = [...basics, ...mid, ...change, ...word].map(fn => fn());
+  return shuffle(tasks);
+}
+
+/* ============================================================
+   ЛОГИКА ТЕСТА
+============================================================ */
+let currentQuestions = [];
+let userAnswers = [];
+let timeLeft = 1200;
+let timerInterval = null;
+let quizFinished = false;
+
+function startQuiz() {
+  currentQuestions = generateTest();
+  userAnswers = currentQuestions.map(() => '');
+  renderQuiz();
+  startTimer();
+}
+
+function renderQuiz() {
+  const quiz = document.getElementById('quiz');
+  quiz.innerHTML = '';
+  currentQuestions.forEach((t, idx) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.id = 'qcard-' + idx;
+
+    const head = document.createElement('div');
+    head.className = 'q-head';
+    const num = document.createElement('div');
+    num.className = 'q-num';
+    num.textContent = idx + 1;
+    const text = document.createElement('div');
+    text.className = 'q-text';
+    text.innerHTML = t.q;
+    head.appendChild(num);
+    head.appendChild(text);
+    card.appendChild(head);
+
+    const row = document.createElement('div');
+    row.className = 'row';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.inputMode = 'decimal';
+    inp.placeholder = 'Твой ответ';
+    inp.id = 'ans-' + idx;
+    inp.addEventListener('input', () => { userAnswers[idx] = inp.value; });
+    row.appendChild(inp);
+    if (t.unit) {
+      const u = document.createElement('span');
+      u.className = 'unit-label';
+      u.textContent = t.unit.trim();
+      row.appendChild(u);
+    }
+    card.appendChild(row);
+    quiz.appendChild(card);
+  });
+}
+
+function startTimer() {
+  timeLeft = 1200;
+  updateTimerDisplay();
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (quizFinished) return;
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      finishQuiz(true);
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60);
+  const s = timeLeft % 60;
+  const el = document.getElementById('timer');
+  el.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  if (timeLeft <= 60) el.classList.add('warn');
+  else el.classList.remove('warn');
+}
+
+async function finishQuiz(auto = false) {
+  if (quizFinished) return;
+  quizFinished = true;
+  clearInterval(timerInterval);
+
+  document.getElementById('checkBtn').disabled = true;
+  document.querySelectorAll('#quiz input').forEach(i => i.disabled = true);
+
+  let correctCount = 0;
+  const wrongDetails = [];
+
+  currentQuestions.forEach((t, idx) => {
+    const v = pA(userAnswers[idx]);
+    const ok = ck(v, t.a);
+    if (ok) {
+      correctCount++;
+    } else {
+      let userDisplay;
+      if (v === null) userDisplay = '— (нет ответа)';
+      else userDisplay = fm(v) + (t.unit || '');
+      const correctDisplay = fm(t.a) + (t.unit || '');
+      wrongDetails.push({
+        num: idx + 1,
+        text: t.q,
+        userDisplay,
+        correctDisplay,
+        explanation: t.sol
+      });
+    }
+  });
+
+  let markText = '2', markClass = 'mark2';
+  if (correctCount >= 9) { markText = '5'; markClass = 'mark5'; }
+  else if (correctCount >= 7) { markText = '4'; markClass = 'mark4'; }
+  else if (correctCount >= 5) { markText = '3'; markClass = 'mark3'; }
+
+  const date = new Date().toLocaleString('ru-RU');
+  try {
+    await fetch(BACKEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({
+        action: 'addResult',
+        fio: studentName,
+        klass: studentClass,
+        topic: 'Проценты',
+        grade: markText,
+        datetime: date,
+        correct: correctCount
+      })
+    });
+  } catch (e) {
+    console.log('Ошибка отправки результата:', e);
+  }
+
+  const resultBox = document.getElementById('resultBox');
+  resultBox.classList.add('show');
+  const markEl = document.getElementById('resultMark');
+  markEl.textContent = markText;
+  markEl.className = 'result-mark ' + markClass;
+  const summary = document.getElementById('resultSummary');
+  summary.innerHTML = `Правильно выполнено: <b>${correctCount} из 10</b> заданий. ` +
+    (auto ? '<br><span style="color:#d9544d;font-weight:600;">⏰ Время вышло — тест завершён автоматически.</span>' : '');
+
+  const wc = document.getElementById('wrongContainer');
+  wc.innerHTML = '';
+  if (wrongDetails.length === 0) {
+    const okDiv = document.createElement('div');
+    okDiv.className = 'all-ok';
+    okDiv.textContent = '🎉 Отлично! Все задания выполнены без ошибок.';
+    wc.appendChild(okDiv);
+  } else {
+    const title = document.createElement('div');
+    title.style.cssText = 'font-weight:700;color:#173a5e;margin-bottom:0.8rem;font-size:1.1rem;';
+    title.textContent = `❌ Ошибки в заданиях (${wrongDetails.length}):`;
+    wc.appendChild(title);
+
+    const ul = document.createElement('ul');
+    ul.className = 'wrong-list';
+    wrongDetails.forEach(w => {
+      const li = document.createElement('li');
+      li.className = 'wrong-item';
+      li.innerHTML = `
+        <div class="wq">Задание ${w.num}: ${w.text}</div>
+        <div class="wdetail">Твой ответ: <b>${w.userDisplay}</b></div>
+        <div class="wcorrect">Правильный ответ: ${w.correctDisplay}</div>
+        <div class="wsolution"><b>💡 Решение:</b> ${w.explanation}</div>
+      `;
+      ul.appendChild(li);
+    });
+    wc.appendChild(ul);
+  }
+
+  resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+window.addEventListener('beforeunload', (e) => {
+  if (quizStarted && !quizFinished) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
