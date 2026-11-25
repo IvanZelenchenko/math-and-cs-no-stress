@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Самостоятельная работа: Проценты</title>
+<title>Самостоятельная работа №1: Проценты (пункты 1–4)</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -29,7 +29,6 @@
   }
   .subtitle { color: #4a5f78; font-size: 1.05rem; margin-bottom: 1.4rem; }
 
-  /* ---------- АВТОРИЗАЦИЯ ---------- */
   .auth-box {
     background: #ffffffdd;
     backdrop-filter: blur(8px);
@@ -69,7 +68,6 @@
   }
   .btn-home:active { transform: translateY(3px); box-shadow: 0 2px 0 #445566; }
 
-  /* ---------- КРИТЕРИИ ---------- */
   .criteria {
     background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
     padding: 1.2rem 1.6rem; margin-bottom: 1.6rem; border: 1px solid #cfe2ff;
@@ -82,7 +80,6 @@
   .mark5 { background: #2fbf71; } .mark4 { background: #4a90e2; }
   .mark3 { background: #f2a03d; } .mark2 { background: #d9544d; }
 
-  /* ---------- ТАЙМЕР ---------- */
   .timer-bar {
     position: sticky; top: 10px; z-index: 50;
     background: #ffffffec; backdrop-filter: blur(8px);
@@ -99,7 +96,6 @@
   .timer-value.warn { color: #d9544d; animation: pulse 1s infinite; }
   @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.55; } }
 
-  /* ---------- ВОПРОСЫ ---------- */
   .q-card {
     background: #ffffffdd; backdrop-filter: blur(8px); border-radius: 24px;
     padding: 1.5rem 1.7rem; margin-bottom: 1.3rem; border: 1px solid #cfe2ff;
@@ -114,6 +110,11 @@
     box-shadow: 0 4px 0 #2a4f9e; flex-shrink: 0;
   }
   .q-text { font-weight: 600; font-size: 1.05rem; color: #173a5e; padding-top: 6px; }
+  .q-level { font-size: 0.75rem; font-weight: 800; padding: 2px 8px; border-radius: 20px; margin-left: 6px; letter-spacing: 0.5px; }
+  .lv-1 { background: #dbeafe; color: #1e40af; }
+  .lv-2 { background: #fef3c7; color: #92400e; }
+  .lv-3 { background: #fee2e2; color: #991b1b; }
+  .lv-4 { background: #ede9fe; color: #5b21b6; }
 
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 0.4rem; }
   input[type="text"] {
@@ -124,7 +125,6 @@
   input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px #4a90e233; }
   .unit-label { font-weight: 700; color: #173a5e; font-size: 1.05rem; }
 
-  /* ---------- РЕЗУЛЬТАТ ---------- */
   .result-box {
     margin-top: 2rem; background: #ffffffdd; backdrop-filter: blur(8px);
     border-radius: 28px; padding: 2rem 2.2rem; border: 2px solid #cfe2ff;
@@ -183,10 +183,10 @@
 </head>
 <body>
 <div class="wrap">
-  <!-- ЭКРАН 1: АВТОРИЗАЦИЯ -->
+  <!-- АВТОРИЗАЦИЯ -->
   <div id="authScreen" class="auth-box">
-    <h2>📝 Вход в тест</h2>
-    <p>Введите данные, чтобы начать самостоятельную работу.<br>Повторное прохождение невозможно.</p>
+    <h2>📝 СР №1. Вход в тест</h2>
+    <p>Пункты 1–4: перевод, три типа задач, изменение на проценты.<br>Повторное прохождение невозможно.</p>
     <div style="background:#f0f6ff; padding: 10px; border-radius: 12px; margin-bottom: 20px; font-size: 0.9rem; color: #3a5f8a; text-align: center;">
       Пример: <b>Иванов Иван</b> и класс <b>6Б</b>
     </div>
@@ -203,10 +203,10 @@
     <a href="index.html" class="btn-home">🏠 Вернуться на главную</a>
   </div>
 
-  <!-- ЭКРАН 2: ТЕСТ -->
+  <!-- ТЕСТ -->
   <div id="quizScreen" class="hidden">
-    <h1>📝 Самостоятельная работа</h1>
-    <p class="subtitle">Тема: Проценты · 10 задач · 20 минут</p>
+    <h1>📝 Самостоятельная работа №1</h1>
+    <p class="subtitle">Проценты: пункты 1–4 · 10 задач · 15 минут</p>
 
     <div class="criteria">
       <div class="crit-title">📊 Критерии оценивания (из 10 заданий):</div>
@@ -218,7 +218,7 @@
 
     <div class="timer-bar">
       <span class="timer-label">⏱️ Осталось времени:</span>
-      <span class="timer-value" id="timer">20:00</span>
+      <span class="timer-value" id="timer">15:00</span>
     </div>
 
     <div id="quiz"></div>
@@ -240,9 +240,7 @@ let studentName = '';
 let studentClass = '';
 let quizStarted = false;
 
-/* ============================================================
-   АВТОРИЗАЦИЯ
-============================================================ */
+/* ---------- АВТОРИЗАЦИЯ ---------- */
 async function checkStudent() {
   const fio = document.getElementById('inpFIO').value.trim();
   const klass = document.getElementById('inpKlass').value.trim().toUpperCase();
@@ -279,15 +277,12 @@ async function checkStudent() {
   startQuiz();
 }
 
-/* ============================================================
-   ФАБРИКИ ЗАДАЧ
-============================================================ */
+/* ---------- ФАБРИКИ ЗАДАЧ ---------- */
 const R = {
   int: (a, b) => a + Math.floor(Math.random() * (b - a + 1)),
   pick: a => a[Math.floor(Math.random() * a.length)],
   num: x => Number(x.toFixed(6))
 };
-
 function pA(s) {
   if (s == null) return null;
   s = String(s).trim().replace(/\s+/g, '').replace(/,/g, '.').replace(/%|₽|руб\.?|рублей/gi, '');
@@ -305,90 +300,52 @@ function fm(x) { return String(Number(x.toFixed(6))); }
 const T = {
   pctToDec: () => {
     const p = R.pick([5, 12, 15, 24, 36, 45, 65, 75, 8, 18, 32, 44, 56, 88]);
-    return { q: `Запиши <b>${p}%</b> в виде десятичной дроби.`, a: R.num(p / 100), sol: `${p} : 100 = ${R.num(p / 100)}.` };
+    return { lvl: 2, q: `Запиши <b>${p}%</b> в виде десятичной дроби.`, a: R.num(p / 100), sol: `${p} : 100 = ${R.num(p / 100)}.` };
   },
   decToPct: () => {
     const d = R.pick([0.15, 0.24, 0.35, 0.4, 0.75, 0.6, 0.08, 0.44, 0.56, 0.68, 0.92, 0.125, 0.375]);
-    return { q: `Запиши число <b>${d}</b> в процентах. (ответ — число процентов)`, a: R.num(d * 100), sol: `${d} · 100 = ${R.num(d * 100)}%.` };
+    return { lvl: 2, q: `Запиши число <b>${d}</b> в процентах. (ответ — число процентов)`, a: R.num(d * 100), sol: `${d} · 100 = ${R.num(d * 100)}%.` };
   },
   fracToPct: () => {
     const b = R.pick([2, 4, 5, 10, 20, 25, 50]);
     const a = R.int(1, b - 1);
-    return { q: `Переведи дробь <b>${a}/${b}</b> в проценты. (ответ — число процентов)`, a: R.num(a * 100 / b), sol: `${a}/${b} · 100 = ${R.num(a * 100 / b)}%.` };
+    return { lvl: 2, q: `Переведи дробь <b>${a}/${b}</b> в проценты. (ответ — число процентов)`, a: R.num(a * 100 / b), sol: `${a}/${b} · 100 = ${R.num(a * 100 / b)}%.` };
   },
   pctOf: () => {
     const N = R.pick([80, 100, 120, 200, 300, 400, 500]);
     const p = R.pick([10, 15, 20, 25, 30, 40, 50]);
     const a = R.num(N * p / 100);
-    return { q: `Найди <b>${p}%</b> от числа ${N}.`, a, sol: `${N} · ${p}/100 = ${a}.` };
+    return { lvl: 3, q: `Найди <b>${p}%</b> от числа ${N}.`, a, sol: `${N} · ${p}/100 = ${a}.` };
   },
   howMuchPct: () => {
     const N = R.pick([100, 150, 200, 400, 500]);
     const p = R.pick([10, 20, 25, 40, 50]);
     const a = R.num(N * p / 100);
-    return { q: `Сколько процентов составляет число <b>${a}</b> от числа <b>${N}</b>? (ответ — число процентов)`, a: p, sol: `${a} : ${N} · 100 = ${p}%.` };
+    return { lvl: 3, q: `Сколько процентов составляет число <b>${a}</b> от числа <b>${N}</b>? (ответ — число процентов)`, a: p, sol: `${a} : ${N} · 100 = ${p}%.` };
   },
   findWhole: () => {
     const N = R.pick([100, 150, 200, 400, 500]);
     const p = R.pick([10, 20, 25, 40, 50]);
     const a = R.num(N * p / 100);
-    return { q: `<b>${p}%</b> некоторого числа равны <b>${a}</b>. Найди это число.`, a: N, sol: `${a} : ${p}/100 = ${a} · 100/${p} = ${N}.` };
+    return { lvl: 3, q: `<b>${p}%</b> некоторого числа равны <b>${a}</b>. Найди это число.`, a: N, sol: `${a} : ${p}/100 = ${a} · 100/${p} = ${N}.` };
   },
   increase: () => {
     const N = R.pick([200, 400, 500, 800, 1000]);
     const p = R.pick([10, 20, 25, 50]);
     const res = R.num(N * (1 + p / 100));
-    return { q: `Число <b>${N}</b> увеличили на <b>${p}%</b>. Какое число получилось?`, a: res, sol: `${N} · (1 + ${p}/100) = ${res}.` };
+    return { lvl: 4, q: `Число <b>${N}</b> увеличили на <b>${p}%</b>. Какое число получилось?`, a: res, sol: `${N} · (1 + ${p}/100) = ${res}.` };
   },
   decrease: () => {
     const N = R.pick([200, 400, 500, 800]);
     const p = R.pick([10, 20, 25]);
     const res = R.num(N * (1 - p / 100));
-    return { q: `Число <b>${N}</b> уменьшили на <b>${p}%</b>. Какое число получилось?`, a: res, sol: `${N} · (1 − ${p}/100) = ${res}.` };
+    return { lvl: 4, q: `Число <b>${N}</b> уменьшили на <b>${p}%</b>. Какое число получилось?`, a: res, sol: `${N} · (1 − ${p}/100) = ${res}.` };
   },
   changePct: () => {
     const N = R.pick([200, 400, 500, 800]);
     const p = R.pick([10, 20, 25]);
     const res = R.num(N * (1 + p / 100));
-    return { q: `Число изменилось с <b>${N}</b> на <b>${res}</b>. На сколько процентов оно увеличилось? (ответ — число процентов)`, a: p, sol: `(${res} − ${N}) : ${N} · 100 = ${p}%.` };
-  },
-  discount: () => {
-    const C = R.pick([400, 600, 800, 1200, 1500, 2000]);
-    const p = R.pick([10, 15, 20, 25, 30]);
-    const res = R.num(C * (1 - p / 100));
-    return { q: `Товар стоит <b>${C} ₽</b>. Скидка <b>${p}%</b>. Сколько стал стоить товар?`, a: res, unit: ' ₽', sol: `${C} − ${C}·${p}/100 = ${res} ₽.` };
-  },
-  discountFind: () => {
-    const C = R.pick([400, 500, 800, 1000, 1200]);
-    const p = R.pick([10, 20, 25, 40, 50]);
-    const d = R.num(C * p / 100);
-    return { q: `Товар стоил <b>${C} ₽</b>, а стал стоить <b>${R.num(C - d)} ₽</b>. Сколько процентов составила скидка? (ответ — число процентов)`, a: p, sol: `Скидка: ${C} − ${R.num(C - d)} = ${d} ₽; ${d} : ${C} · 100 = ${p}%.` };
-  },
-  findOld: () => {
-    const C = R.pick([400, 600, 800, 1000, 1200]);
-    const p = R.pick([10, 20, 25, 50]);
-    const S = R.num(C * (1 + p / 100));
-    return { q: `После подорожания на <b>${p}%</b> товар стал стоить <b>${S} ₽</b>. Сколько он стоил до подорожания?`, a: C, unit: ' ₽', sol: `${S} : (1 + ${p}/100) = ${C} ₽.` };
-  },
-  deposit1y: () => {
-    const P = R.pick([1000, 2000, 5000, 10000, 15000]);
-    const rr = R.pick([5, 8, 10, 12, 20]);
-    const res = R.num(P * (1 + rr / 100));
-    return { q: `Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых (простые проценты). Сколько будет на счёте через 1 год?`, a: res, unit: ' ₽', sol: `${P} + ${P}·${rr}/100 = ${res} ₽.` };
-  },
-  depositNy: () => {
-    const P = R.pick([5000, 10000, 15000, 20000]);
-    const rr = R.pick([6, 8, 10, 12]);
-    const k = R.int(2, 3);
-    const res = R.num(P * (1 + rr / 100 * k));
-    return { q: `Вклад <b>${P} ₽</b> под <b>${rr}%</b> годовых (простые проценты). Сколько будет на счёте через <b>${k}</b> года?`, a: res, unit: ' ₽', sol: `${P}·(1 + ${rr}/100·${k}) = ${res} ₽.` };
-  },
-  penalty: () => {
-    const D = R.pick([1000, 2000, 5000, 8000]);
-    const s = R.pick([0.5, 1, 2]);
-    const d = R.pick([5, 10, 20, 30]);
-    const pen = R.num(D * s / 100 * d);
-    return { q: `Долг <b>${D} ₽</b>, пеня <b>${s}%</b> в день. Какую пеню начислят за <b>${d}</b> дней?`, a: pen, unit: ' ₽', sol: `${D} · ${s}/100 · ${d} = ${pen} ₽.` };
+    return { lvl: 4, q: `Число изменилось с <b>${N}</b> на <b>${res}</b>. На сколько процентов оно увеличилось? (ответ — число процентов)`, a: p, sol: `(${res} − ${N}) : ${N} · 100 = ${p}%.` };
   }
 };
 
@@ -401,28 +358,25 @@ function shuffle(arr) {
   return a;
 }
 
-/* Сбалансированный тест: 3 базовых + 3 «три типа» + 2 «изменение» + 2 «текстовые» */
-function generateTest() {
-  const basics = shuffle([T.pctToDec, T.decToPct, T.fracToPct]);
-  const mid = shuffle([T.pctOf, T.howMuchPct, T.findWhole]);
-  const change = shuffle([T.increase, T.decrease, T.changePct]).slice(0, 2);
-  const word = shuffle([T.discount, T.discountFind, T.findOld, T.deposit1y, T.depositNy, T.penalty]).slice(0, 2);
-
-  const tasks = [...basics, ...mid, ...change, ...word].map(fn => fn());
+/* СР №1 — сбалансированный тест: 3 перевода + 4 три типа + 3 изменение */
+function generateTest1() {
+  const translate = shuffle([T.pctToDec, T.decToPct, T.fracToPct]);
+  const threeTypes = shuffle([T.pctOf, T.howMuchPct, T.findWhole]);
+  const change = shuffle([T.increase, T.decrease, T.changePct]);
+  const extra = shuffle([T.pctOf, T.howMuchPct, T.findWhole])[0];
+  const tasks = [...translate, ...threeTypes, extra, ...change].map(fn => fn());
   return shuffle(tasks);
 }
 
-/* ============================================================
-   ЛОГИКА ТЕСТА
-============================================================ */
+/* ---------- ЛОГИКА ТЕСТА ---------- */
 let currentQuestions = [];
 let userAnswers = [];
-let timeLeft = 1200;
+let timeLeft = 900;
 let timerInterval = null;
 let quizFinished = false;
 
 function startQuiz() {
-  currentQuestions = generateTest();
+  currentQuestions = generateTest1();
   userAnswers = currentQuestions.map(() => '');
   renderQuiz();
   startTimer();
@@ -443,7 +397,7 @@ function renderQuiz() {
     num.textContent = idx + 1;
     const text = document.createElement('div');
     text.className = 'q-text';
-    text.innerHTML = t.q;
+    text.innerHTML = t.q + `<span class="q-level lv-${t.lvl}">п. ${t.lvl}</span>`;
     head.appendChild(num);
     head.appendChild(text);
     card.appendChild(head);
@@ -469,7 +423,7 @@ function renderQuiz() {
 }
 
 function startTimer() {
-  timeLeft = 1200;
+  timeLeft = 900;
   updateTimerDisplay();
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
@@ -537,7 +491,7 @@ async function finishQuiz(auto = false) {
         action: 'addResult',
         fio: studentName,
         klass: studentClass,
-        topic: 'Проценты',
+        topic: 'Проценты — СР №1 (п.1–4)',
         grade: markText,
         datetime: date,
         correct: correctCount
